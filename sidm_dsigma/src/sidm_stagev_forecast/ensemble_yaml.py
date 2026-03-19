@@ -18,6 +18,7 @@ class EnsembleYamlConfig:
     ensemble_config: dict[str, Any]
     projection_config: dict[str, Any]
     sidm_sigma_grid: tuple[float, ...]
+    tier2_config: dict[str, Any]
 
 
 def _build_redshift_configuration(redshift_block: dict[str, Any]) -> dict[str, Any]:
@@ -152,10 +153,29 @@ def load_ensemble_yaml_config(path: Path) -> EnsembleYamlConfig:
 
     sidm_sigma_grid = tuple(float(value) for value in raw["sidm"]["sigma_over_m_grid"])
 
+    tier2_block = dict(raw.get("tier2", {}))
+    tier2_config = {
+        "enabled": bool(tier2_block.get("enabled", False)),
+        "outer_profile_model": str(tier2_block.get("outer_profile_model", "dk14_like")),
+        "stitch_method": str(tier2_block.get("stitch_method", "logistic_logrho_blend")),
+        "r_match_mode": str(tier2_block.get("r_match_mode", "fraction_r200m")),
+        "r_match_value": float(tier2_block.get("r_match_value", 0.8)),
+        "smooth_width_dex": float(tier2_block.get("smooth_width_dex", 0.15)),
+        "continuity": str(tier2_block.get("continuity", "density")),
+        "regime": str(tier2_block.get("regime", "cluster" if mode == "HMF" else "dwarf")),
+    }
+
+    regime_overrides = dict(tier2_block.get("regime_overrides", {}))
+    active_regime_override = regime_overrides.get(tier2_config["regime"], None)
+    if isinstance(active_regime_override, dict):
+        for key, value in active_regime_override.items():
+            tier2_config[key] = value
+
     return EnsembleYamlConfig(
         label=label,
         mode=mode,
         ensemble_config=ensemble_config,
         projection_config=projection_config,
         sidm_sigma_grid=sidm_sigma_grid,
+        tier2_config=tier2_config,
     )

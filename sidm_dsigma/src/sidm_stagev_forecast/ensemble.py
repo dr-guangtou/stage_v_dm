@@ -178,16 +178,27 @@ def _resolve_hmf_callable(config_dict: dict[str, Any]) -> Callable[[np.ndarray, 
             colossus_cosmology.setCosmology("planck18")
 
             mass = np.asarray(mass_msun, dtype=float)
-            dndlnm = mass_function.massFunction(
-                x=mass,
-                z=z,
-                mdef="200c",
-                model="tinker08",
-                q_out="dndlnM",
-            )
-            dndm = dndlnm / np.maximum(mass, 1.0e-30)
-            dndm[~np.isfinite(dndm)] = 0.0
-            return np.maximum(dndm, 0.0)
+            try:
+                dndlnm = mass_function.massFunction(
+                    x=mass,
+                    z=z,
+                    mdef="200c",
+                    model="tinker08",
+                    q_out="dndlnM",
+                )
+                dndm = dndlnm / np.maximum(mass, 1.0e-30)
+                dndm[~np.isfinite(dndm)] = 0.0
+                return np.maximum(dndm, 0.0)
+            except Exception:
+                warnings.warn(
+                    (
+                        "Tinker08 colossus evaluation failed at runtime; "
+                        "falling back to power-law proxy alpha=1.9."
+                    ),
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
+                return np.asarray(mass_msun, dtype=float) ** (-1.9)
 
         return tinker08_hmf
 
@@ -398,19 +409,30 @@ def _sample_concentrations(
                     },
                 )
             colossus_cosmology.setCosmology("planck18")
-            concentration_mean = concentration.concentration(
-                M=np.asarray(halo_mass_msun, dtype=float),
-                mdef="200c",
-                z=np.asarray(z_samples, dtype=float),
-                model="diemer19",
-            )
-            concentration_mean = np.asarray(concentration_mean, dtype=float)
-            invalid = ~np.isfinite(concentration_mean) | (concentration_mean <= 0.0)
-            if np.any(invalid):
-                concentration_mean[invalid] = concentration_from_mass_maccio(
-                    np.asarray(halo_mass_msun, dtype=float)[invalid],
-                    np.asarray(z_samples, dtype=float)[invalid],
+            try:
+                concentration_mean = concentration.concentration(
+                    M=np.asarray(halo_mass_msun, dtype=float),
+                    mdef="200c",
+                    z=np.asarray(z_samples, dtype=float),
+                    model="diemer19",
                 )
+                concentration_mean = np.asarray(concentration_mean, dtype=float)
+                invalid = ~np.isfinite(concentration_mean) | (concentration_mean <= 0.0)
+                if np.any(invalid):
+                    concentration_mean[invalid] = concentration_from_mass_maccio(
+                        np.asarray(halo_mass_msun, dtype=float)[invalid],
+                        np.asarray(z_samples, dtype=float)[invalid],
+                    )
+            except Exception:
+                warnings.warn(
+                    (
+                        "DiemerJoyce19 colossus evaluation failed at runtime; "
+                        "falling back to maccio relation."
+                    ),
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
+                concentration_mean = concentration_from_mass_maccio(halo_mass_msun, z_samples)
     elif concentration_type == "power_law":
         c0 = float(concentration_model.get("c0", 4.5))
         m_pivot_msun = float(concentration_model.get("m_pivot_msun", 3.0e14))

@@ -32,10 +32,25 @@ def rho_crit_z(z: float, cosmo: CosmologyConfig) -> float:
     return 3.0 * hubble_value**2 / (8.0 * math.pi * GRAVITATIONAL_CONSTANT_KPC_KMS)
 
 
+def omega_m_z(z: float, cosmo: CosmologyConfig) -> float:
+    """Return the matter density parameter Omega_m(z)."""
+    ez_squared = e_z(z, cosmo) ** 2
+    return cosmo.omega_m * (1.0 + z) ** 3 / ez_squared
+
+
+def rho_mean_matter_z(z: float, cosmo: CosmologyConfig) -> float:
+    """Mean matter density in Msun / kpc^3 at redshift z."""
+    return omega_m_z(z, cosmo) * rho_crit_z(z, cosmo)
+
+
 def rdelta(mass_msun: float, z: float, cosmo: CosmologyConfig, definition: str = "200c") -> float:
     """Radius for spherical-overdensity mass definitions, returned in kpc."""
-    if definition != "200c":
-        raise ValueError("Only definition='200c' is currently implemented.")
+    definition_normalized = definition.lower()
+    if definition_normalized == "200c":
+        density_ref = rho_crit_z(z, cosmo)
+    elif definition_normalized == "200m":
+        density_ref = rho_mean_matter_z(z, cosmo)
+    else:
+        raise ValueError("Supported definitions are '200c' and '200m'.")
     delta = 200.0
-    density_ref = rho_crit_z(z, cosmo)
     return (3.0 * mass_msun / (4.0 * math.pi * delta * density_ref)) ** (1.0 / 3.0)

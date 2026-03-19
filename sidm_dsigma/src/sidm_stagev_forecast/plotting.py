@@ -197,3 +197,134 @@ def plot_tier1_summary(
 
     fig.savefig(output_path, dpi=220)
     plt.close(fig)
+
+
+def log_slope(r_kpc: np.ndarray, rho_msun_kpc3: np.ndarray) -> np.ndarray:
+    """Return dln(rho)/dln(r) on the input radial grid."""
+    return np.gradient(np.log(rho_msun_kpc3), np.log(r_kpc))
+
+
+def plot_single_halo_tier2_diagnostics(
+    r_kpc: np.ndarray,
+    rho_cdm_inner: np.ndarray,
+    rho_sidm_inner: np.ndarray,
+    rho_dk14_reference: np.ndarray,
+    rho_hybrid: np.ndarray,
+    r_projected_kpc: np.ndarray,
+    delta_sigma_tier1: np.ndarray,
+    delta_sigma_tier2: np.ndarray,
+    output_path: Path,
+    title: str,
+) -> None:
+    """Save Tier-2 single-halo diagnostics for density, slope, and DeltaSigma."""
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5), constrained_layout=True)
+
+    axes[0].loglog(r_kpc, rho_cdm_inner, color="black", lw=2.0, label="CDM inner (NFW)")
+    axes[0].loglog(r_kpc, rho_sidm_inner, color="tab:blue", lw=1.8, label="SIDM inner")
+    axes[0].loglog(r_kpc, rho_dk14_reference, color="tab:orange", lw=1.8, label="DK14-like ref")
+    axes[0].loglog(r_kpc, rho_hybrid, color="tab:red", lw=2.0, ls="--", label="SIDM+DK14 hybrid")
+    axes[0].set_xlabel("r [kpc]")
+    axes[0].set_ylabel(r"$\rho$ [Msun / kpc$^3$]")
+    axes[0].set_title(f"{title}: Density Components")
+    axes[0].legend(fontsize=8)
+
+    axes[1].semilogx(r_kpc, log_slope(r_kpc, rho_cdm_inner), color="black", lw=2.0, label="CDM inner")
+    axes[1].semilogx(r_kpc, log_slope(r_kpc, rho_sidm_inner), color="tab:blue", lw=1.8, label="SIDM inner")
+    axes[1].semilogx(
+        r_kpc,
+        log_slope(r_kpc, rho_dk14_reference),
+        color="tab:orange",
+        lw=1.8,
+        label="DK14-like ref",
+    )
+    axes[1].semilogx(r_kpc, log_slope(r_kpc, rho_hybrid), color="tab:red", lw=2.0, ls="--", label="Hybrid")
+    axes[1].set_xlabel("r [kpc]")
+    axes[1].set_ylabel(r"$d\ln \rho / d\ln r$")
+    axes[1].set_title("Log-Slope Diagnostic")
+    axes[1].axhline(-3.0, color="gray", lw=0.9, ls=":")
+
+    axes[2].loglog(r_projected_kpc, delta_sigma_tier1, color="tab:blue", lw=2.0, label="Tier-1 inner-only")
+    axes[2].loglog(r_projected_kpc, delta_sigma_tier2, color="tab:red", lw=2.0, ls="--", label="Tier-2 hybrid")
+    axes[2].set_xlabel("R [kpc]")
+    axes[2].set_ylabel(r"$\Delta\Sigma$ [Msun / kpc$^2$]")
+    axes[2].set_title("Projection Stability")
+    axes[2].legend(fontsize=8)
+
+    fig.savefig(output_path, dpi=220)
+    plt.close(fig)
+
+
+def plot_tier1_tier2_stacked_comparison(
+    r_projected_kpc: np.ndarray,
+    cdm_tier1: np.ndarray,
+    sidm_tier1_by_sigma: dict[float, np.ndarray],
+    cdm_tier2: np.ndarray,
+    sidm_tier2_by_sigma: dict[float, np.ndarray],
+    output_path: Path,
+    title: str,
+) -> None:
+    """Save stacked Tier-1 vs Tier-2 DeltaSigma comparison and ratio panels."""
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5), constrained_layout=True)
+
+    axes[0].loglog(r_projected_kpc, cdm_tier1, color="black", lw=2.2, label="CDM Tier-1")
+    axes[0].loglog(r_projected_kpc, cdm_tier2, color="black", lw=1.8, ls="--", label="CDM Tier-2")
+    for sigma_over_m, values in sidm_tier1_by_sigma.items():
+        axes[0].loglog(
+            r_projected_kpc,
+            values,
+            lw=1.4,
+            alpha=0.7,
+            label=f"SIDM {sigma_over_m:g} Tier-1",
+        )
+        axes[0].loglog(
+            r_projected_kpc,
+            sidm_tier2_by_sigma[sigma_over_m],
+            lw=1.8,
+            ls="--",
+            label=f"SIDM {sigma_over_m:g} Tier-2",
+        )
+    axes[0].set_xlabel("R [kpc]")
+    axes[0].set_ylabel(r"Stacked $\Delta\Sigma$ [Msun / kpc$^2$]")
+    axes[0].set_title(f"{title}: Tier-1 vs Tier-2")
+    axes[0].legend(fontsize=7, ncol=2)
+
+    axes[1].axhline(1.0, color="black", lw=1.0, ls="--")
+    axes[1].semilogx(r_projected_kpc, cdm_tier2 / cdm_tier1, color="black", lw=2.0, label="CDM T2/T1")
+    for sigma_over_m, values in sidm_tier1_by_sigma.items():
+        axes[1].semilogx(
+            r_projected_kpc,
+            sidm_tier2_by_sigma[sigma_over_m] / values,
+            lw=1.8,
+            label=f"SIDM {sigma_over_m:g} T2/T1",
+        )
+    axes[1].set_xlabel("R [kpc]")
+    axes[1].set_ylabel(r"$\Delta\Sigma_{\mathrm{Tier2}} / \Delta\Sigma_{\mathrm{Tier1}}$")
+    axes[1].set_title("Outskirts Attachment Impact")
+    axes[1].legend(fontsize=8)
+
+    fig.savefig(output_path, dpi=220)
+    plt.close(fig)
+
+
+def plot_delta_chi2_tier_comparison(
+    sigma_over_m_grid_cm2_g: tuple[float, ...],
+    delta_chi2_tier1: dict[float, float],
+    delta_chi2_tier2: dict[float, float],
+    output_path: Path,
+    title: str,
+) -> None:
+    """Save DeltaChi2 versus sigma/m comparison between Tier-1 and Tier-2."""
+    x_values = np.asarray(sigma_over_m_grid_cm2_g, dtype=float)
+    y_tier1 = np.asarray([delta_chi2_tier1[value] for value in sigma_over_m_grid_cm2_g])
+    y_tier2 = np.asarray([delta_chi2_tier2[value] for value in sigma_over_m_grid_cm2_g])
+
+    fig, axis = plt.subplots(1, 1, figsize=(6.5, 4.5), constrained_layout=True)
+    axis.plot(x_values, y_tier1, marker="o", lw=2.0, label="Tier-1 inner-only")
+    axis.plot(x_values, y_tier2, marker="s", lw=2.0, ls="--", label="Tier-2 hybrid")
+    axis.set_xlabel(r"$\sigma/m$ [cm$^2$/g]")
+    axis.set_ylabel(r"$\Delta\chi^2$ (5% fractional error)")
+    axis.set_title(f"{title}: Distinguishability")
+    axis.grid(alpha=0.25)
+    axis.legend()
+    fig.savefig(output_path, dpi=220)
+    plt.close(fig)

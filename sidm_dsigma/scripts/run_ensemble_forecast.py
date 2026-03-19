@@ -13,6 +13,7 @@ from sidm_stagev_forecast.config import (
     CLUSTER_HMF_ENSEMBLE_CONFIG_EXAMPLE,
     DEFAULT_COSMOLOGY,
     DEFAULT_ENSEMBLE_BENCHMARK,
+    DEFAULT_TIER2_CONFIG,
     DWARF_SHMR_ENSEMBLE_CONFIG_EXAMPLE,
     log_radius_grid,
 )
@@ -24,8 +25,19 @@ from sidm_stagev_forecast.forecast import (
     required_uniform_fractional_precision,
 )
 from sidm_stagev_forecast.io import ensure_output_directories, save_table
-from sidm_stagev_forecast.plotting import plot_stacked_delta_sigma, plot_tier1_summary
-from sidm_stagev_forecast.profiles import nfw_profile_bundle, sidm_profile_from_parametric_model
+from sidm_stagev_forecast.io import append_figure_caption_entries, append_inventory_entries
+from sidm_stagev_forecast.plotting import (
+    plot_delta_chi2_tier_comparison,
+    plot_single_halo_tier2_diagnostics,
+    plot_stacked_delta_sigma,
+    plot_tier1_summary,
+    plot_tier1_tier2_stacked_comparison,
+)
+from sidm_stagev_forecast.profiles import (
+    build_hybrid_sidm_profile,
+    nfw_profile_bundle,
+    sidm_profile_from_parametric_model,
+)
 from sidm_stagev_forecast.projection import delta_sigma_of_R
 from sidm_stagev_forecast.stacking import (
     interpolate_profile_to_common_grid,
@@ -109,6 +121,10 @@ def _resolve_runtime_configuration(
             ),
             "projection_configuration": None,
             "sigma_grid": tuple(DEFAULT_ENSEMBLE_BENCHMARK.sigma_over_m_grid_cm2_g),
+            "tier2_configuration": {
+                **DEFAULT_TIER2_CONFIG.__dict__,
+                "regime": "cluster" if ensemble_mode == "HMF" else "dwarf",
+            },
         }
 
     parsed = load_ensemble_yaml_config(config_path)
@@ -123,6 +139,7 @@ def _resolve_runtime_configuration(
         "sampling_configuration": sampling_configuration,
         "projection_configuration": dict(parsed.projection_config),
         "sigma_grid": tuple(parsed.sidm_sigma_grid),
+        "tier2_configuration": dict(parsed.tier2_config),
     }
 
 
@@ -244,6 +261,8 @@ def run_ensemble_forecast(
     sampling_configuration = dict(runtime_configuration["sampling_configuration"])
     projection_configuration = runtime_configuration["projection_configuration"]
     sigma_grid = tuple(float(value) for value in runtime_configuration["sigma_grid"])
+    tier2_configuration = dict(runtime_configuration["tier2_configuration"])
+    tier2_enabled = bool(tier2_configuration.get("enabled", False))
 
     halos = generate_ensemble(mode=active_mode, config_dict=sampling_configuration)
     halo_summary = summarize_ensemble(halos)
@@ -269,8 +288,20 @@ def run_ensemble_forecast(
     }
     cdm_rho_rows: list[np.ndarray] = []
     sidm_rho_rows: dict[float, list[np.ndarray]] = {sigma: [] for sigma in sigma_grid}
+    cdm_projected_profiles_tier2: list[dict[str, np.ndarray]] = []
+    sidm_projected_profiles_tier2: dict[float, list[dict[str, np.ndarray]]] = {
+        sigma: [] for sigma in sigma_grid
+    }
+    cdm_rho_rows_tier2: list[np.ndarray] = []
+    sidm_rho_rows_tier2: dict[float, list[np.ndarray]] = {sigma: [] for sigma in sigma_grid}
 
-    for halo in halos:
+    model_options = None
+    if sidm_backend == "surrogate":
+        model_options = {"sidm_callable": surrogate_sidm_callable}
+
+    single_halo_records: dict[str, dict[str, np.ndarray]] = {}
+
+    for halo_index, halo in enumerate(halos):
         r_3d_kpc, r_lensing_kpc = halo_specific_r_grids(
             m200_msun=halo["m200_msun"],
             z=halo["z"],
@@ -302,10 +333,6 @@ def run_ensemble_forecast(
             )
         )
 
-        model_options = None
-        if sidm_backend == "surrogate":
-            model_options = {"sidm_callable": surrogate_sidm_callable}
-
         for sigma_over_m in sigma_grid:
             sidm_profile = sidm_profile_from_parametric_model(
                 r_kpc=r_3d_kpc,
@@ -330,6 +357,63 @@ def run_ensemble_forecast(
                 )
             )
 
+            if tier2_enabled:
+                hybrid = build_hybrid_sidm_profile(
+                    r_kpc=r_3d_kpc,
+                    m200_msun=halo["m200_msun"],
+                    c200=halo["c200"],
+                    z=halo["z"],
+                    sigma_over_m=sigma_over_m,
+                    cosmo=DEFAULT_COSMOLOGY,
+                    model_options=model_options,
+                    dk14_params={"regime": tier2_configuration.get("regime", "cluster")},
+                    stitch_params=tier2_configuration,
+                )
+                if sigma_over_m == sigma_grid[0]:
+                    cdm_projected_tier2 = delta_sigma_of_R(
+                        r_projected_kpc=r_lensing_kpc,
+                        r_kpc=r_3d_kpc,
+                        rho_msun_kpc3=hybrid["rho_cdm_hybrid_msun_kpc3"],
+                        n_z=benchmark.projection_n_z,
+                    )
+                    cdm_projected_profiles_tier2.append(cdm_projected_tier2)
+                    cdm_rho_rows_tier2.append(
+                        interpolate_profile_to_common_grid(
+                            r_input_kpc=r_3d_kpc,
+                            profile_input=hybrid["rho_cdm_hybrid_msun_kpc3"],
+                            r_common_kpc=r_common_3d_kpc,
+                        )
+                    )
+
+                sidm_projected_tier2 = delta_sigma_of_R(
+                    r_projected_kpc=r_lensing_kpc,
+                    r_kpc=r_3d_kpc,
+                    rho_msun_kpc3=hybrid["rho_sidm_hybrid_msun_kpc3"],
+                    n_z=benchmark.projection_n_z,
+                )
+                sidm_projected_profiles_tier2[sigma_over_m].append(sidm_projected_tier2)
+                sidm_rho_rows_tier2[sigma_over_m].append(
+                    interpolate_profile_to_common_grid(
+                        r_input_kpc=r_3d_kpc,
+                        profile_input=hybrid["rho_sidm_hybrid_msun_kpc3"],
+                        r_common_kpc=r_common_3d_kpc,
+                    )
+                )
+
+                if halo_index == 0 and sigma_over_m == sigma_grid[-1]:
+                    single_halo_records["tier2"] = {
+                        "r_kpc": r_3d_kpc,
+                        "rho_cdm_inner": cdm_profile["rho_msun_kpc3"],
+                        "rho_sidm_inner": sidm_profile["rho_msun_kpc3"],
+                        "rho_dk14_reference": hybrid["dk14_outer_reference"][
+                            "rho_total_msun_kpc3"
+                        ],
+                        "rho_hybrid": hybrid["rho_sidm_hybrid_msun_kpc3"],
+                        "r_projected_kpc": r_lensing_kpc,
+                        "delta_sigma_tier1": sidm_projected["delta_sigma_msun_kpc2"],
+                        "delta_sigma_tier2": sidm_projected_tier2["delta_sigma_msun_kpc2"],
+                    }
+
     stacked_cdm = stack_delta_sigma_profiles(
         r_common_kpc=r_common_lensing_kpc,
         projected_profiles=cdm_projected_profiles,
@@ -350,21 +434,44 @@ def run_ensemble_forecast(
             weights,
         )
 
+    stacked_cdm_tier2: dict[str, np.ndarray] | None = None
+    stacked_cdm_rho_tier2: np.ndarray | None = None
+    stacked_sidm_by_sigma_tier2: dict[float, np.ndarray] = {}
+    stacked_sidm_rho_by_sigma_tier2: dict[float, np.ndarray] = {}
+    if tier2_enabled:
+        stacked_cdm_tier2 = stack_delta_sigma_profiles(
+            r_common_kpc=r_common_lensing_kpc,
+            projected_profiles=cdm_projected_profiles_tier2,
+            weights=weights,
+        )
+        stacked_cdm_rho_tier2 = weighted_stack_profiles(np.vstack(cdm_rho_rows_tier2), weights)
+        for sigma_over_m in sigma_grid:
+            stacked_sidm_by_sigma_tier2[sigma_over_m] = stack_delta_sigma_profiles(
+                r_common_kpc=r_common_lensing_kpc,
+                projected_profiles=sidm_projected_profiles_tier2[sigma_over_m],
+                weights=weights,
+            )["delta_sigma_msun_kpc2"]
+            stacked_sidm_rho_by_sigma_tier2[sigma_over_m] = weighted_stack_profiles(
+                np.vstack(sidm_rho_rows_tier2[sigma_over_m]),
+                weights,
+            )
+
     scenario_fractions = {"optimistic_5pct": 0.05, "conservative_10pct": 0.10}
     summary_rows: list[dict[str, float | int | str]] = []
-    delta_chi2_by_sigma: dict[float, float] = {}
+    delta_chi2_by_sigma_tier1: dict[float, float] = {}
+    delta_chi2_by_sigma_tier2: dict[float, float] = {}
     for sigma_over_m in sigma_grid:
-        metrics = evaluate_stacked_distinguishability(
+        metrics_tier1 = evaluate_stacked_distinguishability(
             model=stacked_sidm_by_sigma[sigma_over_m],
             reference=stacked_cdm["delta_sigma_msun_kpc2"],
             fractional_error_scenarios=scenario_fractions,
         )
-        required_for_3sigma = required_uniform_fractional_precision(
+        required_for_3sigma_tier1 = required_uniform_fractional_precision(
             model=stacked_sidm_by_sigma[sigma_over_m],
             reference=stacked_cdm["delta_sigma_msun_kpc2"],
             target_sigma_significance=3.0,
         )
-        max_ratio_shift_percent = 100.0 * np.max(
+        max_ratio_shift_percent_tier1 = 100.0 * np.max(
             np.abs(stacked_sidm_by_sigma[sigma_over_m] / stacked_cdm["delta_sigma_msun_kpc2"] - 1.0)
         )
 
@@ -374,16 +481,17 @@ def run_ensemble_forecast(
                 "n_halos": int(sampling_configuration["n_halos"]),
                 "seed": int(sampling_configuration["seed"]),
                 "ensemble_mode": active_mode,
+                "tier": "tier1",
                 "sigma_over_m_cm2_g": sigma_over_m,
-                "delta_chi2_optimistic_5pct": metrics["delta_chi2_optimistic_5pct"],
-                "sigma_separation_optimistic_5pct": metrics["sigma_separation_optimistic_5pct"],
-                "delta_chi2_conservative_10pct": metrics["delta_chi2_conservative_10pct"],
-                "sigma_separation_conservative_10pct": metrics[
+                "delta_chi2_optimistic_5pct": metrics_tier1["delta_chi2_optimistic_5pct"],
+                "sigma_separation_optimistic_5pct": metrics_tier1["sigma_separation_optimistic_5pct"],
+                "delta_chi2_conservative_10pct": metrics_tier1["delta_chi2_conservative_10pct"],
+                "sigma_separation_conservative_10pct": metrics_tier1[
                     "sigma_separation_conservative_10pct"
                 ],
-                "required_uniform_fraction_for_3sigma": required_for_3sigma,
-                "required_uniform_percent_for_3sigma": 100.0 * required_for_3sigma,
-                "max_abs_delta_sigma_ratio_shift_percent": max_ratio_shift_percent,
+                "required_uniform_fraction_for_3sigma": required_for_3sigma_tier1,
+                "required_uniform_percent_for_3sigma": 100.0 * required_for_3sigma_tier1,
+                "max_abs_delta_sigma_ratio_shift_percent": max_ratio_shift_percent_tier1,
                 "ensemble_mean_mass_msun": halo_summary["mean_mass_msun"],
                 "ensemble_median_mass_msun": float(
                     np.median([halo["m200_msun"] for halo in halos])
@@ -391,18 +499,74 @@ def run_ensemble_forecast(
                 "ensemble_std_log10_mass_dex": halo_summary["std_log10_mass_dex"],
             }
         )
-        delta_chi2_by_sigma[sigma_over_m] = metrics["delta_chi2_optimistic_5pct"]
+        delta_chi2_by_sigma_tier1[sigma_over_m] = metrics_tier1["delta_chi2_optimistic_5pct"]
+
+        if tier2_enabled and stacked_cdm_tier2 is not None:
+            metrics_tier2 = evaluate_stacked_distinguishability(
+                model=stacked_sidm_by_sigma_tier2[sigma_over_m],
+                reference=stacked_cdm_tier2["delta_sigma_msun_kpc2"],
+                fractional_error_scenarios=scenario_fractions,
+            )
+            required_for_3sigma_tier2 = required_uniform_fractional_precision(
+                model=stacked_sidm_by_sigma_tier2[sigma_over_m],
+                reference=stacked_cdm_tier2["delta_sigma_msun_kpc2"],
+                target_sigma_significance=3.0,
+            )
+            max_ratio_shift_percent_tier2 = 100.0 * np.max(
+                np.abs(
+                    stacked_sidm_by_sigma_tier2[sigma_over_m]
+                    / stacked_cdm_tier2["delta_sigma_msun_kpc2"]
+                    - 1.0
+                )
+            )
+            summary_rows.append(
+                {
+                    "label": mode_tag,
+                    "n_halos": int(sampling_configuration["n_halos"]),
+                    "seed": int(sampling_configuration["seed"]),
+                    "ensemble_mode": active_mode,
+                    "tier": "tier2",
+                    "sigma_over_m_cm2_g": sigma_over_m,
+                    "delta_chi2_optimistic_5pct": metrics_tier2["delta_chi2_optimistic_5pct"],
+                    "sigma_separation_optimistic_5pct": metrics_tier2[
+                        "sigma_separation_optimistic_5pct"
+                    ],
+                    "delta_chi2_conservative_10pct": metrics_tier2[
+                        "delta_chi2_conservative_10pct"
+                    ],
+                    "sigma_separation_conservative_10pct": metrics_tier2[
+                        "sigma_separation_conservative_10pct"
+                    ],
+                    "required_uniform_fraction_for_3sigma": required_for_3sigma_tier2,
+                    "required_uniform_percent_for_3sigma": 100.0 * required_for_3sigma_tier2,
+                    "max_abs_delta_sigma_ratio_shift_percent": max_ratio_shift_percent_tier2,
+                    "ensemble_mean_mass_msun": halo_summary["mean_mass_msun"],
+                    "ensemble_median_mass_msun": float(
+                        np.median([halo["m200_msun"] for halo in halos])
+                    ),
+                    "ensemble_std_log10_mass_dex": halo_summary["std_log10_mass_dex"],
+                }
+            )
+            delta_chi2_by_sigma_tier2[sigma_over_m] = metrics_tier2["delta_chi2_optimistic_5pct"]
 
     stacked_delta_sigma_table = pd.DataFrame(
         {
             "r_projected_kpc": r_common_lensing_kpc,
-            "delta_sigma_cdm_msun_kpc2": stacked_cdm["delta_sigma_msun_kpc2"],
+            "delta_sigma_cdm_tier1_msun_kpc2": stacked_cdm["delta_sigma_msun_kpc2"],
             **{
-                f"delta_sigma_sidm_sigma_{sigma_value:.3f}".replace(".", "p"): values
+                f"delta_sigma_sidm_tier1_sigma_{sigma_value:.3f}".replace(".", "p"): values
                 for sigma_value, values in stacked_sidm_by_sigma.items()
             },
         }
     )
+    if tier2_enabled and stacked_cdm_tier2 is not None:
+        stacked_delta_sigma_table["delta_sigma_cdm_tier2_msun_kpc2"] = stacked_cdm_tier2[
+            "delta_sigma_msun_kpc2"
+        ]
+        for sigma_value, values in stacked_sidm_by_sigma_tier2.items():
+            stacked_delta_sigma_table[
+                f"delta_sigma_sidm_tier2_sigma_{sigma_value:.3f}".replace(".", "p")
+            ] = values
     save_table(
         stacked_delta_sigma_table,
         output_paths["intermediate"] / f"{mode_tag}_ensemble_stacked_delta_sigma_profiles.csv",
@@ -411,13 +575,17 @@ def run_ensemble_forecast(
     stacked_rho_table = pd.DataFrame(
         {
             "r_kpc": r_common_3d_kpc,
-            "rho_cdm_msun_kpc3": stacked_cdm_rho,
+            "rho_cdm_tier1_msun_kpc3": stacked_cdm_rho,
             **{
-                f"rho_sidm_sigma_{sigma_value:.3f}".replace(".", "p"): values
+                f"rho_sidm_tier1_sigma_{sigma_value:.3f}".replace(".", "p"): values
                 for sigma_value, values in stacked_sidm_rho_by_sigma.items()
             },
         }
     )
+    if tier2_enabled and stacked_cdm_rho_tier2 is not None:
+        stacked_rho_table["rho_cdm_tier2_msun_kpc3"] = stacked_cdm_rho_tier2
+        for sigma_value, values in stacked_sidm_rho_by_sigma_tier2.items():
+            stacked_rho_table[f"rho_sidm_tier2_sigma_{sigma_value:.3f}".replace(".", "p")] = values
     save_table(
         stacked_rho_table,
         output_paths["intermediate"] / f"{mode_tag}_ensemble_stacked_rho_profiles.csv",
@@ -460,8 +628,99 @@ def run_ensemble_forecast(
         delta_sigma_cdm_msun_kpc2=stacked_cdm["delta_sigma_msun_kpc2"],
         delta_sigma_sidm_profiles=stacked_sidm_by_sigma,
         sigma_over_m_grid_cm2_g=sigma_grid,
-        delta_chi2_by_sigma=delta_chi2_by_sigma,
+        delta_chi2_by_sigma=delta_chi2_by_sigma_tier1,
         output_path=output_paths["figures"] / f"{mode_tag}_ensemble_tier1_summary.png",
+    )
+
+    figure_paths = [
+        output_paths["figures"] / f"{mode_tag}_ensemble_stacked_delta_sigma.png",
+        output_paths["figures"] / f"{mode_tag}_ensemble_tier1_summary.png",
+    ]
+    if tier2_enabled and stacked_cdm_tier2 is not None:
+        plot_tier1_tier2_stacked_comparison(
+            r_projected_kpc=r_common_lensing_kpc,
+            cdm_tier1=stacked_cdm["delta_sigma_msun_kpc2"],
+            sidm_tier1_by_sigma=stacked_sidm_by_sigma,
+            cdm_tier2=stacked_cdm_tier2["delta_sigma_msun_kpc2"],
+            sidm_tier2_by_sigma=stacked_sidm_by_sigma_tier2,
+            output_path=output_paths["figures"] / f"{mode_tag}_ensemble_tier1_vs_tier2_stacked.png",
+            title=f"{mode_tag} ensemble",
+        )
+        plot_delta_chi2_tier_comparison(
+            sigma_over_m_grid_cm2_g=sigma_grid,
+            delta_chi2_tier1=delta_chi2_by_sigma_tier1,
+            delta_chi2_tier2=delta_chi2_by_sigma_tier2,
+            output_path=output_paths["figures"] / f"{mode_tag}_ensemble_tier1_vs_tier2_delta_chi2.png",
+            title=f"{mode_tag} ensemble",
+        )
+        figure_paths.extend(
+            [
+                output_paths["figures"] / f"{mode_tag}_ensemble_tier1_vs_tier2_stacked.png",
+                output_paths["figures"] / f"{mode_tag}_ensemble_tier1_vs_tier2_delta_chi2.png",
+            ]
+        )
+        if "tier2" in single_halo_records:
+            single_halo_output = output_paths["figures"] / f"{mode_tag}_single_halo_tier2_diagnostic.png"
+            plot_single_halo_tier2_diagnostics(
+                r_kpc=single_halo_records["tier2"]["r_kpc"],
+                rho_cdm_inner=single_halo_records["tier2"]["rho_cdm_inner"],
+                rho_sidm_inner=single_halo_records["tier2"]["rho_sidm_inner"],
+                rho_dk14_reference=single_halo_records["tier2"]["rho_dk14_reference"],
+                rho_hybrid=single_halo_records["tier2"]["rho_hybrid"],
+                r_projected_kpc=single_halo_records["tier2"]["r_projected_kpc"],
+                delta_sigma_tier1=single_halo_records["tier2"]["delta_sigma_tier1"],
+                delta_sigma_tier2=single_halo_records["tier2"]["delta_sigma_tier2"],
+                output_path=single_halo_output,
+                title=f"{mode_tag} representative halo",
+            )
+            figure_paths.append(single_halo_output)
+
+    caption_entries: list[dict[str, str]] = []
+    for figure_path in figure_paths:
+        timestamp = pd.Timestamp(figure_path.stat().st_mtime, unit="s").tz_localize("UTC").tz_convert(
+            "America/Phoenix"
+        )
+        caption_entries.append(
+            {
+                "filename": figure_path.name,
+                "created_at": timestamp.isoformat(),
+                "caption": (
+                    "Tier forecast figure. Axes are in physical kpc and Msun-based density units; "
+                    "Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts "
+                    "attachment with smooth log-density stitching."
+                ),
+            }
+        )
+    append_figure_caption_entries(
+        caption_path=output_paths["figures"] / "CAPTION.md",
+        entries=caption_entries,
+    )
+
+    inventory_entries = [
+        {
+            "path": str((output_paths["intermediate"] / f"{mode_tag}_ensemble_halo_catalog.csv").relative_to(output_root)),
+            "description": "Sampled halo catalog with M200, c200, z, and stack weights.",
+        },
+        {
+            "path": str((output_paths["intermediate"] / f"{mode_tag}_ensemble_stacked_delta_sigma_profiles.csv").relative_to(output_root)),
+            "description": "Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.",
+        },
+        {
+            "path": str((output_paths["intermediate"] / f"{mode_tag}_ensemble_stacked_rho_profiles.csv").relative_to(output_root)),
+            "description": "Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.",
+        },
+        {
+            "path": str((output_paths["tables"] / f"{mode_tag}_ensemble_delta_chi2_summary.csv").relative_to(output_root)),
+            "description": "Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.",
+        },
+        {
+            "path": str((output_paths["tables"] / f"{mode_tag}_ensemble_validation_checks.csv").relative_to(output_root)),
+            "description": "Validation checks for median mass, bins, reproducibility, and single-halo limit.",
+        },
+    ]
+    append_inventory_entries(
+        inventory_path=output_root / "INVENTORY.md",
+        entries=inventory_entries,
     )
 
 
