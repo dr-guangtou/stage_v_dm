@@ -54,3 +54,63 @@
 - photo-z systematics,
 - central/satellite population modeling,
 - publication-grade survey forecasting.
+
+# ============================================
+# EXTENSION: Tier-1 Halo Ensemble Development
+# ============================================
+
+Assume single-halo pipeline complete.
+
+---
+
+## Phase 6 — Halo Ensemble Module
+
+- Implement halo sampler
+- Add configurable mass distribution
+- Add concentration scatter
+- Add reproducible seed support
+- Validate ensemble statistics
+
+---
+
+## Phase 7 — Stacking Module
+
+- Implement interpolation to common R grid
+- Implement weighted averaging
+- Validate single-halo limit
+- Verify convergence with increasing N_halos
+
+---
+
+## Phase 8 — Ensemble Forecast
+
+- Generate stacked ΔΣ(R) for:
+    CDM
+    σ/m = 0.2, 0.5, 1.0, 2.0
+- Produce ratio plots
+- Compute Δχ²
+
+---
+
+## Phase 9 — Stability Tests
+
+- Increase halo count
+- Test mass scatter sensitivity
+- Confirm SIDM signal survives stacking
+
+---
+
+## Milestone
+
+Produce a 4-panel summary figure:
+
+1. Ensemble ρ(r)
+2. Ensemble ΔΣ(R)
+3. Ratio ΔΣ_SIDM / ΔΣ_CDM
+4. Δχ² vs σ/m
+
+Tier-1 complete when:
+
+- Ensemble stacking works
+- Results reproducible
+- ΔΣ differences interpretable

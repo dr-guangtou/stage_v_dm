@@ -222,3 +222,145 @@ sidm_stagev_forecast/
 3. CCL documentation for projected and cumulative 2D halo-profile quantities.
 4. Colossus documentation for halo density, surface density, and `DeltaSigma` profile utilities.
 5. CLMM documentation / paper for weak-lensing observable definitions and unit conventions.
+
+---
+
+## Tier-1: Stacked ΔΣ(R) from a Halo Ensemble
+
+This project implements a first-order forecasting pipeline to assess whether a future Stage-V spectroscopic survey combined with weak lensing can distinguish Cold Dark Matter (CDM) from Self-Interacting Dark Matter (SIDM).
+
+This version upgrades the original single-fiducial-halo approach to a **halo ensemble stacking framework**, motivated by recent simulation-based SIDM analyses where constraints are derived from stacked cluster weak-lensing profiles.
+
+---
+
+# Scientific Motivation
+
+Recent SIDM simulation studies show:
+
+- SIDM modifies inner halo density structure.
+- Observational constraints are derived from **stacked ΔΣ(R)**.
+- Results depend on full halo mass distributions.
+
+Therefore, we now compute:
+
+Halo Ensemble → ρ(r) → Σ(R) → ΔΣ(R) → Stack → Forecast
+
+This is a controlled, fast, transparent science-case forecast.
+
+---
+
+# Scope of Tier-1
+
+We model:
+
+- A halo ensemble drawn from a mass distribution
+- Individual halo ρ(r) using:
+  - CDM NFW baseline
+  - SIDM profiles via `parametricSIDM`
+- Numerical projection to Σ(R) and ΔΣ(R)
+- Stacked ΔΣ(R)
+- Toy Δχ² distinguishability metric
+
+We explicitly DO NOT include:
+
+- Splashback modeling
+- 2-halo term
+- Subhalos
+- Baryons
+- Miscentering
+- Full survey covariance
+- HOD modeling
+
+This is an inner-halo-focused ensemble forecast.
+
+---
+
+# SIDM Parameterization
+
+We adopt elastic SIDM with effective cross section:
+
+σ/m_eff  (cm²/g)
+
+Cluster benchmark grid:
+
+0.2, 0.5, 1.0, 2.0 cm²/g
+
+---
+
+# Pipeline Architecture
+
+Modules:
+
+config.py
+cosmology.py
+profiles.py
+sidm_wrapper.py
+projection.py
+ensemble.py
+stacking.py
+forecast.py
+
+Flow:
+
+1. Sample halo ensemble
+2. Generate CDM profile
+3. Generate SIDM profile
+4. Project to ΔΣ(R)
+5. Interpolate to common R grid
+6. Stack
+7. Compute Δχ²
+
+---
+
+# Ensemble Construction (Tier-1)
+
+Minimum implementation:
+
+- Mass distribution: log-normal
+- Mean mass: 3×10^14 Msun (cluster regime)
+- Scatter: 0.2 dex
+- Fixed redshift (default z=0.4)
+- Concentration from mass–concentration relation
+- Equal-weight stacking
+
+---
+
+# Outputs
+
+- Stacked ΔΣ(R) curves
+- Ratio ΔΣ_SIDM / ΔΣ_CDM
+- Δχ² vs σ/m
+- Summary precision table
+
+---
+
+# Validation
+
+Must verify:
+
+- Projection matches analytic NFW ΔΣ
+- Single-halo limit recovered
+- Mass conservation
+- Stack convergence with N_halos
+
+---
+
+# Limitations
+
+This Tier-1 model captures:
+
+- Inner halo SIDM modifications
+- Ensemble stacking effects
+
+It does NOT capture:
+
+- Self-consistent splashback physics
+- Accretion-region dynamics
+- Subhalo population changes
+
+These require simulation-calibrated modeling.
+
+---
+
+Tier-1 = Ensemble stacking without splashback.
+Future tiers may extend outskirts modeling.

@@ -505,3 +505,148 @@ The project is successful when:
 - CCL documentation for halo-profile projection conventions.
 - Colossus documentation for standard profile and `DeltaSigma` reference behavior.
 - CLMM documentation / paper for weak-lensing definitions and unit conventions.
+
+---
+
+## SIDM vs CDM Stacked ΔΣ(R) Forecast
+
+### Tier-1 Halo Ensemble
+
+Assume the single-halo pipeline is complete.
+
+---
+
+# 1. Objective
+
+Construct stacked ΔΣ(R) predictions from a halo ensemble.
+
+Deliverables:
+
+- Halo sampler
+- Stacking module
+- Ensemble forecast
+- Benchmark stacked cluster results
+
+---
+
+# 2. Halo Ensemble Sampler
+
+Function:
+
+sample_halo_ensemble(
+    N_halos,
+    mean_mass,
+    mass_scatter_dex,
+    z,
+    concentration_model,
+    seed=None
+)
+
+Returns list of halos:
+
+{
+  M200,
+  z,
+  c200,
+  weight
+}
+
+Defaults:
+
+- mean_mass = 3e14 Msun
+- mass_scatter = 0.2 dex
+- z = 0.4
+- Equal weights
+
+---
+
+# 3. Profile Generation
+
+For each halo:
+
+CDM:
+- NFW profile
+
+SIDM:
+- Use parametricSIDM wrapper
+
+Radial grid:
+- Log-spaced
+- Extend to ≥ 5 × R200
+
+Output:
+- ρ(r)
+- M(<r)
+
+---
+
+# 4. Projection
+
+Compute:
+
+Σ(R)
+ΔΣ(R)
+
+Method:
+
+- Direct numerical Abel integral
+- Log-spaced grids
+- No cluster_toolkit dependency
+
+---
+
+# 5. Stacking
+
+Procedure:
+
+1. Interpolate ΔΣ_i onto common R grid
+2. Compute weighted mean
+3. Return stacked ΔΣ(R)
+
+---
+
+# 6. Forecast
+
+Compute:
+
+Δχ² = Σ [ (ΔΣ_SIDM − ΔΣ_CDM)^2 / σ^2 ]
+
+Toy fractional errors:
+
+Cluster regime:
+- 5% (optimistic)
+- 10% (conservative)
+
+Return:
+
+- Δχ²
+- Effective sigma separation
+
+---
+
+# 7. Validation Requirements
+
+- Analytic NFW ΔΣ check
+- Single-halo limit test
+- Ensemble convergence
+- Profile sanity checks
+
+---
+
+# 8. Explicit Non-Goals
+
+Do not implement:
+
+- Splashback modeling
+- 2-halo term
+- Subhalo evolution
+- Baryons
+- Full survey realism
+
+---
+
+# 9. Performance Target
+
+- 100 halos per σ/m grid
+- Runtime < 2 minutes
+- Stable reproducibility with fixed seed
