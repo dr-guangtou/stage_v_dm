@@ -39,6 +39,19 @@ Owns toy error models, `Delta chi^2`, summary tables, figure generation, and fin
 - Projection should be implemented locally with `numpy`/`scipy`.
 - `pyccl` and `colossus` are allowed as references or validation tools, not required runtime dependencies.
 - Keep all outputs in well-labeled physical units unless there is a strong reason not to.
+- Figure-caption persistence rule (core memory):
+  - Every time any figure is generated under `outputs/figures/`, append or update an entry in `outputs/figures/CAPTION.md`.
+  - Each entry must include:
+    - exact figure filename/path,
+    - filesystem timestamp for that generated file (with timezone),
+    - an explicit caption describing what is plotted, axis quantities/units, benchmark/model context, and how to interpret the plotted quantity.
+  - Captions must be unambiguous and detailed enough for future standalone interpretation without reading code.
+- Output-inventory persistence rule (core memory):
+  - Every time files are generated or updated under `outputs/tables/` or `outputs/intermediate/`, append or update entries in `outputs/INVENTORY.md`.
+  - Each inventory entry must include:
+    - exact filename/path,
+    - a concise description of the file content and intended use in reproducibility/debugging.
+  - Keep the inventory synchronized with the actual filesystem state for these folders.
 
 ## Minimum acceptance bar
 

@@ -65,16 +65,17 @@ For the first-pass forecast, benchmark grids can be:
 
 ### Dwarf halo (`1e10 Msun`)
 - `0.0`
-- `0.3`
+- `0.2`
+- `0.5`
 - `1.0`
-- `3.0`
-- `10.0`
+- `2.0`
 
 ### Cluster halo (`1e14 Msun`)
 - `0.0`
-- `0.1`
-- `0.3`
+- `0.2`
+- `0.5`
 - `1.0`
+- `2.0`
 
 These are not meant to be the final particle-physics parameterization. They are a practical first layer that can later be mapped onto a velocity-dependent SIDM model.
 
