@@ -1,0 +1,2 @@
+label,mode,median_mass_msun,expected_median_mass_msun,median_mass_check_pass,expected_projection_bins,actual_projection_bins,radial_bin_check_pass,reproducibility_check_pass,single_halo_limit_check_pass
+dwarf2_z0p05,SHMR,232361274809.67218,31622776601.683792,True,30,30,True,True,True

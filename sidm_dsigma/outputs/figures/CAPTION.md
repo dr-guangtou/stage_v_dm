@@ -269,3 +269,867 @@ Common context for the benchmark forecast figures:
 ### cluster_single_halo_tier2_diagnostic.png
 - Created: 2026-03-19T11:50:26.563595533-07:00
 - Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+## Update 2026-03-19T11:58:50-07:00
+
+### cluster_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T11:58:45.995086432-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_ensemble_tier1_summary.png
+- Created: 2026-03-19T11:58:47.362810135-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T11:58:47.796515226-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T11:58:47.916850090-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T11:58:48.524509430-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_ensemble_tier3_summary.png
+- Created: 2026-03-19T11:58:49.243898869-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T11:58:49.792044401-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T11:58:49.915891886-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T11:58:50.675368547-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T11:58:50.858799696-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T11:59:08-07:00
+
+### dwarf_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T11:59:04.854831696-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_ensemble_tier1_summary.png
+- Created: 2026-03-19T11:59:05.561036587-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T11:59:05.948815107-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T11:59:06.046019554-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T11:59:06.590419531-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_ensemble_tier3_summary.png
+- Created: 2026-03-19T11:59:07.111136675-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T11:59:07.644942760-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T11:59:07.744937658-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T11:59:08.409980774-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T11:59:08.569684267-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:14:00-07:00
+
+### cluster1_z0p1_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:13:56.017127752-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:13:56.672052622-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:13:57.100394487-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:13:57.217632532-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:13:57.876997948-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:13:58.695195913-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:13:59.137138128-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:13:59.228872776-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:13:59.852906227-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:14:00.106198072-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:14:43-07:00
+
+### cluster1_z0p5_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:14:39.561174631-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:14:40.160544634-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:14:40.523278712-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:14:40.623074055-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:14:41.187230825-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:14:41.812653065-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:14:42.312062502-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:14:42.405933380-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:14:43.119284391-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:14:43.283358335-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:15:25-07:00
+
+### cluster2_z0p1_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:15:22.088594913-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:15:22.647788286-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:15:23.042280912-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:15:23.209324360-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:15:23.694726944-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:15:24.300121307-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:15:24.732865334-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:15:24.834270239-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:15:25.539442539-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:15:25.686833858-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:16:06-07:00
+
+### cluster2_z0p5_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:16:03.126037598-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:16:03.716132879-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:16:04.050545216-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:16:04.147610903-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:16:04.657881737-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:16:05.245115519-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:16:05.687441826-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:16:05.783334494-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:16:06.467840672-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:16:06.647597551-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:17:01-07:00
+
+### dwarf1_z0p05_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:16:58.355311871-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:16:58.951833725-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:16:59.278313875-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:16:59.357883930-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:16:59.797064304-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:17:00.245533943-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:17:00.660478115-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:17:00.744708061-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:17:01.305227995-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:17:01.445106506-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:17:53-07:00
+
+### dwarf1_z0p2_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:17:50.888899803-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:17:51.437226057-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:17:51.776608706-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:17:51.856777430-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:17:52.313448668-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:17:52.747900486-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:17:53.176605225-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:17:53.262454509-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:17:53.812981844-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:17:53.949257135-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:18:46-07:00
+
+### dwarf2_z0p05_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:18:42.827586651-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:18:43.392032862-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:18:43.737237453-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:18:43.826119900-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:18:44.277556896-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:18:44.813823700-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:18:45.253279209-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:18:45.342742443-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:18:45.897559643-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:18:46.035641432-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:19:38-07:00
+
+### dwarf2_z0p2_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T12:19:34.908510923-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier1_summary.png
+- Created: 2026-03-19T12:19:35.461121798-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T12:19:35.806502819-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T12:19:35.895833015-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T12:19:36.338086605-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:19:36.871542692-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T12:19:37.307467937-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T12:19:37.396914721-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T12:19:37.944637775-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T12:19:38.089459181-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T12:33:21-07:00
+
+### cluster1_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:33:19.776684046-07:00
+- Caption: Tier-3 summary for cluster1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### cluster2_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:33:20.332443714-07:00
+- Caption: Tier-3 summary for cluster2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf1_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:33:20.839016676-07:00
+- Caption: Tier-3 summary for dwarf1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf2_ensemble_tier3_summary.png
+- Created: 2026-03-19T12:33:21.428270340-07:00
+- Caption: Tier-3 summary for dwarf2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+## Update 2026-03-19T12:41:14-07:00
+
+### cdm_engine_convergence_parametric_vs_colossus_dk14.png
+- Created: 2026-03-19T12:41:14.364957571-07:00
+- Caption: Convergence diagnostic comparing CDM profiles from parametricSIDM at tiny cross section (sigma/m=1e-4 cm^2/g) versus colossus DK14 CDM. Panels show density and DeltaSigma curves and their ratios for dwarf and cluster benchmarks.
+
+## Update 2026-03-19T12:42:40-07:00
+
+### cdm_engine_convergence_parametric_vs_colossus_dk14.png
+- Created: 2026-03-19T12:42:40.920594454-07:00
+- Caption: Convergence diagnostic comparing CDM profiles from parametricSIDM at tiny cross section (sigma/m=1e-4 cm^2/g) versus colossus DK14 CDM. Panels show density and DeltaSigma curves and their ratios for dwarf and cluster benchmarks.
+
+## Update 2026-03-19T12:43:24-07:00
+
+### cdm_engine_convergence_parametric_vs_colossus_dk14.png
+- Created: 2026-03-19T12:43:24.135110378-07:00
+- Caption: Convergence diagnostic comparing CDM profiles from parametricSIDM at tiny cross section (sigma/m=1e-4 cm^2/g) versus colossus DK14 CDM. Panels show density and DeltaSigma curves and their ratios for dwarf and cluster benchmarks. Ratio panels use the convergence window 0.05*R200c to 1.0*R200c.
+
+## Update 2026-03-19T14:22:25-07:00
+
+### cluster1_z0p1_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:22:21.830804348-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:22:22.357378483-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:22:22.715981245-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:22:22.828362226-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:22:23.287818909-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:22:23.814328671-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:22:24.825147152-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:22:24.932975054-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:22:25.541112423-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p1_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:22:25.685726404-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:22:59-07:00
+
+### cluster1_z0p5_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:22:56.069368601-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:22:56.607275486-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:22:56.871472359-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:22:56.977162838-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:22:57.497240543-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:22:58.023528337-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:22:58.374357939-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:22:58.487547874-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:22:58.998214960-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster1_z0p5_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:22:59.160977840-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:23:31-07:00
+
+### cluster2_z0p1_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:23:28.267508030-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:23:28.812824249-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:23:29.113665581-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:23:29.206602573-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:23:29.611661196-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:23:30.368910074-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:23:30.800246239-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:23:30.888028383-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:23:31.434416294-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p1_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:23:31.579033375-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:24:03-07:00
+
+### cluster2_z0p5_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:24:00.679798603-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:24:01.200346947-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:24:01.486865997-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:24:01.572557449-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:24:01.974555492-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:24:02.496343851-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:24:02.843079329-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:24:02.964863300-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:24:03.489757061-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### cluster2_z0p5_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:24:03.656665802-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:24:55-07:00
+
+### dwarf1_z0p05_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:24:51.212369680-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:24:52.163012981-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:24:52.645520210-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:24:52.739600420-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:24:53.294876337-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:24:53.728591919-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:24:54.198842525-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:24:54.283718348-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:24:54.854867220-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p05_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:24:54.994208336-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:25:45-07:00
+
+### dwarf1_z0p2_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:25:42.323761225-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:25:42.904618740-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:25:43.257781982-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:25:43.352015972-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:25:43.852229357-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:25:44.299171686-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:25:44.778087854-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:25:44.861454725-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:25:45.445489883-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf1_z0p2_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:25:45.586649179-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:26:36-07:00
+
+### dwarf2_z0p05_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:26:33.422376633-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:26:33.991962194-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:26:34.309398651-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:26:34.391035080-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:26:34.799377918-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:26:35.339258671-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:26:35.754954338-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:26:35.842357159-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:26:36.444833040-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p05_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:26:36.586230993-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:27:28-07:00
+
+### dwarf2_z0p2_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T14:27:25.338500977-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier1_summary.png
+- Created: 2026-03-19T14:27:25.982053280-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T14:27:26.372807264-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T14:27:26.481457949-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T14:27:26.911588192-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:27:27.563514471-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier2_vs_tier3_stacked.png
+- Created: 2026-03-19T14:27:28.027154446-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_ensemble_tier2_vs_tier3_delta_chi2.png
+- Created: 2026-03-19T14:27:28.112488747-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_single_halo_tier3_diagnostic.png
+- Created: 2026-03-19T14:27:28.677552462-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+### dwarf2_z0p2_tier3_sensitivity_rt_shift.png
+- Created: 2026-03-19T14:27:28.817254305-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts attachment, and Tier-3 curves include empirical SIDM outer corrections.
+
+## Update 2026-03-19T14:28:04-07:00
+
+### cluster1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:28:02.649057627-07:00
+- Caption: Tier-3 summary for cluster1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### cluster2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:28:03.228564739-07:00
+- Caption: Tier-3 summary for cluster2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:28:03.763018131-07:00
+- Caption: Tier-3 summary for dwarf1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:28:04.376275063-07:00
+- Caption: Tier-3 summary for dwarf2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+## Update 2026-03-19T14:33:11-07:00
+
+### cluster1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:09.188103437-07:00
+- Caption: Tier-3 summary for cluster1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### cluster2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:09.884085417-07:00
+- Caption: Tier-3 summary for cluster2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:10.445164204-07:00
+- Caption: Tier-3 summary for dwarf1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:11.074339628-07:00
+- Caption: Tier-3 summary for dwarf2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+## Update 2026-03-19T14:33:40-07:00
+
+### cluster1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:38.865943909-07:00
+- Caption: Tier-3 summary for cluster1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### cluster2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:39.590850115-07:00
+- Caption: Tier-3 summary for cluster2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:40.224849939-07:00
+- Caption: Tier-3 summary for dwarf1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:33:40.873161077-07:00
+- Caption: Tier-3 summary for dwarf2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+## Update 2026-03-19T14:35:34-07:00
+
+### cluster1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:35:32.963280439-07:00
+- Caption: Tier-3 summary for cluster1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### cluster2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:35:33.573145866-07:00
+- Caption: Tier-3 summary for cluster2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf1_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:35:34.139209986-07:00
+- Caption: Tier-3 summary for dwarf1 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.
+
+### dwarf2_ensemble_tier3_summary.png
+- Created: 2026-03-19T14:35:34.788028955-07:00
+- Caption: Tier-3 summary for dwarf2 with redshift overlay. Two line styles correspond to the two fixed-redshift runs in that ensemble split; color encodes sigma/m. Top-right panel uses DeltaSigma units of h Msun / pc^2. Annotation box lists stellar-mass range (or N/A for HMF), halo-mass range definition, and concentration scatter used in the ensemble configuration.

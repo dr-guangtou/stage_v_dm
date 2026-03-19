@@ -20,6 +20,13 @@ def test_cluster_yaml_parses_and_generates_expected_median_mass() -> None:
     assert parsed.mode == "HMF"
     assert parsed.tier2_config["enabled"] is True
     assert parsed.tier2_config["outer_profile_model"] == "dk14_like"
+    assert parsed.tier3_config["enabled"] is True
+    assert parsed.tier3_config["correction_model"] in {
+        "rt_shift",
+        "gamma_shift",
+        "rt_gamma_shift",
+        "multiplicative_outer_window",
+    }
 
     halos = generate_ensemble(parsed.mode, parsed.ensemble_config)
     median_mass = float(np.median([halo["m200_msun"] for halo in halos]))
@@ -34,6 +41,8 @@ def test_dwarf_yaml_parses_and_generates_expected_median_mass() -> None:
     assert parsed.mode == "SHMR"
     assert parsed.tier2_config["enabled"] is True
     assert parsed.tier2_config["r_match_mode"] in {"fraction_r200c", "fraction_r200m", "fixed_kpc"}
+    assert parsed.tier3_config["enabled"] is True
+    assert "dwarf" in set(parsed.tier3_config["apply_to_regimes"])
 
     halos = generate_ensemble(parsed.mode, parsed.ensemble_config)
     median_mass = float(np.median([halo["m200_msun"] for halo in halos]))
@@ -96,3 +105,4 @@ def test_yaml_tier2_defaults_to_disabled_when_block_absent(tmp_path: Path) -> No
 
     parsed = load_ensemble_yaml_config(path)
     assert parsed.tier2_config["enabled"] is False
+    assert parsed.tier3_config["enabled"] is False

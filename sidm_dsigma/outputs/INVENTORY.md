@@ -105,3 +105,132 @@ When new files are added under `outputs/intermediate/` or `outputs/tables/`, app
 - intermediate/cluster_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
 - tables/cluster_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
 - tables/cluster_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T11:58:50-07:00
+- intermediate/cluster_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T11:59:08-07:00
+- intermediate/dwarf_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:14:00-07:00
+- intermediate/cluster1_z0p1_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster1_z0p1_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster1_z0p1_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster1_z0p1_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster1_z0p1_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:14:43-07:00
+- intermediate/cluster1_z0p5_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster1_z0p5_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster1_z0p5_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster1_z0p5_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster1_z0p5_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:15:25-07:00
+- intermediate/cluster2_z0p1_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster2_z0p1_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster2_z0p1_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster2_z0p1_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster2_z0p1_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:16:06-07:00
+- intermediate/cluster2_z0p5_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster2_z0p5_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster2_z0p5_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster2_z0p5_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster2_z0p5_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:17:01-07:00
+- intermediate/dwarf1_z0p05_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf1_z0p05_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf1_z0p05_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf1_z0p05_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf1_z0p05_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:17:53-07:00
+- intermediate/dwarf1_z0p2_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf1_z0p2_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf1_z0p2_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf1_z0p2_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf1_z0p2_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:18:46-07:00
+- intermediate/dwarf2_z0p05_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf2_z0p05_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf2_z0p05_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf2_z0p05_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf2_z0p05_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:19:38-07:00
+- intermediate/dwarf2_z0p2_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf2_z0p2_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf2_z0p2_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf2_z0p2_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf2_z0p2_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T12:43:00-07:00
+- tables/cdm_engine_convergence_parametric_vs_colossus_dk14.csv: Summary diagnostics for CDM-engine convergence check, reporting ratio statistics between parametricSIDM tiny-sigma CDM and colossus DK14 CDM in the 0.05*R200c to 1.0*R200c radial window for dwarf and cluster benchmarks.
+
+## Update 2026-03-19T14:22:25-07:00
+- intermediate/cluster1_z0p1_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster1_z0p1_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster1_z0p1_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster1_z0p1_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster1_z0p1_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:22:59-07:00
+- intermediate/cluster1_z0p5_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster1_z0p5_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster1_z0p5_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster1_z0p5_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster1_z0p5_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:23:31-07:00
+- intermediate/cluster2_z0p1_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster2_z0p1_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster2_z0p1_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster2_z0p1_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster2_z0p1_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:24:03-07:00
+- intermediate/cluster2_z0p5_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster2_z0p5_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/cluster2_z0p5_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/cluster2_z0p5_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster2_z0p5_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:24:55-07:00
+- intermediate/dwarf1_z0p05_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf1_z0p05_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf1_z0p05_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf1_z0p05_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf1_z0p05_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:25:45-07:00
+- intermediate/dwarf1_z0p2_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf1_z0p2_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf1_z0p2_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf1_z0p2_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf1_z0p2_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:26:36-07:00
+- intermediate/dwarf2_z0p05_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf2_z0p05_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf2_z0p05_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf2_z0p05_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf2_z0p05_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T14:27:28-07:00
+- intermediate/dwarf2_z0p2_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf2_z0p2_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- intermediate/dwarf2_z0p2_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2/Tier-3 when enabled.
+- tables/dwarf2_z0p2_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf2_z0p2_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.

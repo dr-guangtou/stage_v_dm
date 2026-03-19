@@ -5,6 +5,9 @@ This module exposes a stable callable expected by the local forecast wrapper:
 
 It loads `parametricC4.py` from a local parametricSIDM checkout and maps
 `(M200c, c200, z, sigma_over_m)` to the C4 profile prescription.
+
+Optional velocity-dependent mode is supported through kwargs:
+`cross_section_parameterization="velocity_dependent"` and `w_km_s`.
 """
 
 from __future__ import annotations
@@ -18,6 +21,11 @@ import numpy as np
 
 from sidm_stagev_forecast.config import DEFAULT_COSMOLOGY
 from sidm_stagev_forecast.cosmology import rdelta
+from sidm_stagev_forecast.velocity_dependence import (
+    elapsed_time_since_formation_gyr,
+    nfw_vmax_km_s,
+    sigma_eff_maxwellian,
+)
 
 
 def _default_parametric_sidm_path() -> Path:
@@ -64,21 +72,63 @@ def density_profile_from_m200_c200(
     z: float,
     sigma_over_m: float,
     elapsed_time_gyr: float | None = None,
+    *,
+    cross_section_parameterization: str = "effective",
+    w_km_s: float | None = None,
+    formation_redshift: float | None = None,
+    time_model: str = "lookback_to_z",
+    mass_definition: str = "200c",
 ) -> np.ndarray:
     """Return SIDM density profile in Msun/kpc^3 using parametricSIDM C4 model."""
     r_kpc = np.asarray(r_kpc)
-    rho_s_msun_kpc3, rs_kpc = _nfw_rho_s_rs_from_m200c(m200_msun, c200, z)
+    if str(mass_definition).lower() != "200c":
+        raise ValueError(
+            "density_profile_from_m200_c200 requires mass_definition='200c' for consistency. "
+            f"Received: {mass_definition!r}."
+        )
 
-    if sigma_over_m <= 0.0:
+    rho_s_msun_kpc3, rs_kpc = _nfw_rho_s_rs_from_m200c(m200_msun, c200, z)
+    c4_module = _load_parametric_c4_module()
+
+    parameterization = str(cross_section_parameterization).lower()
+    effective_sigma_over_m = float(sigma_over_m)
+    if parameterization == "velocity_dependent":
+        w_value_km_s = 0.0 if w_km_s is None else float(w_km_s)
+        vmax_nfw_km_s = nfw_vmax_km_s(rho_s_msun_kpc3, rs_kpc)
+        veff_km_s = 0.64 * vmax_nfw_km_s
+        effective_sigma_over_m = sigma_eff_maxwellian(
+            veff_km_s=veff_km_s,
+            sigma0_over_m_cm2_g=float(sigma_over_m),
+            w_km_s=w_value_km_s,
+        )
+    elif parameterization != "effective":
+        raise ValueError(
+            "cross_section_parameterization must be either 'effective' or "
+            f"'velocity_dependent', received {cross_section_parameterization!r}."
+        )
+
+    if effective_sigma_over_m <= 0.0:
         x = r_kpc / rs_kpc
         return rho_s_msun_kpc3 / (x * (1.0 + x) ** 2)
 
-    c4_module = _load_parametric_c4_module()
-
     if elapsed_time_gyr is None:
-        elapsed_time_gyr = float(c4_module.tlb(z))
+        time_model_name = str(time_model).lower()
+        if time_model_name == "lookback_to_z":
+            elapsed_time_gyr = float(c4_module.tlb(z))
+        elif time_model_name == "since_formation":
+            elapsed_time_gyr = elapsed_time_since_formation_gyr(
+                mass_msun=float(m200_msun),
+                z_observation=float(z),
+                tlb_callable=c4_module.tlb,
+                formation_redshift=formation_redshift,
+            )
+        else:
+            raise ValueError(
+                "time_model must be 'lookback_to_z' or 'since_formation' when "
+                f"elapsed_time_gyr is not provided, received {time_model!r}."
+            )
 
-    tc_gyr = float(c4_module.tc(float(sigma_over_m), float(rho_s_msun_kpc3), float(rs_kpc)))
+    tc_gyr = float(c4_module.tc(effective_sigma_over_m, float(rho_s_msun_kpc3), float(rs_kpc)))
     if tc_gyr <= 0.0:
         tr = 0.0
     else:

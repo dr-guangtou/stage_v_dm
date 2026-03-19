@@ -1,0 +1,78 @@
+mode: SHMR
+
+cosmology:
+  name: "Planck18"
+  h: 0.674
+  Omega_m: 0.315
+  Omega_L: 0.685
+  sigma8: 0.811
+  ns: 0.965
+
+ensemble:
+  N_halos: 800
+  random_seed: 401
+
+redshift:
+  model: "fixed"
+  value: 0.05
+
+stellar_mass_distribution:
+  model: "lognormal"
+  logMstar_mean: 8.5
+  logMstar_sigma: 0.4
+  logMstar_min: 8.0
+  logMstar_max: 9.0
+
+shmr:
+  model: "Behroozi13"
+  scatter_logMhalo: 0.3
+  assume_central: true
+
+concentration:
+  model: "DiemerJoyce19"
+  scatter_logc: 0.20
+
+stacking:
+  weight_scheme: "equal"
+
+projection:
+  R_min_kpc: 1
+  R_max_kpc: 300
+  N_R_bins: 30
+
+sidm:
+  parameterization: "velocity_dependent"
+  sigma0_over_m_grid: [10.0, 20.0, 50.0, 100.0]
+  w_km_s: 40.0
+  time_model: "since_formation"
+  mass_definition: "200c"
+  cdm_reference:
+    profile_source: "parametric"
+    sigma0_over_m: 1.0e-6
+    w_km_s: 1.0e-6
+    time_model: "since_formation"
+
+tier2:
+  enabled: true
+  outer_profile_model: "dk14_like"
+  stitch_method: "logistic_logrho_blend"
+  r_match_mode: "fraction_r200c"
+  r_match_value: 1.0
+  smooth_width_dex: 0.18
+  continuity: "density"
+  regime: "dwarf"
+
+tier3:
+  enabled: true
+  correction_model: "rt_gamma_shift"
+  sigma_pivot: 1.0
+  apply_to_regimes: ["dwarf"]
+  calibration_mode: "manual_preset"
+  preset: "mild"
+  regime: "dwarf"
+  rt_shift:
+    A_rt: -0.04
+    use_concentration_dependence: false
+    A_c: 0.0
+  gamma_shift:
+    A_gamma: -0.10

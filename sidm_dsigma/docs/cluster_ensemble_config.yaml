@@ -59,3 +59,18 @@ tier2:
   smooth_width_dex: 0.15
   continuity: "density"
   regime: "cluster"
+
+tier3:
+  enabled: true
+  correction_model: "rt_gamma_shift"
+  sigma_pivot: 1.0
+  apply_to_regimes: ["cluster"]
+  calibration_mode: "manual_preset"
+  preset: "moderate"
+  regime: "cluster"
+  rt_shift:
+    A_rt: -0.08
+    use_concentration_dependence: true
+    A_c: 0.5
+  gamma_shift:
+    A_gamma: -0.20

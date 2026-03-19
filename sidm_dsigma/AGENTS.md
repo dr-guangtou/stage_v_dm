@@ -52,6 +52,9 @@ Owns toy error models, `Delta chi^2`, summary tables, figure generation, and fin
     - exact filename/path,
     - a concise description of the file content and intended use in reproducibility/debugging.
   - Keep the inventory synchronized with the actual filesystem state for these folders.
+- Worktree-first development rule (core memory):
+  - For this project, always implement new development work in a dedicated git worktree.
+  - Do not use a branch-only workflow in the same checkout.
 
 ## Minimum acceptance bar
 

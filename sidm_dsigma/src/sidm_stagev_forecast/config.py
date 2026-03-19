@@ -71,10 +71,24 @@ class Tier2Config:
     regime: str = "cluster"
 
 
+@dataclass(frozen=True)
+class Tier3Config:
+    """Tier-3 empirical outer-correction controls."""
+
+    enabled: bool = False
+    correction_model: str = "rt_gamma_shift"
+    sigma_pivot: float = 1.0
+    apply_to_regimes: tuple[str, ...] = ("cluster",)
+    calibration_mode: str = "manual_preset"
+    preset: str = "none"
+    regime: str = "cluster"
+
+
 DEFAULT_COSMOLOGY = CosmologyConfig()
 DEFAULT_FORECAST_CONFIG = ForecastConfig()
 DEFAULT_ENSEMBLE_BENCHMARK = EnsembleBenchmarkConfig()
 DEFAULT_TIER2_CONFIG = Tier2Config()
+DEFAULT_TIER3_CONFIG = Tier3Config()
 
 CLUSTER_HMF_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
     "n_halos": 100,
@@ -97,6 +111,17 @@ CLUSTER_HMF_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
         "smooth_width_dex": 0.15,
         "continuity": "density",
         "regime": "cluster",
+    },
+    "tier3": {
+        "enabled": True,
+        "correction_model": "rt_gamma_shift",
+        "sigma_pivot": 1.0,
+        "apply_to_regimes": ("cluster",),
+        "calibration_mode": "manual_preset",
+        "preset": "moderate",
+        "regime": "cluster",
+        "rt_shift": {"A_rt": -0.08, "use_concentration_dependence": True, "A_c": 0.5},
+        "gamma_shift": {"A_gamma": -0.2},
     },
 }
 
@@ -124,6 +149,15 @@ DWARF_SHMR_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
         "r_match_value": 1.0,
         "smooth_width_dex": 0.18,
         "continuity": "density",
+        "regime": "dwarf",
+    },
+    "tier3": {
+        "enabled": False,
+        "correction_model": "rt_gamma_shift",
+        "sigma_pivot": 1.0,
+        "apply_to_regimes": ("cluster",),
+        "calibration_mode": "manual_preset",
+        "preset": "none",
         "regime": "dwarf",
     },
 }

@@ -18,7 +18,9 @@ class EnsembleYamlConfig:
     ensemble_config: dict[str, Any]
     projection_config: dict[str, Any]
     sidm_sigma_grid: tuple[float, ...]
+    sidm_config: dict[str, Any]
     tier2_config: dict[str, Any]
+    tier3_config: dict[str, Any]
 
 
 def _build_redshift_configuration(redshift_block: dict[str, Any]) -> dict[str, Any]:
@@ -151,7 +153,29 @@ def load_ensemble_yaml_config(path: Path) -> EnsembleYamlConfig:
         "n_r_bins": int(projection["N_R_bins"]),
     }
 
-    sidm_sigma_grid = tuple(float(value) for value in raw["sidm"]["sigma_over_m_grid"])
+    sidm_block = dict(raw["sidm"])
+    sidm_parameterization = str(sidm_block.get("parameterization", "effective")).lower()
+    if sidm_parameterization == "effective":
+        sidm_sigma_grid = tuple(float(value) for value in sidm_block["sigma_over_m_grid"])
+    elif sidm_parameterization == "velocity_dependent":
+        sidm_sigma_grid = tuple(float(value) for value in sidm_block["sigma0_over_m_grid"])
+    else:
+        raise ValueError(
+            "sidm.parameterization must be 'effective' or 'velocity_dependent', "
+            f"received {sidm_parameterization!r}."
+        )
+
+    cdm_block = dict(sidm_block.get("cdm_reference", {}))
+    sidm_config = {
+        "parameterization": sidm_parameterization,
+        "w_km_s": float(sidm_block.get("w_km_s", 0.0)),
+        "time_model": str(sidm_block.get("time_model", "lookback_to_z")),
+        "mass_definition": str(sidm_block.get("mass_definition", "200c")).lower(),
+        "cdm_profile_source": str(cdm_block.get("profile_source", "nfw")).lower(),
+        "cdm_sigma_over_m": float(cdm_block.get("sigma0_over_m", 0.0)),
+        "cdm_w_km_s": float(cdm_block.get("w_km_s", 0.0)),
+        "cdm_time_model": str(cdm_block.get("time_model", sidm_block.get("time_model", "lookback_to_z"))),
+    }
 
     tier2_block = dict(raw.get("tier2", {}))
     tier2_config = {
@@ -171,11 +195,31 @@ def load_ensemble_yaml_config(path: Path) -> EnsembleYamlConfig:
         for key, value in active_regime_override.items():
             tier2_config[key] = value
 
+    tier3_block = dict(raw.get("tier3", {}))
+    tier3_config = {
+        "enabled": bool(tier3_block.get("enabled", False)),
+        "correction_model": str(tier3_block.get("correction_model", "rt_gamma_shift")),
+        "sigma_pivot": float(tier3_block.get("sigma_pivot", 1.0)),
+        "apply_to_regimes": tuple(
+            str(value)
+            for value in tier3_block.get("apply_to_regimes", ["cluster"])
+        ),
+        "calibration_mode": str(tier3_block.get("calibration_mode", "manual_preset")),
+        "preset": str(tier3_block.get("preset", "none")),
+        "regime": str(tier3_block.get("regime", "cluster" if mode == "HMF" else "dwarf")),
+        "rt_shift": dict(tier3_block.get("rt_shift", {})),
+        "gamma_shift": dict(tier3_block.get("gamma_shift", {})),
+        "beta_shift": dict(tier3_block.get("beta_shift", {})),
+        "outer_window": dict(tier3_block.get("outer_window", {})),
+    }
+
     return EnsembleYamlConfig(
         label=label,
         mode=mode,
         ensemble_config=ensemble_config,
         projection_config=projection_config,
         sidm_sigma_grid=sidm_sigma_grid,
+        sidm_config=sidm_config,
         tier2_config=tier2_config,
+        tier3_config=tier3_config,
     )
