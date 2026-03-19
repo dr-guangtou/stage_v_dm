@@ -46,6 +46,45 @@ def delta_chi2(model: np.ndarray, reference: np.ndarray, sigma: np.ndarray) -> f
     return float(np.sum((residual / sigma) ** 2))
 
 
+def delta_chi2_with_fractional_error(
+    model: np.ndarray,
+    reference: np.ndarray,
+    fractional_error: float | np.ndarray,
+    floor: float = 1.0e-12,
+) -> float:
+    """Return Delta chi^2 using sigma_i = frac_i * |reference_i|."""
+    reference = np.asarray(reference)
+    sigma_abs = np.maximum(np.asarray(fractional_error) * np.abs(reference), floor)
+    return delta_chi2(model=np.asarray(model), reference=reference, sigma=sigma_abs)
+
+
+def sigma_separation_from_delta_chi2(delta_chi2_value: float) -> float:
+    """Return effective Gaussian sigma-equivalent separation."""
+    if delta_chi2_value < 0.0:
+        raise ValueError("delta_chi2_value must be non-negative.")
+    return float(np.sqrt(delta_chi2_value))
+
+
+def evaluate_stacked_distinguishability(
+    model: np.ndarray,
+    reference: np.ndarray,
+    fractional_error_scenarios: dict[str, float],
+) -> dict[str, float]:
+    """Evaluate Delta chi^2 and sigma-separation over named error scenarios."""
+    results: dict[str, float] = {}
+    for scenario_name, scenario_fraction in fractional_error_scenarios.items():
+        metric_delta_chi2 = delta_chi2_with_fractional_error(
+            model=model,
+            reference=reference,
+            fractional_error=scenario_fraction,
+        )
+        results[f"delta_chi2_{scenario_name}"] = metric_delta_chi2
+        results[f"sigma_separation_{scenario_name}"] = sigma_separation_from_delta_chi2(
+            metric_delta_chi2
+        )
+    return results
+
+
 def required_uniform_fractional_precision(
     model: np.ndarray,
     reference: np.ndarray,

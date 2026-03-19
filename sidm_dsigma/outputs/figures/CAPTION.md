@@ -53,3 +53,45 @@ Common context for the benchmark forecast figures:
 - Created timestamp: `2026-03-19 02:33:11 MST`
 - Caption:
   This figure summarizes required measurement precision for SIDM-vs-CDM separation in the cluster benchmark. As in the dwarf figure, panels are radial windows (`full`, `inner`, `outer`) and curves are significance targets (`2 sigma`, `3 sigma`, `5 sigma`), with y-axis values giving the required uniform per-bin fractional `DeltaSigma` uncertainty percentage needed to achieve the target separation.
+
+## `ensemble_stacked_delta_sigma.png`
+- File: `outputs/figures/ensemble_stacked_delta_sigma.png`
+- Created timestamp: `2026-03-19 03:19:03 MST`
+- Caption:
+  This figure shows Tier-1 ensemble-stacked lensing predictions for a sampled cluster-like halo population (`N_halos = 100`, log-normal mass distribution with mean `3e14 Msun`, scatter `0.2 dex`, `z = 0.4`, equal weights). The left panel plots stacked `DeltaSigma(R)` in `Msun/kpc^2` for CDM and SIDM (`sigma/m = 0.2, 0.5, 1.0, 2.0 cm^2/g`) as a function of projected physical radius `R` (`kpc`); each SIDM curve is produced by halo-by-halo profile generation with `parametricSIDM`, projection, interpolation to a common `R` grid, and weighted stacking. The right panel shows `DeltaSigma_SIDM / DeltaSigma_CDM`, isolating scale-dependent fractional departures from CDM after ensemble averaging.
+
+## `ensemble_tier1_summary.png`
+- File: `outputs/figures/ensemble_tier1_summary.png`
+- Created timestamp: `2026-03-19 03:19:03 MST`
+- Caption:
+  This is the Tier-1 four-panel summary figure for ensemble forecasting. Top-left: stacked 3D density `rho(r)` (`Msun/kpc^3`) for CDM and SIDM over a common physical `r` grid after interpolating and averaging individual halo profiles. Top-right: stacked `DeltaSigma(R)` (`Msun/kpc^2`) for CDM and SIDM over the common projected `R` grid. Bottom-left: stacked ratio `DeltaSigma_SIDM / DeltaSigma_CDM`, showing whether the inner-halo SIDM imprint survives ensemble mixing. Bottom-right: `Delta chi^2` versus `sigma/m` (computed under the toy optimistic `5%` fractional-error model with diagonal covariance), which quantifies distinguishability strength as SIDM cross section increases.
+
+## `cluster_ensemble_stacked_delta_sigma.png`
+- File: `outputs/figures/cluster_ensemble_stacked_delta_sigma.png`
+- Created timestamp: `2026-03-19 03:49:25 MST`
+- Caption:
+  This figure is the YAML-configured cluster (HMF-mode) stacked lensing output generated from `docs/cluster_ensemble_config.yaml`. Halos are sampled from an HMF-driven distribution with logistic selection and concentration scatter, then projected and stacked with equal weights on the configured radial grid (`R = 50-2000 kpc`, `N_R = 30`). The left panel shows stacked `DeltaSigma(R)` (`Msun/kpc^2`) for CDM and SIDM (`sigma/m = 0.2, 0.5, 1.0, 2.0`), and the right panel shows `DeltaSigma_SIDM / DeltaSigma_CDM` as a function of `R`.
+
+## `cluster_ensemble_tier1_summary.png`
+- File: `outputs/figures/cluster_ensemble_tier1_summary.png`
+- Created timestamp: `2026-03-19 03:49:26 MST`
+- Caption:
+  This 4-panel summary corresponds to the cluster YAML run (HMF mode). Top-left: stacked `rho(r)` for CDM and SIDM. Top-right: stacked `DeltaSigma(R)` on the cluster projection grid. Bottom-left: stacked `DeltaSigma` ratio relative to CDM. Bottom-right: `Delta chi^2` versus `sigma/m` using the toy optimistic 5% fractional-error model. This figure summarizes whether SIDM signatures survive stacking across the selected cluster-like halo population.
+
+## `dwarf_ensemble_stacked_delta_sigma.png`
+- File: `outputs/figures/dwarf_ensemble_stacked_delta_sigma.png`
+- Created timestamp: `2026-03-19 03:50:47 MST`
+- Caption:
+  This figure is the YAML-configured dwarf (SHMR-mode) stacked lensing output generated from `docs/dwarf_ensemble_config.yaml`. Galaxies are sampled in stellar mass, mapped to halos through a Tier-1 SHMR model with halo scatter, and stacked with equal weights on the configured projected radial grid (`R = 1-300 kpc`, `N_R = 30`). The left panel shows stacked `DeltaSigma(R)` (`Msun/kpc^2`) for CDM and SIDM (`sigma/m = 0.5, 1.0, 3.0, 10.0`), and the right panel shows `DeltaSigma_SIDM / DeltaSigma_CDM`.
+
+## `dwarf_ensemble_tier1_summary.png`
+- File: `outputs/figures/dwarf_ensemble_tier1_summary.png`
+- Created timestamp: `2026-03-19 03:50:48 MST`
+- Caption:
+  This 4-panel summary corresponds to the dwarf YAML run (SHMR mode). Top-left shows stacked `rho(r)` for CDM and SIDM models inferred from the SHMR-selected ensemble. Top-right shows stacked `DeltaSigma(R)` over the dwarf radial bins. Bottom-left shows `DeltaSigma_SIDM / DeltaSigma_CDM`, and bottom-right shows `Delta chi^2` versus `sigma/m` (optimistic 5% toy precision), quantifying distinguishability in the low-mass regime.
+
+## `cluster_dwarf_delta_chi2_comparison.png`
+- File: `outputs/figures/cluster_dwarf_delta_chi2_comparison.png`
+- Created timestamp: `2026-03-19 03:51:12 MST`
+- Caption:
+  This comparison plot overlays `Delta chi^2` (optimistic 5% scenario) versus `sigma/m` for the two YAML-configured ensemble pipelines: cluster HMF and dwarf SHMR. Both axes are logarithmic. The purpose is direct cross-regime comparison of stacked SIDM distinguishability after applying each regime’s selection-aware ensemble model and radial binning.

@@ -1,0 +1,51 @@
+# ============================================
+# Stage-V Cluster Ensemble Configuration
+# HMF-Based Halo Selection
+# ============================================
+
+mode: HMF
+
+cosmology:
+  name: "Planck18"
+  h: 0.674
+  Omega_m: 0.315
+  Omega_L: 0.685
+  sigma8: 0.811
+  ns: 0.965
+
+ensemble:
+  N_halos: 400
+  random_seed: 42
+
+redshift:
+  model: "gaussian"
+  mean: 0.45
+  sigma: 0.15
+  z_min: 0.2
+  z_max: 0.8
+
+mass_function:
+  model: "Tinker08"
+  mass_definition: "M200c"
+  M_min: 1.0e14 # Msun
+  M_max: 1.0e15 # Msun
+
+selection:
+  type: "logistic"
+  logM_cut: 14.2
+  sigma_sel_dex: 0.25
+
+concentration:
+  model: "DiemerJoyce19"
+  scatter_logc: 0.18
+
+stacking:
+  weight_scheme: "equal" # options: equal, sigma_crit_inv2
+
+projection:
+  R_min_kpc: 50
+  R_max_kpc: 2000
+  N_R_bins: 30
+
+sidm:
+  sigma_over_m_grid: [0.2, 0.5, 1.0, 2.0] # cm^2/g

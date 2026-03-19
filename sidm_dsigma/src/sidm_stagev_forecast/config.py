@@ -38,8 +38,60 @@ class ForecastConfig:
     default_mass_definition: str = "200c"
 
 
+@dataclass(frozen=True)
+class EnsembleBenchmarkConfig:
+    """Tier-1 ensemble benchmark settings for stacked cluster-like forecasts."""
+
+    n_halos: int = 100
+    mean_mass_msun: float = 3.0e14
+    mass_scatter_dex: float = 0.2
+    concentration_scatter_dex: float = 0.1
+    redshift: float = 0.4
+    sigma_over_m_grid_cm2_g: tuple[float, ...] = (0.2, 0.5, 1.0, 2.0)
+    n_r_3d: int = 220
+    n_r_lensing_per_halo: int = 56
+    r_common_min_kpc: float = 30.0
+    r_common_max_kpc: float = 3000.0
+    n_r_common: int = 44
+    projection_n_z: int = 700
+    seed: int = 7
+
+
 DEFAULT_COSMOLOGY = CosmologyConfig()
 DEFAULT_FORECAST_CONFIG = ForecastConfig()
+DEFAULT_ENSEMBLE_BENCHMARK = EnsembleBenchmarkConfig()
+
+CLUSTER_HMF_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
+    "n_halos": 100,
+    "seed": 7,
+    "redshift": 0.4,
+    "mass_min_msun": 1.0e14,
+    "mass_max_msun": 1.0e15,
+    "n_mass_grid": 512,
+    "hmf_model": {"type": "power_law", "alpha": 1.9},
+    "selection_model": {"type": "threshold", "log10_m_cut": 14.0},
+    "concentration_model": {"type": "maccio"},
+    "concentration_scatter_dex": 0.15,
+    "weight_mode": "equal",
+}
+
+DWARF_SHMR_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
+    "n_halos": 200,
+    "seed": 17,
+    "redshift": 0.2,
+    "stellar_mass_distribution": {
+        "type": "lognormal",
+        "mean_log10_mstar": 7.5,
+        "sigma_log10_mstar": 0.5,
+    },
+    "shmr_model": {"type": "power_law", "a": 10.5, "b": 1.4, "pivot_log10_mstar": 7.5},
+    "halo_scatter_dex": 0.3,
+    "mhalo_min_msun": 1.0e9,
+    "mhalo_max_msun": 3.0e11,
+    "concentration_model": {"type": "maccio"},
+    "concentration_scatter_dex": 0.15,
+    "weight_mode": "equal",
+}
 
 DWARF_BENCHMARK = BenchmarkConfig(
     label="dwarf",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+from scipy.integrate import trapezoid
 from scipy.interpolate import interp1d
 
 
@@ -61,7 +62,7 @@ def sigma_of_R(
         rho_grid = np.exp(log_rho)
         rho_grid[~np.isfinite(rho_grid)] = 0.0
 
-        sigma_msun_kpc2[index] = 2.0 * np.trapz(rho_grid, z_grid)
+        sigma_msun_kpc2[index] = 2.0 * trapezoid(rho_grid, z_grid)
 
     return sigma_msun_kpc2
 
