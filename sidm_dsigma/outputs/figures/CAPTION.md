@@ -203,3 +203,69 @@ Common context for the benchmark forecast figures:
 - Created timestamp: `2026-03-19 07:56:54 MST`
 - Caption:
   Dwarf SHMR Tier-1 four-panel summary regenerated with sigma/m grid [0.2, 0.5, 1.0, 2.0]. Panels show stacked rho(r), stacked DeltaSigma(R), DeltaSigma ratio to CDM, and Delta chi^2 versus sigma/m (5% toy precision).
+
+## Update 2026-03-19T11:47:44-07:00
+
+### cluster_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T11:47:43.252906083-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_summary.png
+- Created: 2026-03-19T11:47:43.821531534-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T11:47:44.150659323-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T11:47:44.255169152-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T11:47:44.725646973-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+## Update 2026-03-19T11:49:50-07:00
+
+### dwarf_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T11:49:48.590800285-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_ensemble_tier1_summary.png
+- Created: 2026-03-19T11:49:49.237215519-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T11:49:49.600851536-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T11:49:49.696293831-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T11:49:50.179052830-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+## Update 2026-03-19T11:50:26-07:00
+
+### cluster_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T11:50:24.965315342-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_summary.png
+- Created: 2026-03-19T11:50:25.612401962-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T11:50:25.956269503-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T11:50:26.058327198-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T11:50:26.563595533-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.

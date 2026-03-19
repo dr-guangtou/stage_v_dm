@@ -119,3 +119,11 @@
   - cluster median mass check pass (`~2.49e14 Msun`)
   - dwarf median mass check pass (`~1.03e10 Msun`)
   - projection bin, reproducibility, and single-halo checks pass in both modes
+
+## sigma-grid regime update (paper-informed)
+- [x] Updated regime-specific SIDM grids in YAML configs:
+  - cluster: `[0.05, 0.1, 0.2, 0.3]` cm^2/g
+  - dwarf: `[10.0, 20.0, 50.0, 100.0]` cm^2/g
+- [x] Updated code defaults in `config.py` to keep benchmark runs consistent with regime intent.
+- [x] Updated `README.md` and `SPEC.md` benchmark-grid documentation to match runtime configuration.
+- [x] Re-ran cluster and dwarf ensemble forecast scripts and verified output artifacts/captions/inventory updates.

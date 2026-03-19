@@ -47,7 +47,7 @@ This is the only required SIDM parameter in version 1.
 M200 = 1e10 Msun
 c200 = 15.0   (default; allow override)
 z = 0.3       (default; allow override)
-sigma/m = [0.0, 0.2, 0.5, 1.0, 2.0]
+sigma/m = [0.0, 10.0, 20.0, 50.0, 100.0]
 ```
 
 #### Cluster case
@@ -55,7 +55,7 @@ sigma/m = [0.0, 0.2, 0.5, 1.0, 2.0]
 M200 = 1e14 Msun
 c200 = 4.0    (default; allow override)
 z = 0.3       (default; allow override)
-sigma/m = [0.0, 0.2, 0.5, 1.0, 2.0]
+sigma/m = [0.0, 0.05, 0.1, 0.2, 0.3]
 ```
 
 ### 1.4 Version-1 exclusions

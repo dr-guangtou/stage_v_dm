@@ -53,3 +53,15 @@ def test_stack_delta_sigma_profiles_weighted_mean_behavior() -> None:
 
     expected = 0.25 * profile_a + 0.75 * profile_b
     assert np.allclose(stacked["delta_sigma_msun_kpc2"], expected, rtol=1.0e-12, atol=0.0)
+
+
+def test_interpolate_profile_to_common_grid_linear_fallback_for_non_positive() -> None:
+    """Profiles with non-positive values should use stable linear interpolation."""
+    r_input = np.asarray([10.0, 20.0, 40.0, 80.0])
+    profile_input = np.asarray([5.0, 2.0, -1.0, -2.0])
+    r_common = np.asarray([10.0, 30.0, 60.0, 100.0])
+
+    interpolated = interpolate_profile_to_common_grid(r_input, profile_input, r_common)
+    expected = np.asarray([5.0, 0.5, -1.5, 0.0])
+
+    assert np.allclose(interpolated, expected, rtol=1.0e-12, atol=0.0)

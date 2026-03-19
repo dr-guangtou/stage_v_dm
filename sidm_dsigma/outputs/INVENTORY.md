@@ -84,3 +84,24 @@ When new files are added under `outputs/intermediate/` or `outputs/tables/`, app
 - intermediate/dwarf_ensemble_stacked_rho_profiles.csv: Same tier-split 3D density schema for dwarf SHMR ensemble.
 - tables/cluster_ensemble_delta_chi2_summary.csv: Distinguishability rows now include explicit `tier` column (`tier1`, `tier2`) for each sigma/m value.
 - tables/dwarf_ensemble_delta_chi2_summary.csv: Distinguishability rows now include explicit `tier` column (`tier1`, `tier2`) for each sigma/m value.
+
+## Update 2026-03-19T11:47:44-07:00
+- intermediate/cluster_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
+- intermediate/cluster_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
+- tables/cluster_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T11:49:50-07:00
+- intermediate/dwarf_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/dwarf_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
+- intermediate/dwarf_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
+- tables/dwarf_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/dwarf_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.
+
+## Update 2026-03-19T11:50:26-07:00
+- intermediate/cluster_ensemble_halo_catalog.csv: Sampled halo catalog with M200, c200, z, and stack weights.
+- intermediate/cluster_ensemble_stacked_delta_sigma_profiles.csv: Stacked DeltaSigma profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
+- intermediate/cluster_ensemble_stacked_rho_profiles.csv: Stacked rho(r) profiles for CDM/SIDM and Tier-1/Tier-2 when enabled.
+- tables/cluster_ensemble_delta_chi2_summary.csv: Distinguishability summary with DeltaChi2 metrics by sigma/m and tier.
+- tables/cluster_ensemble_validation_checks.csv: Validation checks for median mass, bins, reproducibility, and single-halo limit.

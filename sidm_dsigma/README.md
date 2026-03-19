@@ -65,17 +65,17 @@ For the first-pass forecast, benchmark grids can be:
 
 ### Dwarf halo (`1e10 Msun`)
 - `0.0`
-- `0.2`
-- `0.5`
-- `1.0`
-- `2.0`
+- `10.0`
+- `20.0`
+- `50.0`
+- `100.0`
 
 ### Cluster halo (`1e14 Msun`)
 - `0.0`
+- `0.05`
+- `0.1`
 - `0.2`
-- `0.5`
-- `1.0`
-- `2.0`
+- `0.3`
 
 These are not meant to be the final particle-physics parameterization. They are a practical first layer that can later be mapped onto a velocity-dependent SIDM model.
 
@@ -281,9 +281,10 @@ We adopt elastic SIDM with effective cross section:
 
 σ/m_eff  (cm²/g)
 
-Cluster benchmark grid:
+Regime-specific benchmark grids:
 
-0.2, 0.5, 1.0, 2.0 cm²/g
+- Cluster (`M200 ~ 1e14 Msun`): 0.05, 0.1, 0.2, 0.3 cm²/g
+- Dwarf (`M200 ~ 1e10 Msun`): 10, 20, 50, 100 cm²/g
 
 ---
 

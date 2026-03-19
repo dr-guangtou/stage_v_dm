@@ -11,7 +11,11 @@ def interpolate_profile_to_common_grid(
     profile_input: np.ndarray,
     r_common_kpc: np.ndarray,
 ) -> np.ndarray:
-    """Interpolate a positive profile onto a common radius grid in log-log space."""
+    """Interpolate a profile onto a common radius grid.
+
+    Positive profiles use log-log interpolation; profiles with any non-positive
+    values fall back to linear interpolation in radius to preserve sign.
+    """
     r_input_kpc = np.asarray(r_input_kpc, dtype=float)
     profile_input = np.asarray(profile_input, dtype=float)
     r_common_kpc = np.asarray(r_common_kpc, dtype=float)
@@ -22,19 +26,28 @@ def interpolate_profile_to_common_grid(
         raise ValueError("r_common_kpc must be strictly increasing.")
     if np.any(r_input_kpc <= 0.0) or np.any(r_common_kpc <= 0.0):
         raise ValueError("All radii must be positive.")
-    if np.any(profile_input <= 0.0):
-        raise ValueError("Profile values must be positive for log-log interpolation.")
+    if np.all(profile_input > 0.0):
+        log_interpolator = interp1d(
+            np.log(r_input_kpc),
+            np.log(profile_input),
+            kind="linear",
+            bounds_error=False,
+            fill_value=(-np.inf, -np.inf),
+            assume_sorted=True,
+        )
+        profile_common = np.exp(log_interpolator(np.log(r_common_kpc)))
+        profile_common[~np.isfinite(profile_common)] = 0.0
+        return profile_common
 
-    log_interpolator = interp1d(
-        np.log(r_input_kpc),
-        np.log(profile_input),
+    linear_interpolator = interp1d(
+        r_input_kpc,
+        profile_input,
         kind="linear",
         bounds_error=False,
-        fill_value=(-np.inf, -np.inf),
+        fill_value=(0.0, 0.0),
         assume_sorted=True,
     )
-
-    profile_common = np.exp(log_interpolator(np.log(r_common_kpc)))
+    profile_common = linear_interpolator(r_common_kpc)
     profile_common[~np.isfinite(profile_common)] = 0.0
     return profile_common
 

@@ -7,3 +7,4 @@
 - For optional external references (`colossus`), catch runtime evaluation failures (including cache-write permission issues) and fall back to deterministic local approximations to preserve pipeline stability.
 - When adding Tier-2 outskirts stitching, blend in log-density with configurable match radius and width; linear blending is more prone to visible projection artifacts.
 - Auto-updating caption/inventory files should still be followed by explicit, figure-specific descriptive text to keep outputs interpretable without reading code.
+- SIDM benchmark grids should be regime-specific; cluster-focused lensing runs should stay in the sub-unity regime while dwarf-focused sensitivity tests can target high effective cross sections, and this split must be reflected consistently in config, code defaults, and docs.
