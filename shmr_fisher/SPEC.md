@@ -363,6 +363,39 @@ def survey_volume(z_lo: float, z_hi: float, area_deg2: float) -> float:
 - σ(ΔΣ) should scale as 1/√N_lens. Test by comparing N_lens = 10^4 vs 10^6.
 - `survey_volume(0.2, 0.4, 10000)` should be ~10^9 Mpc³ (order of magnitude).
 
+#### 2.4.1 Systematic Error Model (Optional Features)
+
+Two toggleable systematic error features are available to produce more realistic absolute constraints. The statistical-only forecast is sufficient for relative survey comparisons; these features are needed when absolute error bars matter.
+
+**Feature 1: Fractional systematic floor on ΔΣ**
+
+Adds an irreducible fractional uncertainty to each ΔΣ radial bin:
+
+    σ²_total(R_i) = σ²_stat(R_i) + (f_sys × ΔΣ_fid(R_i))²
+
+This captures baryonic effects on halo profiles, miscentering, intrinsic alignments, and other model uncertainties that scale with the signal amplitude. Toggle: `ForecastConfig.systematic_floor_fraction` (default 0.0 = off; typical 0.05–0.10).
+
+**Feature 2: Nuisance parameter marginalization**
+
+Two lensing nuisance parameters are added to the Fisher matrix:
+
+| Parameter | Symbol | Fiducial | Prior σ | Physical effect |
+|-----------|--------|----------|---------|-----------------|
+| `shear_m` | m | 0 | 0.02 | Multiplicative shear calibration bias: ΔΣ_obs = (1+m) ΔΣ_true |
+| `photo_dz_source` | Δz_s | 0 | 0.03 | Source photo-z bias: shifts n(z_s), modifying Σ_crit_eff |
+
+Derivatives are computed analytically (not via finite differences on SHMRParams):
+- ∂ΔΣ/∂m = ΔΣ_fid (exact at fiducial m=0)
+- ∂ΔΣ/∂Δz_s = ΔΣ_fid × ∂ln(Σ_crit_eff⁻¹)/∂Δz_s (numerical via `d_ln_inv_sigma_crit_d_dz`)
+
+Clustering observables (b_eff, n_gal) are unaffected by lensing nuisance parameters.
+
+Toggle: `ForecastConfig.include_nuisance_params` (default False). Configuration: `NuisanceConfig` dataclass with `sigma_m` and `sigma_dz_source`.
+
+**Feature 3: Off-diagonal LSS covariance — DEFERRED**
+
+Not implemented. The off-diagonal covariance from large-scale structure requires Hankel transforms (J2 Bessel functions) of the ΔΣ window function against P(k), plus survey window treatment (~200–300 lines). Deferred because: (1) shape noise dominates for stacked g-g lensing, (2) the systematic floor already captures leading model uncertainties, (3) off-diagonal terms matter mainly at large R where S/N is low. A future parametric approximation (correlation coefficient r ~ 0.1–0.3 between adjacent bins) would be simpler.
+
 ---
 
 ### 2.5 `fisher.py` — Fisher Matrix

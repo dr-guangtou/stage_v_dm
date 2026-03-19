@@ -63,10 +63,10 @@ This is a **Fisher forecast tool for the stellar-halo mass relation (SHMR)**, pr
 ## Project Structure
 
 ```
-shmr_forecast/
+shmr_fisher/
 ├── CLAUDE.md              # This file
 ├── SPEC.md                # Detailed specification
-├── shmr_forecast/         # Main package
+├── shmr_fisher/         # Main package
 │   ├── __init__.py
 │   ├── config.py          # All dataclasses: SHMRParams, SurveyConfig, LensingConfig, ForecastConfig
 │   ├── shmr_model.py      # SHMR parameterization (Moster+2013 with z-evolution)
@@ -122,5 +122,10 @@ If `np.linalg.cond(fisher) > 1e10`:
 
 ### Output conventions
 - Save Fisher matrices and errors as JSON (for portability) and as numpy `.npz` files (for reloading).
-- Save figures as PDF (vector) at 300 dpi, with descriptive filenames like `shmr_validation_z0_z1.pdf`, `fisher_comparison_stage4_vs_stage5.pdf`.
+- **Default figure format: PNG** at 300 dpi, with descriptive filenames like `shmr_validation.png`, `fisher_comparison_stage4_vs_stage5.png`.
 - All figures should have axis labels with units, legends, and a title or annotation indicating the survey configuration.
+
+### Figure captioning (MANDATORY)
+- Every time a figure is saved to `outputs/`, a detailed caption **must** be appended to `outputs/CAPTION.md`.
+- Each caption entry must include: the filename, creation timestamp, a full description of what is plotted (axes, units, data shown, colors/line styles), the physical interpretation of key features, and the figure's purpose in the pipeline.
+- This ensures figures remain interpretable months later without re-running the code.

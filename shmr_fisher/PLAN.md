@@ -11,7 +11,7 @@ This is a **first-order, relative forecast** — we want to compare survey confi
 ## Architecture Overview
 
 ```
-shmr_forecast/
+shmr_fisher/
 ├── config.py              # Survey configs, cosmology, SHMR fiducial params
 ├── shmr_model.py          # Parameterized SHMR (Moster+2013 form) with z-evolution
 ├── halo_model.py          # Halo model predictions: DeltaSigma, b_eff, n_gal
@@ -760,9 +760,10 @@ After each phase, verify:
 
 ### Known Simplifications (acceptable for first order)
 - No cross-bin covariance (stellar mass bins treated as independent)
-- No off-diagonal ΔΣ covariance (radial bins treated as independent)
+- No off-diagonal ΔΣ covariance (radial bins treated as independent; see SPEC.md Section 2.4.1 Feature 3 for feasibility assessment)
 - Satellite prescription fixed, not varied
-- No shear calibration or photo-z systematics (can add as priors later)
+- ~~No shear calibration or photo-z systematics~~ **IMPLEMENTED:** optional nuisance parameter marginalization for shear calibration bias (m) and source photo-z bias (Δz_s) with configurable Gaussian priors. Toggle: `ForecastConfig.include_nuisance_params`.
+- ~~No systematic error floor~~ **IMPLEMENTED:** optional fractional systematic floor on ΔΣ covariance. Toggle: `ForecastConfig.systematic_floor_fraction`.
 - Single effective source redshift per lens bin (vs. full n(z_s) integration)
 - Clustering info simplified to (b_eff, n_gal) rather than full w_p(r_p)
 - Scatter assumed constant with z (weak assumption; Behroozi+2019 finds little evolution)

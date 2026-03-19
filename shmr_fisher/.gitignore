@@ -1,0 +1,12 @@
+# Generated outputs (figures, data files)
+outputs/*.png
+outputs/*.json
+outputs/*.npz
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# uv
+.python-version
