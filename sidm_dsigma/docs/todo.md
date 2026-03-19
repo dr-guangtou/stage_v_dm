@@ -95,3 +95,27 @@
   - `docs/cluster_ensemble_config.yaml` run complete
   - `docs/dwarf_ensemble_config.yaml` run complete
   - combined comparison table/figure produced afterward.
+
+## tier 2 hybrid outskirts extension
+- [x] Added optional Tier-2 modules:
+  - `src/sidm_stagev_forecast/outer_profiles.py` (DK14-like outer structure)
+  - `src/sidm_stagev_forecast/stitch.py` (smooth log-density stitching)
+- [x] Extended cosmology helpers with `200m` support for stitch-scale controls while preserving `M200c` as core pipeline convention.
+- [x] Added hybrid builder in `profiles.py`:
+  - CDM Tier-2: CDM inner + DK14-like outskirts
+  - SIDM Tier-2: SIDM inner + DK14-like outskirts
+- [x] Extended YAML/config handling with optional `tier2` block and regime defaults.
+- [x] Integrated Tier-2 into `scripts/run_ensemble_forecast.py` without changing Tier-1 default behavior (`tier2.enabled=false`).
+- [x] Added Tier-2 figures:
+  - single-halo diagnostics (cluster + dwarf)
+  - stacked Tier-1 vs Tier-2 comparison (cluster + dwarf)
+  - `Delta chi^2` Tier-1 vs Tier-2 comparison (cluster + dwarf)
+- [x] Added Tier-2 tests:
+  - `tests/test_outer_profiles.py`
+  - `tests/test_stitch.py`
+  - YAML Tier-2 parse/default checks in `tests/test_ensemble_yaml.py`
+- [x] Validation status:
+  - full test suite pass: `32 passed`
+  - cluster median mass check pass (`~2.49e14 Msun`)
+  - dwarf median mass check pass (`~1.03e10 Msun`)
+  - projection bin, reproducibility, and single-halo checks pass in both modes

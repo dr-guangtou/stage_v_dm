@@ -95,3 +95,111 @@ Common context for the benchmark forecast figures:
 - Created timestamp: `2026-03-19 03:51:12 MST`
 - Caption:
   This comparison plot overlays `Delta chi^2` (optimistic 5% scenario) versus `sigma/m` for the two YAML-configured ensemble pipelines: cluster HMF and dwarf SHMR. Both axes are logarithmic. The purpose is direct cross-regime comparison of stacked SIDM distinguishability after applying each regime’s selection-aware ensemble model and radial binning.
+
+## Update 2026-03-19T07:56:13-07:00
+
+### cluster_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T07:56:12.338006258-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_summary.png
+- Created: 2026-03-19T07:56:12.816890717-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T07:56:13.092409134-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T07:56:13.195337296-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### cluster_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T07:56:13.648265839-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+## Update 2026-03-19T07:56:55-07:00
+
+### dwarf_ensemble_stacked_delta_sigma.png
+- Created: 2026-03-19T07:56:53.958179951-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_ensemble_tier1_summary.png
+- Created: 2026-03-19T07:56:54.607635975-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_ensemble_tier1_vs_tier2_stacked.png
+- Created: 2026-03-19T07:56:54.954513550-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_ensemble_tier1_vs_tier2_delta_chi2.png
+- Created: 2026-03-19T07:56:55.051311493-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+### dwarf_single_halo_tier2_diagnostic.png
+- Created: 2026-03-19T07:56:55.494876385-07:00
+- Caption: Tier forecast figure. Axes are in physical kpc and Msun-based density units; Tier-1 curves use inner-only profiles, while Tier-2 curves include DK14-like outskirts attachment with smooth log-density stitching.
+
+## Update 2026-03-19T07:58:26-07:00 (Tier-2 Detailed Captions)
+
+## `cluster_ensemble_tier1_vs_tier2_stacked.png`
+- File: `outputs/figures/cluster_ensemble_tier1_vs_tier2_stacked.png`
+- Created timestamp: `2026-03-19 07:56:13 MST`
+- Caption:
+  Cluster HMF ensemble stacked DeltaSigma comparison between Tier-1 and Tier-2. Left panel: physical projected radius R [kpc] versus stacked DeltaSigma [Msun/kpc^2] for CDM and SIDM (sigma/m = 0.2, 0.5, 1.0, 2.0), with Tier-1 as solid curves and Tier-2 as dashed curves. Right panel: multiplicative impact ratio DeltaSigma_Tier2 / DeltaSigma_Tier1 for the same models; values above unity indicate outskirts attachment boosts the projected signal at that radius.
+
+## `cluster_ensemble_tier1_vs_tier2_delta_chi2.png`
+- File: `outputs/figures/cluster_ensemble_tier1_vs_tier2_delta_chi2.png`
+- Created timestamp: `2026-03-19 07:56:13 MST`
+- Caption:
+  Cluster HMF ensemble distinguishability comparison. X-axis is SIDM cross section sigma/m [cm^2/g], y-axis is Delta chi^2 under the optimistic 5% fractional-error toy model. Tier-1 (inner-only) and Tier-2 (hybrid outskirts) are plotted together to show how DK14-like outskirts treatment changes CDM-vs-SIDM separation strength.
+
+## `cluster_single_halo_tier2_diagnostic.png`
+- File: `outputs/figures/cluster_single_halo_tier2_diagnostic.png`
+- Created timestamp: `2026-03-19 07:56:13 MST`
+- Caption:
+  Single representative cluster-halo Tier-2 diagnostic. Panel 1: rho(r) [Msun/kpc^3] for CDM inner NFW, SIDM inner profile, DK14-like reference, and stitched hybrid. Panel 2: logarithmic slope d ln rho / d ln r versus r to verify outer steepening and smooth stitching. Panel 3: projected DeltaSigma(R) [Msun/kpc^2] comparing Tier-1 inner-only and Tier-2 hybrid profiles to check projection smoothness and identify where outskirts attachment activates.
+
+## `dwarf_ensemble_tier1_vs_tier2_stacked.png`
+- File: `outputs/figures/dwarf_ensemble_tier1_vs_tier2_stacked.png`
+- Created timestamp: `2026-03-19 07:56:54 MST`
+- Caption:
+  Dwarf SHMR ensemble stacked DeltaSigma comparison between Tier-1 and Tier-2. Left panel shows stacked DeltaSigma(R) [Msun/kpc^2] for CDM and SIDM (sigma/m = 0.2, 0.5, 1.0, 2.0) with solid Tier-1 curves and dashed Tier-2 curves. Right panel shows DeltaSigma_Tier2 / DeltaSigma_Tier1, quantifying the relative effect of outer-profile attachment in the dwarf-selected sample.
+
+## `dwarf_ensemble_tier1_vs_tier2_delta_chi2.png`
+- File: `outputs/figures/dwarf_ensemble_tier1_vs_tier2_delta_chi2.png`
+- Created timestamp: `2026-03-19 07:56:55 MST`
+- Caption:
+  Dwarf SHMR ensemble distinguishability comparison. X-axis is sigma/m [cm^2/g], y-axis is Delta chi^2 for the optimistic 5% toy precision scenario. Tier-1 and Tier-2 curves are overlaid to assess whether inner SIDM leverage survives when DK14-like outskirts are attached in the low-mass regime.
+
+## `dwarf_single_halo_tier2_diagnostic.png`
+- File: `outputs/figures/dwarf_single_halo_tier2_diagnostic.png`
+- Created timestamp: `2026-03-19 07:56:55 MST`
+- Caption:
+  Single representative dwarf-halo Tier-2 diagnostic with the same three-panel structure as the cluster diagnostic: density components, logarithmic slope, and Tier-1 vs Tier-2 projected DeltaSigma. This figure is used to verify that stitching remains smooth in the dwarf regime and that inner SIDM profile differences remain visible at small radii.
+
+## Update 2026-03-19T07:58:52-07:00 (Tier-1 Baseline Captions Refreshed)
+
+## `cluster_ensemble_stacked_delta_sigma.png`
+- File: `outputs/figures/cluster_ensemble_stacked_delta_sigma.png`
+- Created timestamp: `2026-03-19 07:56:12 MST`
+- Caption:
+  Cluster HMF stacked Tier-1 baseline lensing figure regenerated in this Tier-2 run. Left panel shows stacked DeltaSigma(R) [Msun/kpc^2] for CDM and SIDM with sigma/m = 0.2, 0.5, 1.0, 2.0. Right panel shows DeltaSigma_SIDM/DeltaSigma_CDM. This figure remains the inner-only Tier-1 reference for comparison against Tier-2 hybrid outputs.
+
+## `cluster_ensemble_tier1_summary.png`
+- File: `outputs/figures/cluster_ensemble_tier1_summary.png`
+- Created timestamp: `2026-03-19 07:56:12 MST`
+- Caption:
+  Cluster HMF Tier-1 four-panel summary regenerated with the current sigma/m grid [0.2, 0.5, 1.0, 2.0]. Panels show stacked rho(r), stacked DeltaSigma(R), DeltaSigma ratio to CDM, and Delta chi^2 versus sigma/m (5% toy precision).
+
+## `dwarf_ensemble_stacked_delta_sigma.png`
+- File: `outputs/figures/dwarf_ensemble_stacked_delta_sigma.png`
+- Created timestamp: `2026-03-19 07:56:53 MST`
+- Caption:
+  Dwarf SHMR stacked Tier-1 baseline lensing figure regenerated in this Tier-2 run. Left panel shows stacked DeltaSigma(R) [Msun/kpc^2] for CDM and SIDM using sigma/m = 0.2, 0.5, 1.0, 2.0 (updated grid). Right panel shows DeltaSigma_SIDM/DeltaSigma_CDM.
+
+## `dwarf_ensemble_tier1_summary.png`
+- File: `outputs/figures/dwarf_ensemble_tier1_summary.png`
+- Created timestamp: `2026-03-19 07:56:54 MST`
+- Caption:
+  Dwarf SHMR Tier-1 four-panel summary regenerated with sigma/m grid [0.2, 0.5, 1.0, 2.0]. Panels show stacked rho(r), stacked DeltaSigma(R), DeltaSigma ratio to CDM, and Delta chi^2 versus sigma/m (5% toy precision).

@@ -168,3 +168,88 @@ def sidm_profile_from_parametric_model(
             "sigma_over_m_cm2_g": float(sigma_over_m),
         },
     }
+
+
+def build_hybrid_sidm_profile(
+    r_kpc: np.ndarray,
+    m200_msun: float,
+    c200: float,
+    z: float,
+    sigma_over_m: float,
+    cosmo: CosmologyConfig,
+    model_options: dict[str, Any] | None = None,
+    dk14_params: dict[str, float] | None = None,
+    stitch_params: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Build Tier-2 hybrid profile components and stitched outputs."""
+    from sidm_stagev_forecast.outer_profiles import build_dk14_outer_profile
+    from sidm_stagev_forecast.stitch import resolve_match_radius_kpc, stitch_inner_outer_profile
+
+    cdm_inner = nfw_profile_bundle(
+        r_kpc=r_kpc,
+        m200_msun=m200_msun,
+        c200=c200,
+        z=z,
+        cosmo=cosmo,
+    )
+    sidm_inner = sidm_profile_from_parametric_model(
+        r_kpc=r_kpc,
+        m200_msun=m200_msun,
+        c200=c200,
+        z=z,
+        sigma_over_m=sigma_over_m,
+        model_options=model_options,
+    )
+
+    outer_bundle = build_dk14_outer_profile(
+        r_kpc=r_kpc,
+        mass_msun=m200_msun,
+        z=z,
+        concentration=c200,
+        mass_def="200c",
+        cosmology=cosmo,
+        dk14_params=dk14_params,
+    )
+
+    stitching_options = {} if stitch_params is None else dict(stitch_params)
+    r_match_kpc = resolve_match_radius_kpc(
+        mass_msun=m200_msun,
+        z=z,
+        cosmo=cosmo,
+        stitch_config=stitching_options,
+    )
+
+    rho_cdm_hybrid = stitch_inner_outer_profile(
+        r_kpc=r_kpc,
+        rho_inner_sidm_msun_kpc3=cdm_inner["rho_msun_kpc3"],
+        rho_outer_reference_msun_kpc3=outer_bundle["rho_total_msun_kpc3"],
+        method=str(stitching_options.get("stitch_method", "logistic_logrho_blend")),
+        r_match_kpc=r_match_kpc,
+        smooth_width_dex=float(stitching_options.get("smooth_width_dex", 0.15)),
+        continuity=str(stitching_options.get("continuity", "density")),
+    )
+    rho_sidm_hybrid = stitch_inner_outer_profile(
+        r_kpc=r_kpc,
+        rho_inner_sidm_msun_kpc3=sidm_inner["rho_msun_kpc3"],
+        rho_outer_reference_msun_kpc3=outer_bundle["rho_total_msun_kpc3"],
+        method=str(stitching_options.get("stitch_method", "logistic_logrho_blend")),
+        r_match_kpc=r_match_kpc,
+        smooth_width_dex=float(stitching_options.get("smooth_width_dex", 0.15)),
+        continuity=str(stitching_options.get("continuity", "density")),
+    )
+
+    return {
+        "r_kpc": np.asarray(r_kpc),
+        "cdm_inner": cdm_inner,
+        "sidm_inner": sidm_inner,
+        "dk14_outer_reference": outer_bundle,
+        "rho_cdm_hybrid_msun_kpc3": rho_cdm_hybrid,
+        "rho_sidm_hybrid_msun_kpc3": rho_sidm_hybrid,
+        "metadata": {
+            "profile": "sidm_hybrid_tier2",
+            "sigma_over_m_cm2_g": float(sigma_over_m),
+            "r_match_kpc": float(r_match_kpc),
+            "stitch_method": str(stitching_options.get("stitch_method", "logistic_logrho_blend")),
+            "mass_definition": "200c",
+        },
+    }

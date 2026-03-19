@@ -49,4 +49,14 @@ projection:
   N_R_bins: 30
 
 sidm:
-  sigma_over_m_grid: [0.5, 1.0, 3.0, 10.0] # cm^2/g
+  sigma_over_m_grid: [0.2, 0.5, 1.0, 2.0] # cm^2/g
+
+tier2:
+  enabled: true
+  outer_profile_model: "dk14_like"
+  stitch_method: "logistic_logrho_blend"
+  r_match_mode: "fraction_r200c"
+  r_match_value: 1.0
+  smooth_width_dex: 0.18
+  continuity: "density"
+  regime: "dwarf"

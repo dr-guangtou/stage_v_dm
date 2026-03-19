@@ -57,9 +57,24 @@ class EnsembleBenchmarkConfig:
     seed: int = 7
 
 
+@dataclass(frozen=True)
+class Tier2Config:
+    """Tier-2 hybrid (SIDM inner + DK14-like outskirts) controls."""
+
+    enabled: bool = False
+    outer_profile_model: str = "dk14_like"
+    stitch_method: str = "logistic_logrho_blend"
+    r_match_mode: str = "fraction_r200m"
+    r_match_value: float = 0.8
+    smooth_width_dex: float = 0.15
+    continuity: str = "density"
+    regime: str = "cluster"
+
+
 DEFAULT_COSMOLOGY = CosmologyConfig()
 DEFAULT_FORECAST_CONFIG = ForecastConfig()
 DEFAULT_ENSEMBLE_BENCHMARK = EnsembleBenchmarkConfig()
+DEFAULT_TIER2_CONFIG = Tier2Config()
 
 CLUSTER_HMF_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
     "n_halos": 100,
@@ -73,6 +88,16 @@ CLUSTER_HMF_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
     "concentration_model": {"type": "maccio"},
     "concentration_scatter_dex": 0.15,
     "weight_mode": "equal",
+    "tier2": {
+        "enabled": True,
+        "outer_profile_model": "dk14_like",
+        "stitch_method": "logistic_logrho_blend",
+        "r_match_mode": "fraction_r200m",
+        "r_match_value": 0.8,
+        "smooth_width_dex": 0.15,
+        "continuity": "density",
+        "regime": "cluster",
+    },
 }
 
 DWARF_SHMR_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
@@ -91,6 +116,16 @@ DWARF_SHMR_ENSEMBLE_CONFIG_EXAMPLE: dict[str, object] = {
     "concentration_model": {"type": "maccio"},
     "concentration_scatter_dex": 0.15,
     "weight_mode": "equal",
+    "tier2": {
+        "enabled": False,
+        "outer_profile_model": "dk14_like",
+        "stitch_method": "logistic_logrho_blend",
+        "r_match_mode": "fraction_r200c",
+        "r_match_value": 1.0,
+        "smooth_width_dex": 0.18,
+        "continuity": "density",
+        "regime": "dwarf",
+    },
 }
 
 DWARF_BENCHMARK = BenchmarkConfig(

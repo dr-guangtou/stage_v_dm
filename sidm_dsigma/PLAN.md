@@ -114,3 +114,42 @@ Tier-1 complete when:
 - Ensemble stacking works
 - Results reproducible
 - ΔΣ differences interpretable
+
+# ============================================
+# EXTENSION: Tier-2 Hybrid Outskirts Development
+# ============================================
+
+## Phase 10 — DK14-Like Outer Module
+
+- Add `outer_profiles.py` with DK14-inspired inner+transition+outer terms.
+- Keep model lightweight and configurable by regime.
+- Validate positivity and outer steepening signature.
+
+## Phase 11 — Stitching Utility
+
+- Add `stitch.py` with smooth `logistic_logrho_blend`.
+- Support `r_match_mode` in `fraction_r200m`, `fraction_r200c`, `fixed_kpc`.
+- Enforce continuity in density and numerical stability.
+
+## Phase 12 — Pipeline Integration
+
+- Wire optional `tier2` block into YAML/config runtime.
+- Keep Tier-1 behavior unchanged when `tier2.enabled=false`.
+- Build CDM Tier-2 and SIDM Tier-2 profiles in ensemble runner.
+
+## Phase 13 — Tier-2 Validation and Outputs
+
+- Single-halo diagnostics for cluster and dwarf:
+  - density components,
+  - log-slope,
+  - Tier-1 vs Tier-2 DeltaSigma.
+- Ensemble stacked comparison:
+  - Tier-1 vs Tier-2 stacked DeltaSigma,
+  - SIDM/CDM ratios,
+  - DeltaChi2 comparison table/figure.
+
+## Phase 14 — Documentation and Reproducibility
+
+- Update `SPEC.md`, `README.md`, and `docs/todo.md`.
+- Record rationale in `docs/lessons.md` and Tier-2 journal.
+- Update `outputs/figures/CAPTION.md` and `outputs/INVENTORY.md` with new artifacts.

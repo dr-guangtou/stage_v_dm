@@ -364,3 +364,61 @@ These require simulation-calibrated modeling.
 
 Tier-1 = Ensemble stacking without splashback.
 Future tiers may extend outskirts modeling.
+
+---
+
+## Tier-2: Hybrid SIDM Inner + DK14-Like Outskirts
+
+Tier-2 is optional and keeps Tier-1 behavior unchanged when disabled.
+
+### Model interpretation
+
+- Tier-1: SIDM-modified inner halo only.
+- Tier-2: SIDM inner halo + DK14-like outer-profile attachment.
+
+Tier-2 is a practical hybrid approximation, not a self-consistent SIDM splashback simulation.
+
+### Tier-2 configuration
+
+Add a `tier2` block in the ensemble YAML:
+
+```yaml
+tier2:
+  enabled: true
+  outer_profile_model: "dk14_like"
+  stitch_method: "logistic_logrho_blend"
+  r_match_mode: "fraction_r200m"  # or fraction_r200c, fixed_kpc
+  r_match_value: 0.8
+  smooth_width_dex: 0.15
+  continuity: "density"
+  regime: "cluster"
+```
+
+### Usage examples
+
+Cluster ensemble with Tier-2:
+
+```bash
+uv run python scripts/run_ensemble_forecast.py \
+  --sidm-backend surrogate \
+  --config-path docs/cluster_ensemble_config.yaml
+```
+
+Dwarf ensemble with Tier-2:
+
+```bash
+uv run python scripts/run_ensemble_forecast.py \
+  --sidm-backend surrogate \
+  --config-path docs/dwarf_ensemble_config.yaml
+```
+
+### Tier-2 outputs
+
+- Single-halo diagnostic figure:
+  - profile components,
+  - slope `d ln rho / d ln r`,
+  - Tier-1 vs Tier-2 `DeltaSigma`.
+- Stacked Tier-1 vs Tier-2 `DeltaSigma` comparison.
+- Tier-1 vs Tier-2 `Delta chi^2` versus `sigma/m`.
+
+Cluster and dwarf runs both produce Tier-1 and Tier-2 stacked outputs for direct comparison.

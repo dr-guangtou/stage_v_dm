@@ -650,3 +650,71 @@ Do not implement:
 - 100 halos per σ/m grid
 - Runtime < 2 minutes
 - Stable reproducibility with fixed seed
+
+---
+
+## Tier-2 Hybrid Outskirts Extension (Optional)
+
+### Scientific Framing
+
+Tier-2 is a hybrid approximation:
+- Tier-1: SIDM-modified inner halo only.
+- Tier-2: SIDM inner halo + DK14-like outer-profile attachment.
+
+Tier-2 is not a self-consistent SIDM splashback simulation and must be documented as such in outputs.
+
+### Tier-2 Profile Structure
+
+For each halo:
+
+rho_hybrid(r) = stitch( rho_inner_sidm(r), rho_outer_dk14_like(r) )
+
+where:
+- `rho_inner_sidm` comes from `parametricSIDM` wrapper,
+- `rho_outer_dk14_like` is a DK14-inspired outer reference profile,
+- stitch is a smooth log-density blend.
+
+### Tier-2 Config Interface
+
+Add `tier2` config block:
+
+```yaml
+tier2:
+  enabled: false
+  outer_profile_model: "dk14_like"
+  stitch_method: "logistic_logrho_blend"
+  r_match_mode: "fraction_r200m"  # or fraction_r200c, fixed_kpc
+  r_match_value: 0.8
+  smooth_width_dex: 0.15
+  continuity: "density"
+```
+
+Mass-definition rule:
+- Keep the core pipeline on `M200c`.
+- Derive `R200m` only when requested by `r_match_mode`.
+
+### Tier-2 Required Validation
+
+1. Profile sanity (single halo, cluster + dwarf):
+- plot `rho_cdm_inner`, `rho_sidm_inner`, `rho_dk14_reference`, `rho_hybrid`.
+- verify no discontinuities.
+
+2. Slope diagnostic:
+- plot `d ln rho / d ln r` for baseline, DK14-like, and hybrid.
+- confirm outer steepening exists.
+
+3. Projection stability:
+- project to `Sigma(R)` and `DeltaSigma(R)`.
+- confirm no oscillatory stitching artifacts.
+
+4. Ensemble comparison:
+- stacked `DeltaSigma(R)` Tier-1 vs Tier-2 for cluster and dwarf.
+- SIDM/CDM ratios and `Delta chi^2` by `sigma/m`.
+
+### Tier-2 Acceptance
+
+Tier-2 is complete when:
+1. `tier2.enabled=false` reproduces Tier-1 behavior.
+2. `tier2.enabled=true` generates stable hybrid profiles and projections.
+3. Cluster stacked `DeltaSigma` shows sensible outskirts modification.
+4. Inner SIDM contrast remains visible at small radii.
