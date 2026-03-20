@@ -1,8 +1,21 @@
-# dwarf_regime.yaml — Focused dwarf galaxy science case
+# dwarf_regime.yaml — Dwarf galaxy SHMR science case
 #
-# Single low-z survey optimized for constraining the SHMR at the
-# dwarf end (M* < 10^9.5). No redshift evolution parameters varied
-# since we probe only z < 0.4.
+# Constrains the low-mass SHMR (beta_0, N_0, scatter) by fixing the
+# high-mass parameters (gamma_0, log_M1_0) that are irrelevant in the
+# dwarf regime (Mh << M1 ~ 10^11.6).
+#
+# At Mh << M1, the double power-law reduces to an effective power-law:
+#     M*/Mh ≈ 2N × (Mh/M1)^beta
+# so beta_0 and N_0 are the only shape parameters that matter.
+#
+# No z-evolution parameters are varied since z < 0.3.
+# log_Mstar_max is set to 9.0 to exclude massive galaxies whose halos
+# probe gamma_0 and log_M1_0.
+#
+# Four surveys compare current (DESI BGS) vs. next-gen (DESI-II, Spec-S5)
+# vs. futuristic (Stage-V) spectroscopy, all combined with Stage-IV
+# imaging lensing. DESI-II and Spec-S5 win by going deeper (lower M*
+# completeness, higher redshift reach), not wider.
 
 shmr_params:
   use_mass_dependent_scatter: true
@@ -13,19 +26,51 @@ forecast:
   systematic_floor_fraction: 0.05
   include_nuisance_params: true
   vary_z_evolution: false
+  fixed_params:
+    - gamma_0
+    - log_M1_0
 
 nuisance:
   sigma_m: 0.02
   sigma_dz_source: 0.03
 
 surveys:
-  stage5_wide:
-    name: "Stage-V Wide (dwarf focus)"
-    area_deg2: 10000
-    z_min: 0.05
-    z_max: 0.4
-    n_gal_total: 50000000
+  desi:
+    name: "DESI"
+    area_deg2: 14000
+    z_min: 0.01
+    z_max: 0.08
+    n_gal_total: 100000
     log_Mstar_min: 8.0
-    log_Mstar_min_z_dep:
-      base: 8.0
-      slope: 1.0
+    log_Mstar_max: 9.0
+    dlog_Mstar: 0.5
+
+  desi2:
+    name: "DESI-II"
+    area_deg2: 5000
+    z_min: 0.01
+    z_max: 0.15
+    n_gal_total: 1000000
+    log_Mstar_min: 7.5
+    log_Mstar_max: 9.0
+    dlog_Mstar: 0.5
+
+  spec_s5:
+    name: "Spec-S5"
+    area_deg2: 5000
+    z_min: 0.01
+    z_max: 0.20
+    n_gal_total: 12000000
+    log_Mstar_min: 7.0
+    log_Mstar_max: 9.0
+    dlog_Mstar: 0.5
+
+  stage5_dwarf:
+    name: "Stage-V Dwarf Mania"
+    area_deg2: 8000
+    z_min: 0.01
+    z_max: 0.30
+    n_gal_total: 40000000
+    log_Mstar_min: 7.0
+    log_Mstar_max: 9.0
+    dlog_Mstar: 0.5

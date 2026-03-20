@@ -53,16 +53,18 @@ def get_varied_params(
     """
     Auto-select SHMR parameters to vary based on survey z-range.
 
-    Always varies the 5 z=0 shape + scatter parameters. Also varies the
+    Always varies the z=0 shape + scatter parameters. Also varies the
     4 evolution parameters if the survey spans enough redshift range AND
-    the user has enabled evolution variation.
+    the user has enabled evolution variation. Any parameters listed in
+    ``forecast_config.fixed_params`` are removed from the varied set.
 
     Parameters
     ----------
     params : SHMRParams
         Fiducial SHMR parameters.
     forecast_config : ForecastConfig
-        Forecast configuration (contains vary_z_evolution flag).
+        Forecast configuration (contains vary_z_evolution flag and
+        fixed_params list).
     z_min : float
         Minimum survey redshift.
     z_max : float
@@ -71,6 +73,13 @@ def get_varied_params(
     Returns
     -------
     varied : list of (param_name, fiducial_value) tuples
+
+    Notes
+    -----
+    The ``fixed_params`` mechanism is useful for focused science cases.
+    For example, a dwarf-galaxy forecast might fix gamma_0 and log_M1_0
+    (high-mass parameters) since dwarf bins live deep in the low-mass
+    power-law regime where the signal is insensitive to those parameters.
     """
     # Always vary the z=0 shape parameters
     varied = [
@@ -97,6 +106,21 @@ def get_varied_params(
             ('nu_beta', params.nu_beta),
             ('nu_gamma', params.nu_gamma),
         ]
+
+    # Remove any explicitly fixed parameters
+    if forecast_config.fixed_params:
+        fixed_set = set(forecast_config.fixed_params)
+        # Validate that fixed param names are recognized
+        all_param_names = {name for name, _ in varied}
+        unknown = fixed_set - all_param_names
+        if unknown:
+            import warnings
+            warnings.warn(
+                f"fixed_params contains unknown parameter(s): {sorted(unknown)}. "
+                f"These will be ignored. Valid names: {sorted(all_param_names)}",
+                stacklevel=2,
+            )
+        varied = [(name, val) for name, val in varied if name not in fixed_set]
 
     return varied
 

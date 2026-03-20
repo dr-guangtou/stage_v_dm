@@ -322,6 +322,13 @@ class ForecastConfig:
         If True, include lensing nuisance parameters (shear calibration m,
         source photo-z bias dz) in the Fisher matrix and marginalize over
         them with Gaussian priors from NuisanceConfig.
+    fixed_params : list of str
+        SHMR parameter names to hold fixed (not varied in the Fisher matrix).
+        Useful for focused science cases, e.g., fixing gamma_0 and log_M1_0
+        for dwarf-galaxy forecasts where the high-mass SHMR is irrelevant.
+        Overrides the default parameter selection in get_varied_params().
+        Empty list (default) means no additional parameters are fixed beyond
+        the standard logic (e.g., nu_* when vary_z_evolution is False).
     """
 
     R_min_Mpc: float = 0.1
@@ -335,3 +342,4 @@ class ForecastConfig:
     n_Mh_bins: int = 200
     systematic_floor_fraction: float = 0.0
     include_nuisance_params: bool = False
+    fixed_params: list[str] = field(default_factory=list)
