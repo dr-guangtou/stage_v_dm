@@ -544,17 +544,19 @@ SHMRParams (config.py)
   │
   ▼
 HOD: N_cen(Mh), N_sat(Mh)               # halo_model.py
+  │                                        (uses σ_eff = √(σ²_SHMR + σ²_obs)
+  │                                         when sigma_log_Mstar_obs > 0)
   │
   ├─── × dn/dMh (Tinker08 HMF)
   ├─── × ΔΣ_NFW(R, Mh, z)  ─────────── ΔΣ(R | bin, z)     # halo_model.py
   ├─── × b(Mh, z) (Tinker10 bias) ───── b_eff(bin, z)      # halo_model.py
-  └─── (integrate) ──────────────────── n_gal(bin, z)       # halo_model.py
+  └─── (integrate) ──────────────────── Φ(bin, z) = n_gal   # halo_model.py
                                               │
                                               ▼
                                     Covariance (covariance.py)
                                     ├── Var(ΔΣ):  shape noise + sys. floor
                                     ├── Var(b):   cosmic var. + shot noise
-                                    └── Var(n):   Poisson
+                                    └── Var(Φ):   Poisson + cosmic variance
                                               │
                                               ▼
                                     Fisher matrix (fisher.py)
@@ -725,7 +727,196 @@ The comparison plot is saved as
 
 ---
 
-## 9. Key Assumptions and Limitations
+## 9. Stellar Mass Measurement Uncertainty
+
+### 9.1 The Problem
+
+The current pipeline bins galaxies by *true* stellar mass when computing
+the HOD.  In practice, stellar masses are *estimated* from photometry and
+spectroscopy with a statistical uncertainty σ_obs(log M*).  Spectroscopic
+surveys with good SED coverage achieve σ_obs ≈ 0.1 dex; photometric-only
+estimates are typically 0.15–0.25 dex.
+
+When galaxies are binned by *estimated* stellar mass, two effects arise:
+
+1. **Eddington bias:** Because the stellar mass function is steep (more
+   low-mass galaxies than high-mass), the net scattering is *upward* —
+   more galaxies scatter into a bin from below than scatter out above.
+   This shifts the mean halo mass of observed bins toward lower masses.
+
+2. **Diluted scatter sensitivity:** The effective scatter seen in the data
+   is σ_eff = √(σ²_SHMR + σ²_obs), which is always ≥ σ_SHMR.  This
+   broadens the HOD transitions and reduces the Fisher information on
+   the intrinsic scatter parameters.
+
+### 9.2 Mathematical Framework
+
+At fixed halo mass Mh, the *true* stellar mass follows:
+
+```
+log M*_true ~ N(⟨log M*⟩(Mh, z),  σ_SHMR²(Mh))
+```
+
+The *observed* (estimated) stellar mass adds an independent measurement error:
+
+```
+log M*_obs = log M*_true + ε,    ε ~ N(0, σ_obs²)
+```
+
+The marginal distribution of log M*_obs at fixed Mh is the convolution of
+two Gaussians:
+
+```
+log M*_obs | Mh  ~  N(⟨log M*⟩(Mh, z),  σ_SHMR²(Mh) + σ_obs²)
+```
+
+This means the HOD per *observed* bin `[log M*_lo, log M*_hi]` is:
+
+```
+N_cen(Mh | observed bin) = ½ [erf(x_hi) − erf(x_lo)]
+```
+
+where the erf arguments use the **effective scatter**:
+
+```
+σ_eff(Mh) = √[σ_SHMR²(Mh) + σ_obs²]
+x = (log M*_edge − ⟨log M*⟩) / (√2 · σ_eff)
+```
+
+This is exact — no numerical integration or convolution is needed.
+
+### 9.3 Magnitude of the Effect
+
+For the Cao & Tinker (2020) scatter model with σ_obs = 0.1 dex:
+
+| Halo mass regime | σ_SHMR | σ_eff | Fractional increase |
+|-----------------|--------|-------|---------------------|
+| Clusters (log Mh ≫ 12) | 0.18 | 0.206 | +15% |
+| Transition (log Mh ~ 12) | 0.28 | 0.297 | +6% |
+| Dwarfs (log Mh ≪ 12) | 0.38 | 0.393 | +3% |
+
+The impact is largest at high halo masses where σ_SHMR is smallest.
+For dwarf galaxies, where σ_SHMR is already large (0.38 dex), the 0.1 dex
+measurement error adds only ~3% in quadrature — a negligible change.
+
+### 9.4 Implementation
+
+**Configuration:** `ForecastConfig.sigma_log_Mstar_obs` (default 0.0 for
+backward compatibility; set to 0.1 for spectroscopic surveys).
+
+**Code change:** In `halo_model.n_cen()` and `n_sat()`, the scatter used
+in the erf computation is replaced with σ_eff:
+
+```python
+sigma = scatter_at_Mh(log_Mh_grid, params)
+if sigma_obs > 0:
+    sigma = np.sqrt(sigma**2 + sigma_obs**2)
+```
+
+This single change propagates through all downstream observables (ΔΣ,
+b_eff, n_gal) because they all weight by the HOD functions.
+
+
+---
+
+## 10. Stellar Mass Function as a Data Vector
+
+### 10.1 Motivation
+
+The stellar mass function (SMF) — the volume number density of galaxies as
+a function of stellar mass — is one of the most fundamental constraints on
+the galaxy-halo connection.  It directly constrains the integral of the HOD
+over the halo mass function:
+
+```
+Φ(log M*_lo, log M*_hi) = n_gal = ∫ dMh (dn/dMh) · N_total(Mh)
+```
+
+In the real world, the SMF is routinely measured alongside galaxy-galaxy
+lensing and galaxy clustering and jointly fit to constrain the SHMR.
+
+### 10.2 Relationship to Existing n_gal Observable
+
+The current pipeline already includes n_gal as a clustering observable with
+Poisson-only variance `Var(n) = n / V`.  The SMF observable is physically
+the same quantity, but with a more complete covariance model that includes
+both Poisson noise and sample (cosmic) variance.
+
+**Decision:** Replace the existing n_gal clustering observable with the SMF
+data vector.  They measure the same physical quantity; the difference is
+only in the noise model.  The effective bias b_eff is retained as a
+separate clustering observable.
+
+### 10.3 SMF Covariance Model
+
+Two contributions to the variance on Φ per (z, M*) bin:
+
+**Poisson noise:**
+```
+σ²_Poisson(Φ_i) = Φ_i / V_survey
+```
+
+This comes from the finite number of galaxies: N_i = Φ_i × V_survey,
+so σ(Φ_i) = √N_i / V = √(Φ_i / V).
+
+**Sample (cosmic) variance:**
+```
+σ²_cv(Φ_i) = b²_eff,i × σ²_m(V, z) × Φ²_i
+```
+
+The galaxy overdensity traces the matter overdensity amplified by the
+effective bias.  The matter variance σ²_m on the survey scale is:
+
+```
+σ²_m(V, z) = (1/V²) ∫ d³x d³x'  ξ_mm(|x−x'|, z)
+            ≈ ∫ dk/(2π²)  k²  P(k, z)  |W(k, V)|²
+```
+
+where W(k, V) is a top-hat window function of volume V.  For a survey
+volume V at redshift z, this is computed from the colossus matter power
+spectrum.
+
+**Combined covariance:**
+```
+σ²(Φ_i) = Φ_i / V_survey  +  b²_eff,i × σ²_m(V, z) × Φ²_i
+```
+
+In the Poisson-dominated regime (small V or rare populations):
+  σ(Φ)/Φ ≈ 1/√N.
+
+In the cosmic-variance-dominated regime (large V, abundant populations):
+  σ(Φ)/Φ ≈ b_eff × σ_m.
+
+### 10.4 Fisher Matrix Contribution
+
+The SMF adds a contribution to the Fisher matrix for each (z, M*) bin:
+
+```
+F_SMF += J_Φᵀ · J_Φ / σ²(Φ)
+```
+
+where `J_Φ = ∂Φ/∂θ` is the Jacobian of the galaxy number density with
+respect to the SHMR parameters — the same derivative already computed for
+the former n_gal clustering observable.
+
+### 10.5 Impact on Scatter Constraints
+
+The SMF is sensitive to scatter because scatter changes the mapping between
+the halo mass function (which sets the total number of halos) and the
+stellar mass function (which distributes those halos across observed bins).
+At fixed SHMR shape, increasing scatter broadens the HOD, redistributing
+galaxies across stellar mass bins and changing the predicted SMF shape.
+
+For dwarfs, where σ_SHMR varies strongly with halo mass (from 0.18 to
+0.38 dex), the SMF shape directly constrains the scatter gradient.
+Combined with lensing (which constrains the mean halo mass) and clustering
+(which constrains the bias), the SMF provides complementary information
+that can significantly tighten scatter constraints.
+
+
+---
+
+## 11. Key Assumptions and Limitations
 
 1. **NFW + linear 2-halo term.**  The lensing signal uses an NFW profile
    for the 1-halo term plus a linear-bias 2-halo term.  The transition
@@ -743,10 +934,10 @@ The comparison plot is saved as
    underestimates the true covariance and leads to slightly optimistic
    constraints.
 
-4. **Clustering reduced to two numbers.**  The full w_p(r_p) information
-   content is compressed to (b_eff, n_gal) per bin.  This discards
-   scale-dependent clustering information (e.g., the transition from
-   1-halo to 2-halo) but simplifies the covariance model.
+4. **Clustering reduced to b_eff + SMF.**  The full w_p(r_p) information
+   content is compressed to b_eff per bin (plus the SMF data vector).
+   This discards scale-dependent clustering information (e.g., the
+   transition from 1-halo to 2-halo) but simplifies the covariance model.
 
 5. **Fixed satellite prescription.**  The satellite parameters (α_sat,
    M1/Mmin) are not varied.  This is acceptable for relative survey
@@ -761,6 +952,12 @@ The comparison plot is saved as
    contributes independently to the Fisher matrix.  In reality,
    overlapping halo populations create correlations between adjacent
    M* bins.
+
+8. **No stellar mass bias.**  We assume the stellar mass estimator is
+   unbiased (⟨log M*_obs⟩ = ⟨log M*_true⟩).  In practice, systematic
+   biases in stellar mass estimation (from SPS model assumptions,
+   dust, IMF) can be significant.  We account only for the statistical
+   scatter σ_obs.
 
 
 ---

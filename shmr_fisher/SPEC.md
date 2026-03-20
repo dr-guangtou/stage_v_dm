@@ -73,7 +73,14 @@ Fixed for all forecasts. Fields: `n_source_per_arcmin2` (25.0), `sigma_e` (0.26)
 Lensing nuisance parameter priors for marginalization. Fields: `sigma_m` (0.02, shear calibration prior), `sigma_dz_source` (0.03, source photo-z bias prior).
 
 #### `ForecastConfig`
-Controls forecast behavior. Fields: `R_min_Mpc`, `R_max_Mpc`, `n_R_bins`, `dz`, `frac_step`, `vary_z_evolution`, `log_Mh_min`, `log_Mh_max`, `n_Mh_bins`, `systematic_floor_fraction` (0.0), `include_nuisance_params` (False).
+Controls forecast behavior. Fields: `R_min_Mpc`, `R_max_Mpc`, `n_R_bins`, `dz`, `frac_step`, `vary_z_evolution`, `log_Mh_min`, `log_Mh_max`, `n_Mh_bins`, `systematic_floor_fraction` (0.0), `include_nuisance_params` (False), `fixed_params` (empty list), `sigma_log_Mstar_obs` (0.0), `include_smf` (True).
+
+New Phase 5 fields:
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `fixed_params` | list[str] | [] | SHMR parameter names to hold fixed in the Fisher matrix. Useful for focused science (e.g., fixing `gamma_0` and `log_M1_0` for dwarf forecasts). |
+| `sigma_log_Mstar_obs` | float | 0.0 | Statistical uncertainty in observed log M* [dex]. When > 0, the HOD uses σ_eff = √(σ²_SHMR + σ²_obs). Set to 0.1 for spectroscopic surveys. |
+| `include_smf` | bool | True | Whether to include the stellar mass function as a data vector. When True, the n_gal observable uses Poisson + cosmic variance covariance. |
 
 ---
 
@@ -385,6 +392,42 @@ def survey_volume(z_lo: float, z_hi: float, area_deg2: float) -> float:
     """
 ```
 
+```python
+def smf_covariance(
+    n_gal_model: float,
+    b_eff: float,
+    survey_volume_Mpc3: float,
+    z: float,
+) -> float:
+    """
+    Variance on the stellar mass function (galaxy number density) per bin.
+
+    Combines Poisson noise and sample (cosmic) variance:
+
+        σ²(Φ) = Φ / V_survey  +  b²_eff × σ²_m(V, z) × Φ²
+
+    where σ²_m is the matter variance on the survey scale, computed from
+    the colossus matter power spectrum integrated over a spherical top-hat
+    window of radius R_survey = (3V / 4π)^{1/3}.
+
+    Parameters
+    ----------
+    n_gal_model : float
+        Model-predicted comoving galaxy number density [Mpc⁻³].
+    b_eff : float
+        Effective halo bias for this stellar mass bin.
+    survey_volume_Mpc3 : float
+        Comoving survey volume in this z-bin [Mpc³].
+    z : float
+        Central redshift.
+
+    Returns
+    -------
+    var_phi : float
+        Variance on Φ [Mpc⁻⁶].
+    """
+```
+
 #### Validation criteria (Tasks 7–8)
 - For N_lens = 10^5, n_s = 25/arcmin², z_l = 0.3: σ(ΔΣ) at R ~ 1 Mpc should be ~1–10 M☉/pc².
 - σ(ΔΣ) should scale as 1/√N_lens. Test by comparing N_lens = 10^4 vs 10^6.
@@ -434,11 +477,15 @@ def get_varied_params(params: SHMRParams, forecast_config: ForecastConfig,
     Auto-select parameters to vary based on survey z-range.
 
     Rules:
-    - Always vary: log_M1_0, N_0, beta_0, gamma_0, sigma_logMs (5 params)
+    - Always vary: log_M1_0, N_0, beta_0, gamma_0
+    - Scatter: sigma_logMs (1 param) or scatter_sigma_high + scatter_sigma_rise
+      (2 params) depending on use_mass_dependent_scatter
     - Also vary nu_M1, nu_N, nu_beta, nu_gamma IF:
         forecast_config.vary_z_evolution is True
         AND z_max > 0.4
         AND (z_max - z_min) > 0.3
+    - Remove any parameters listed in forecast_config.fixed_params
+      (with validation: unknown names trigger a warning)
 
     Returns list of (param_name, fiducial_value).
     """
@@ -492,8 +539,11 @@ def compute_fisher_matrix(
        b. For each M*-bin:
           - Compute N_lens in this bin (from survey's total N_gal,
             distributed across bins proportional to predicted n_gal × volume).
-          - Compute fiducial observables: ΔΣ(R), b_eff, n_gal.
-          - Compute covariance: lensing noise, clustering noise.
+          - Compute fiducial observables: ΔΣ(R), b_eff, Φ (= n_gal).
+            When sigma_log_Mstar_obs > 0, the HOD uses σ_eff = √(σ²_SHMR + σ²_obs).
+          - Compute covariance: lensing noise (shape noise + systematic floor),
+            clustering noise (cosmic variance + shot noise for b_eff),
+            SMF noise (Poisson + cosmic variance for Φ).
           - Compute Jacobian ∂obs/∂θ.
           - Accumulate Fisher contribution:
             F += J^T × C^{-1} × J
@@ -708,12 +758,14 @@ YAML config (or CLI args)
         ├──► For each (z_bin, M*_bin):
         │       │
         │       ├── halo_model.delta_sigma_bin()  ──► ΔΣ(R) = 1-halo NFW + 2-halo
+        │       │     (HOD uses σ_eff when sigma_log_Mstar_obs > 0)
         │       ├── halo_model.effective_bias()    ──► b_eff scalar
-        │       ├── halo_model.galaxy_number_density() ──► n_gal scalar
+        │       ├── halo_model.galaxy_number_density() ──► Φ = n_gal scalar (SMF)
         │       │
         │       ├── covariance.lensing_covariance()  ──► σ²(ΔΣ) per R-bin
         │       │     + systematic floor: σ² += (f_sys × ΔΣ_fid)²
-        │       ├── covariance.clustering_covariance() ──► σ²(b_eff), σ²(n_gal)
+        │       ├── covariance.clustering_covariance() ──► σ²(b_eff)
+        │       ├── covariance.smf_covariance()    ──► σ²(Φ) = Poisson + cosmic var.
         │       │
         │       ├── fisher.compute_derivatives()   ──► Jacobian ∂obs/∂θ
         │       │     (SHMR params via finite diff + nuisance analytically)
@@ -758,6 +810,12 @@ For the shared 5 z=0 parameters: `σ(Stage-V) < σ(Stage-IV) < σ(Stage-III)`.
 
 ### AT-8: Binning consistency
 Changing `dlog_Mstar` from 0.5 to 0.25 should not change total Fisher information by more than ~30% (finer bins add some information from better mass resolution, but should not change drastically).
+
+### AT-9: Stellar mass uncertainty effect
+With `sigma_log_Mstar_obs = 0.1`, all marginalized errors should be within a factor of 2 of the `sigma_log_Mstar_obs = 0` case. The change should be largest for the scatter parameters (`scatter_sigma_high`, `scatter_sigma_rise`) and smallest for the SHMR shape parameters (`log_M1_0`, `beta_0`).
+
+### AT-10: SMF covariance consistency
+`smf_covariance(n_gal, b_eff, V, z)` should return a variance ≥ the Poisson-only variance `n_gal / V`. The cosmic variance contribution should dominate for large V and high b_eff.
 
 ---
 

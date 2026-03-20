@@ -7,9 +7,11 @@ Fisher matrix forecast tool for predicting how well spectroscopic surveys (combi
 Given a spectroscopic survey configuration (area, redshift range, galaxy count, mass completeness), this tool computes:
 
 - **Galaxy-galaxy lensing signal** DeltaSigma(R) via the halo model (HOD + HMF + NFW 1-halo + analytic 2-halo from colossus)
-- **Clustering summary statistics** (effective halo bias, galaxy number density) per stellar mass bin
+- **Stellar mass function** (volume number density per M* bin) with Poisson + cosmic variance covariance
+- **Clustering summary statistics** (effective halo bias) per stellar mass bin
 - **Fisher information matrix** for the Moster+2013 SHMR with optional mass-dependent scatter (Cao & Tinker 2020)
 - **Marginalized parameter constraints** with optional systematic errors (shear calibration, photo-z bias, fractional floor)
+- **Stellar mass uncertainty** propagation via effective scatter σ_eff = √(σ²_SHMR + σ²_obs)
 
 The tool is designed for **relative survey comparisons** (Stage-III vs IV vs V), not absolute error bars.
 
@@ -119,10 +121,12 @@ Scatter: either constant (sigma_logMs = 0.15 dex) or mass-dependent following Ca
 
 ## Systematic error options
 
-Both are toggleable via YAML config or `ForecastConfig`:
+All toggleable via YAML config or `ForecastConfig`:
 
 - **Fractional floor** (`systematic_floor_fraction`): adds (f_sys * DS_fid)^2 to the lensing variance per radial bin. Captures baryonic effects, miscentering, etc.
 - **Nuisance marginalization** (`include_nuisance_params`): adds shear calibration bias (m) and source photo-z bias (dz) to the Fisher matrix with Gaussian priors from `NuisanceConfig`.
+- **Stellar mass uncertainty** (`sigma_log_Mstar_obs`): propagates statistical uncertainty in log M* through the HOD via an effective scatter σ_eff = √(σ²_SHMR + σ²_obs). Set to 0.1 dex for spectroscopic surveys (default 0.0).
+- **Fixed parameters** (`fixed_params`): hold specific SHMR parameters fixed in the Fisher matrix for focused science cases (e.g., `[gamma_0, log_M1_0]` for dwarf-only forecasts).
 
 ## Predefined surveys
 

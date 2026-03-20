@@ -767,6 +767,12 @@ After each phase, verify:
 - Single effective source redshift per lens bin (vs. full n(z_s) integration)
 - Clustering info simplified to (b_eff, n_gal) rather than full w_p(r_p)
 - Scatter assumed constant with z (weak assumption; Behroozi+2019 finds little evolution)
+- ~~Perfect stellar mass knowledge~~ **Phase 5** (Tasks 13–14): implementing
+  σ_obs convolution and SMF data vector to account for stellar mass
+  measurement uncertainty and Eddington bias.
+- ~~No stellar mass function observable~~ **Phase 5** (Task 14): adding
+  SMF (volume number density per M* bin) as a data vector with
+  Poisson + cosmic variance covariance.
 
 ---
 
@@ -801,6 +807,181 @@ After each phase, verify:
 
 ---
 
+## Phase 5: Stellar Mass Uncertainty & SMF Data Vector (Tasks 13–16)
+
+### Motivation
+
+The forecast pipeline currently assumes perfect stellar mass knowledge when
+binning galaxies.  In practice, stellar masses are estimated from photometry
+and/or spectroscopy with a statistical uncertainty σ_obs(log M*) ≈ 0.1 dex.
+This introduces **Eddington bias** — net upscatter into bins on the steep
+side of the stellar mass function.  Additionally, the stellar mass function
+(SMF) itself is a powerful constraint on the SHMR that has not yet been
+included as a data vector.
+
+This phase addresses both issues:
+
+1. **Stellar mass measurement error** — propagate σ_obs through the HOD and
+   all observables via an effective scatter.
+2. **SMF as a data vector** — add the volume number density of galaxies per
+   stellar mass bin as a Fisher observable, replacing the current ad hoc
+   n_gal clustering observable.
+
+### Task 13: Stellar Mass Uncertainty in the HOD
+
+**The key insight:** At fixed halo mass Mh, the true stellar mass is drawn
+from a log-normal with intrinsic scatter σ_SHMR(Mh).  The *observed*
+(estimated) stellar mass adds an independent Gaussian measurement error
+σ_obs in log-space.  Because both distributions are Gaussian in log M*, the
+convolution is another Gaussian with combined width:
+
+```
+σ_eff(Mh) = √[σ_SHMR²(Mh) + σ_obs²]
+```
+
+When we bin galaxies by *observed* stellar mass, the HOD per observed bin
+is equivalent to the HOD computed with the *effective* scatter σ_eff.  This
+is exact — no numerical convolution is needed.
+
+**Implementation:**
+
+1. Add `sigma_log_Mstar_obs: float = 0.0` to `ForecastConfig` (default 0
+   for backward compatibility).
+2. In `halo_model.n_cen()`, when computing the erf integral, replace
+   `σ = scatter_at_Mh(log_Mh, params)` with:
+   ```
+   σ_eff = √(scatter_at_Mh(log_Mh, params)² + sigma_obs²)
+   ```
+   This single change propagates through ΔΣ, b_eff, and n_gal, because they
+   all weight by n_cen (and n_sat, which also uses n_cen internally).
+3. Update `n_sat()` similarly: the threshold occupation `N_cen_thresh` also
+   uses the scatter, so it should use σ_eff.
+
+**Physical effects:**
+- The HOD transitions become broader (more low-mass halos contribute to each
+  observed stellar mass bin).
+- The effective mean halo mass per observed bin shifts slightly toward lower
+  masses (Eddington bias from the steep HMF).
+- ΔΣ is slightly diluted (lower mean halo mass → weaker signal).
+- Sensitivity to intrinsic scatter parameters (σ_high, σ_rise) is reduced
+  because σ_eff depends on both σ_SHMR and σ_obs, and σ_obs is fixed.
+
+**Validation:**
+- Compare N_cen(Mh) profiles for a [9.0, 9.5] bin with σ_obs = 0 vs 0.1:
+  the σ_obs = 0.1 curve should be broader and shifted to lower Mh.
+- At σ_obs = 0.1 and σ_SHMR = 0.18 (high-mass halos): σ_eff = 0.206,
+  a ~15% increase.  At σ_SHMR = 0.38 (dwarfs): σ_eff = 0.393, only ~3%.
+
+### Task 14: SMF Data Vector
+
+**Observable:** For each stellar mass bin [log M*_lo, log M*_hi] in each
+redshift slice, the volume number density of galaxies:
+
+```
+Φ_i = n_gal(log M*_lo, log M*_hi, params, z)    [Mpc⁻³]
+```
+
+This is the same quantity already computed by `galaxy_number_density()` in
+`halo_model.py`.  What changes is the **covariance model**.
+
+**SMF covariance:** Two contributions:
+
+1. **Poisson noise**: σ²_Poisson = Φ_i / V_survey.  Equivalently,
+   σ²_Poisson = 1 / (N_i × V_survey), where N_i = Φ_i × V_survey is the
+   count in the bin.  This is the dominant term for rare galaxy populations.
+
+2. **Sample (cosmic) variance**: σ²_cv = b²_eff,i × σ²_m(V) × Φ²_i.
+   The matter variance σ²_m on the survey scale is:
+   ```
+   σ²_m(V, z) ≈ ∫ dk/(2π²) k² P(k, z) |W(k, V)|²
+   ```
+   For a rough estimate at the survey volumes of interest (V ~ 10⁶–10⁸ Mpc³),
+   σ_m ~ 0.01–0.001.  The effective bias b_eff amplifies this for the galaxy
+   field.
+
+Combined:
+```
+σ²(Φ_i) = Φ_i / V_survey + b²_eff,i × σ²_m(V, z) × Φ²_i
+```
+
+**Relationship to existing n_gal observable:**
+
+The current pipeline already includes n_gal as a clustering observable with
+Poisson-only variance `Var(n) = n / V`.  The SMF observable is physically
+the same quantity, but with a more complete covariance (Poisson + cosmic
+variance).  We adopt **Option A: replace** the existing n_gal clustering
+observable with the SMF, since they measure the same thing.
+
+The effective bias observable (b_eff) is retained as a separate clustering
+observable.
+
+**Implementation:**
+
+1. Add `smf_covariance()` to `covariance.py`:
+   ```python
+   def smf_covariance(
+       n_gal_model: float,
+       b_eff: float,
+       survey_volume_Mpc3: float,
+       z: float,
+   ) -> float:
+       """Variance on the SMF (galaxy number density) per bin."""
+   ```
+   This computes Poisson + cosmic variance.  The matter variance σ²_m is
+   estimated from the colossus matter power spectrum integrated over a
+   top-hat window function of size V^(1/3).
+
+2. Modify `clustering_covariance()`:
+   - Option: have it return only `var_b` (bias variance), since `var_n` is
+     now handled by `smf_covariance()`.
+   - Or: keep the signature unchanged but use the improved covariance.
+
+3. In `compute_fisher_matrix()`:
+   - Add an `include_smf: bool = True` flag to `ForecastConfig`.
+   - When enabled, the n_gal contribution uses the SMF covariance
+     (Poisson + cosmic variance) instead of Poisson-only.
+   - The Jacobian for n_gal is already computed; only the covariance changes.
+
+### Task 15: Integration and Testing
+
+1. Run the dwarf regime forecast with σ_obs = 0.1 dex and compare with
+   σ_obs = 0 to quantify the degradation from stellar mass uncertainty.
+2. Run with the SMF covariance (Poisson + cosmic variance) and compare with
+   the previous Poisson-only n_gal result.
+3. Verify that the Fisher matrix remains well-conditioned (cond < 10^10).
+4. Generate updated summary figures.
+
+### Task 16: Validation and Figures
+
+**Validation checks:**
+- With σ_obs = 0.1 dex, all constraints should degrade by ≤ 20% for the
+  main SHMR shape parameters (the effect is small because σ_obs ≪ σ_SHMR
+  for dwarf halos).
+- The scatter constraints (σ_high, σ_rise) should degrade more, because
+  the effective scatter now has a fixed floor from σ_obs.
+- With SMF included, scatter constraints may improve relative to
+  lensing-only, because the SMF is directly sensitive to the integral of
+  the HOD (which depends on scatter).
+
+**Figures:**
+- N_cen(Mh) comparison: σ_obs = 0 vs 0.1 dex for a representative bin.
+- Error bar comparison: before/after σ_obs, before/after SMF inclusion.
+
+---
+
+## Stretch Goals (if time permits)
+1. Add w_p(r_p) as a full observable (replace b_eff/n_gal with radial bins)
+2. ~~Add nuisance parameters (shear calibration, photo-z bias) with Gaussian priors~~ **DONE**
+3. ~~Allow mass-dependent scatter σ_logMs(Mh)~~ **DONE** (Cao & Tinker 2020)
+4. Compare Fisher forecast with a quick MCMC on mock data (using `emcee`)
+5. Produce a Jupyter notebook version for interactive exploration
+6. Allow user to add external priors (e.g., SDSS z=0 SHMR constraints) to high-z-only forecasts
+7. ~~Make surveys configurable via YAML~~ **DONE**
+8. ~~Allow fixing specific SHMR parameters (fixed_params)~~ **DONE**
+9. ~~Implement 2-halo lensing term~~ **DONE**
+
+---
+
 ## References
 - Moster, Naab & White (2013), MNRAS, 428, 3121 — SHMR parameterization with z-evolution
 - Behroozi, Conroy & Wechsler (2010), ApJ, 717, 379 — SHMR analysis
@@ -811,3 +992,4 @@ After each phase, verify:
 - Wright & Brainerd (2000), ApJ, 534, 34 — Analytic NFW lensing
 - Wechsler & Tinker (2018), ARA&A, 56, 435 — Galaxy-halo connection review
 - Oguri & Takada (2011), PRD, 83, 023008 — Fisher forecast for lensing surveys
+- Cao & Tinker (2020), MNRAS, 498, 5080 — Mass-dependent SHMR scatter
