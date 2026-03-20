@@ -342,6 +342,71 @@ def survey_volume(
     return f_sky * V_shell
 
 
+def smf_covariance(
+    n_gal_model: float,
+    b_eff: float,
+    survey_volume_Mpc3: float,
+    z: float,
+) -> float:
+    """
+    Variance on the galaxy number density from the stellar mass function.
+
+    Combines Poisson shot noise and cosmic variance contributions:
+
+        var(n_gal) = n_gal / V_survey + b_eff^2 * sigma_m^2 * n_gal^2
+
+    where sigma_m^2 is the matter RMS fluctuation on the survey scale,
+    computed from colossus for the effective survey radius at redshift z.
+
+    Parameters
+    ----------
+    n_gal_model : float
+        Model-predicted comoving galaxy number density [Mpc^{-3}].
+    b_eff : float
+        Effective halo bias [dimensionless].
+    survey_volume_Mpc3 : float
+        Comoving survey volume in this z-bin [Mpc^3].
+    z : float
+        Central redshift of the bin.
+
+    Returns
+    -------
+    var_n : float
+        Variance on n_gal [Mpc^{-6}].
+
+    Notes
+    -----
+    The cosmic variance term accounts for the fact that the survey
+    volume is a biased tracer of the underlying matter field. The
+    effective survey radius is computed as the radius of a sphere
+    with the same volume, and sigma_m is the matter RMS fluctuation
+    smoothed on that scale.
+
+    References
+    ----------
+    Moster, Somerville & Newman (2011), ApJ, 731, 113 — Eq. 13.
+    """
+    if survey_volume_Mpc3 <= 0 or n_gal_model <= 0:
+        return np.inf
+
+    cosmo = cosmology.getCurrent()
+    h = cosmo.H0 / 100.0
+
+    # Effective survey radius: sphere with same volume [Mpc]
+    R_survey = (3.0 * survey_volume_Mpc3 / (4.0 * np.pi)) ** (1.0 / 3.0)
+    # colossus sigma() expects R in Mpc/h
+    R_survey_h = R_survey * h  # [Mpc/h]
+    sigma_m = cosmo.sigma(R_survey_h, z)  # matter RMS fluctuation
+
+    # Poisson term: var = n_gal / V [Mpc^{-6}]
+    var_poisson = n_gal_model / survey_volume_Mpc3
+
+    # Cosmic variance term: var = b_eff^2 * sigma_m^2 * n_gal^2 [Mpc^{-6}]
+    var_cosmic = b_eff**2 * sigma_m**2 * n_gal_model**2
+
+    return var_poisson + var_cosmic
+
+
 def clustering_covariance(
     n_gal_model: float,
     b_eff: float,

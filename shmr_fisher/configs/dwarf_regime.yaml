@@ -26,6 +26,8 @@ forecast:
   systematic_floor_fraction: 0.05
   include_nuisance_params: true
   vary_z_evolution: false
+  sigma_log_Mstar_obs: 0.1
+  include_smf: true
   fixed_params:
     - gamma_0
     - log_M1_0

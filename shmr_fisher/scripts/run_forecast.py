@@ -202,6 +202,8 @@ def _save_results(
             "n_R_bins": forecast_config.n_R_bins,
             "dz": forecast_config.dz,
             "frac_step": forecast_config.frac_step,
+            "sigma_log_Mstar_obs": forecast_config.sigma_log_Mstar_obs,
+            "include_smf": forecast_config.include_smf,
         },
         "surveys": {},
     }
