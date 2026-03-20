@@ -31,7 +31,7 @@ shmr_fisher/
 
 **Install:**
 ```bash
-pip install colossus numpy scipy matplotlib emcee astropy
+uv add colossus numpy scipy matplotlib astropy pyyaml
 ```
 
 **Key dependency: `colossus`** (Diemer 2018). This is a pure-Python package, no compilation needed, and provides:

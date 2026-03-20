@@ -510,6 +510,7 @@ dependencies = [
     { name = "colossus" },
     { name = "matplotlib" },
     { name = "numpy" },
+    { name = "pyyaml" },
     { name = "scipy" },
 ]
 
@@ -519,6 +520,7 @@ requires-dist = [
     { name = "colossus", specifier = ">=1.3.14" },
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "numpy", specifier = ">=2.4.3" },
+    { name = "pyyaml", specifier = ">=6.0" },
     { name = "scipy", specifier = ">=1.17.1" },
 ]
 

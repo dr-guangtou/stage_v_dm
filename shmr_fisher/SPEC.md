@@ -11,7 +11,9 @@ A Python package that computes Fisher matrix forecasts for SHMR parameter constr
 ### 2.1 `config.py` — Configuration Dataclasses
 
 #### `SHMRParams`
-Stores the 9-parameter Moster+2013 SHMR model (4 z=0 shape + 4 evolution + 1 scatter).
+Stores the Moster+2013 SHMR model with optional mass-dependent scatter (Cao & Tinker 2020).
+
+**Core parameters (9 — always present):**
 
 | Parameter | Symbol | Fiducial | Physical meaning |
 |-----------|--------|----------|------------------|
@@ -23,7 +25,23 @@ Stores the 9-parameter Moster+2013 SHMR model (4 z=0 shape + 4 evolution + 1 sca
 | `nu_N` | νN | −0.0247 | Redshift evolution of N |
 | `nu_beta` | νβ | −0.826 | Redshift evolution of β |
 | `nu_gamma` | νγ | 0.329 | Redshift evolution of γ |
-| `sigma_logMs` | σ_log M* | 0.15 | Log-normal scatter at fixed Mh [dex], constant with z |
+| `sigma_logMs` | σ_log M* | 0.15 | Log-normal scatter at fixed Mh [dex], constant with z (used when `use_mass_dependent_scatter=False`) |
+
+**Mass-dependent scatter parameters (4 — active when `use_mass_dependent_scatter=True`):**
+
+Following Cao & Tinker (2020, MNRAS, 498, 5080), the scatter varies with halo mass via a tanh transition:
+
+    σ(log M* | Mh) = σ_high + σ_rise × [1 − tanh((log Mh − log Mh,break) / δ)]
+
+| Parameter | Symbol | Fiducial | Physical meaning |
+|-----------|--------|----------|------------------|
+| `use_mass_dependent_scatter` | — | False | Toggle mass-dependent scatter model |
+| `scatter_sigma_high` | σ_high | 0.18 | Asymptotic scatter at high Mh [dex] |
+| `scatter_sigma_rise` | σ_rise | 0.10 | Half-amplitude of rise toward low Mh [dex] |
+| `scatter_log_Mh_break` | log Mh,break | 12.0 | Transition halo mass [log₁₀(M☉)] |
+| `scatter_delta` | δ | 0.4 | Transition width [dex] |
+
+When mass-dependent scatter is enabled, `sigma_logMs` is replaced by these 4 parameters. The Fisher matrix varies `scatter_sigma_high` and `scatter_sigma_rise` (the other two are held fixed). At high Mh (≫ break), σ → σ_high ≈ 0.18 dex. At low Mh (≪ break), σ → σ_high + 2σ_rise ≈ 0.38 dex.
 
 Must support:
 - `to_dict()` → dictionary of {name: value} for all parameters
@@ -51,8 +69,11 @@ Methods:
 #### `LensingConfig`
 Fixed for all forecasts. Fields: `n_source_per_arcmin2` (25.0), `sigma_e` (0.26), `z_source_median` (1.0).
 
+#### `NuisanceConfig`
+Lensing nuisance parameter priors for marginalization. Fields: `sigma_m` (0.02, shear calibration prior), `sigma_dz_source` (0.03, source photo-z bias prior).
+
 #### `ForecastConfig`
-Controls forecast behavior. Fields: `R_min_Mpc`, `R_max_Mpc`, `n_R_bins`, `dz`, `frac_step`, `vary_z_evolution`, `log_Mh_min`, `log_Mh_max`, `n_Mh_bins`.
+Controls forecast behavior. Fields: `R_min_Mpc`, `R_max_Mpc`, `n_R_bins`, `dz`, `frac_step`, `vary_z_evolution`, `log_Mh_min`, `log_Mh_max`, `n_Mh_bins`, `systematic_floor_fraction` (0.0), `include_nuisance_params` (False).
 
 ---
 
@@ -132,7 +153,7 @@ def phi_Mstar_given_Mh(log_Mstar: np.ndarray, log_Mh: float,
 - At z=0: peak of M*/Mh should be between 0.02 and 0.06, occurring at log Mh between 11.5 and 12.5.
 - `mean_log_Mstar(12.0, fiducial, z=0)` should return ~10.4–10.8.
 - `mean_log_Mh(mean_log_Mstar(12.0, ...))` should return 12.0 (round-trip test).
-- Plot: M*/Mh vs Mh at z=0, 0.5, 1.0, 2.0 → save as `outputs/shmr_validation.pdf`.
+- Plot: M*/Mh vs Mh at z=0, 0.5, 1.0, 2.0 → save as `outputs/phase1/shmr_validation.png`.
 
 ---
 
@@ -207,9 +228,15 @@ def delta_sigma_bin(R_Mpc: np.ndarray, log_Mstar_lo: float, log_Mstar_hi: float,
     """
     Halo-model prediction for ΔΣ(R) averaged over a stellar mass bin.
 
-    ΔΣ(R|bin,z) = ∫ dMh (dn/dMh) [N_cen × ΔΣ_NFW + N_sat × ΔΣ_sat] / n_gal
+    Total signal = 1-halo + 2-halo:
+        ΔΣ_1h(R|bin,z) = ∫ dMh (dn/dMh) [N_cen × ΔΣ_NFW + N_sat × ΔΣ_sat] / n_gal
+        ΔΣ_2h(R|bin,z) = b_eff(bin,z) × ΔΣ_matter(R, z)
 
-    Integration is done via np.trapz over log_Mh_grid.
+    where ΔΣ_matter is the matter-matter excess surface density computed from
+    the projected matter correlation function ξ_mm (via colossus), cached per
+    redshift for performance.
+
+    Integration is done via np.trapezoid over log_Mh_grid.
 
     Parameters
     ----------
@@ -223,7 +250,7 @@ def delta_sigma_bin(R_Mpc: np.ndarray, log_Mstar_lo: float, log_Mstar_hi: float,
     Returns
     -------
     ds : array, shape (N_R,)
-        ΔΣ in M☉/Mpc².
+        ΔΣ in M☉/Mpc² (1-halo + 2-halo).
     """
 ```
 
@@ -257,7 +284,7 @@ def galaxy_number_density(log_Mstar_lo: float, log_Mstar_hi: float,
 - `delta_sigma_nfw(R, 1e13, 0.3)` at R=0.5 Mpc should give ΔΣ ~ 10–100 M☉/pc² (i.e., 10^13–10^14 M☉/Mpc²).
 - `effective_bias` for a bin around M* ~ 10^{10.5} at z=0.3 should be ~1.0–2.0.
 - `galaxy_number_density` for M* ∈ [10.0, 10.5] at z=0.3 should be ~10^{-3}–10^{-2} Mpc^{-3}.
-- Plot: ΔΣ(R) for bins [9.5,10], [10,10.5], [10.5,11], [11,11.5] at z=0.3 → save as `outputs/delta_sigma_model.pdf`.
+- Plot: ΔΣ(R) for bins [9.5,10], [10,10.5], [10.5,11], [11,11.5] at z=0.3 → save as `outputs/phase2/delta_sigma_model.png`.
 
 ---
 
@@ -453,6 +480,7 @@ def compute_fisher_matrix(
     survey_config: SurveyConfig,
     lensing_config: LensingConfig,
     forecast_config: ForecastConfig,
+    nuisance_config: NuisanceConfig | None = None,
 ) -> tuple[np.ndarray, list[str], dict]:
     """
     Main Fisher matrix computation.
@@ -497,6 +525,18 @@ def fisher_ellipse(fisher_matrix: np.ndarray, i: int, j: int,
     """
     Return (x, y) coordinates of the n_sigma Fisher ellipse
     for parameter pair (i, j), marginalized over all other parameters.
+    """
+```
+
+```python
+def extract_shmr_constraints(fisher: np.ndarray, param_names: list[str]
+                              ) -> tuple[np.ndarray, list[str]]:
+    """
+    Extract SHMR-only constraints by marginalizing over nuisance parameters.
+
+    If the Fisher matrix includes nuisance parameters (shear_m, photo_dz_source),
+    this function marginalizes over them and returns errors on only the
+    SHMR parameters.
     """
 ```
 
@@ -579,39 +619,72 @@ def plot_improvement_factor(results_baseline: dict, results_target: dict, save_p
 
 ---
 
-### 2.9 `scripts/run_forecast.py` — Main Driver
+### 2.9 `shmr_fisher/config_io.py` — YAML Configuration Loader
+
+Parses a YAML config file into a `RunConfig` dataclass that drives the entire forecast pipeline.
 
 ```python
-"""
-Main forecast driver.
+@dataclass
+class RunConfig:
+    run_name: str                           # From filename stem or explicit override
+    shmr_params: SHMRParams
+    forecast_config: ForecastConfig
+    lensing_config: LensingConfig
+    nuisance_config: NuisanceConfig | None
+    surveys: dict[str, SurveyConfig]        # 1–4 surveys
+    output_dir: Path                        # outputs/{run_name}/
 
-Usage:
-    python -m scripts.run_forecast [--config CONFIG_FILE]
-
-Without --config, runs all predefined surveys from survey_configs.py.
-
-Outputs:
-    outputs/forecast_results.json    — all constraints
-    outputs/forecast_results.npz     — Fisher matrices
-    outputs/*.pdf                    — all figures
-"""
+def load_run_config(yaml_path: str | Path) -> RunConfig:
+    """Load and validate a YAML config file."""
 ```
 
-### 2.10 `scripts/run_sweep.py` — Parameter Sweep Driver
+The YAML schema supports z-dependent completeness via `log_Mstar_min_z_dep: {base, slope}`, which constructs a lambda `f(z) = base + slope * z` — avoiding `eval()` while covering all current use cases.
 
-```python
-"""
-Parameter sweep driver.
+Validation rules:
+- `surveys` section must have 1–4 entries.
+- Each survey must have all required fields: `name`, `area_deg2`, `z_min`, `z_max`, `n_gal_total`, `log_Mstar_min`.
+- Warns if `include_nuisance_params` is True but no `nuisance` section is provided.
 
-Usage:
-    python -m scripts.run_sweep --base stage5_wide --param n_gal_total --values 1e6,5e6,1e7,5e7,1e8
-    python -m scripts.run_sweep --base stage5_wide --param log_Mstar_min --values 9.5,9.0,8.5,8.0
-    python -m scripts.run_sweep --base stage5_wide --param dlog_Mstar --values 1.0,0.5,0.25
+### 2.10 `scripts/run_forecast.py` — Main Driver
+
+```
+Usage (YAML mode — preferred):
+    uv run python scripts/run_forecast.py --config configs/default.yaml
+
+Usage (legacy mode):
+    uv run python scripts/run_forecast.py --surveys stage4_low_z stage5_wide
+    uv run python scripts/run_forecast.py --systematics
+
+Outputs (YAML mode):
+    outputs/{run_name}/config.yaml           — copy of input config
+    outputs/{run_name}/forecast_results.json  — all constraints
+    outputs/{run_name}/forecast_results.npz   — Fisher matrices
+    outputs/{run_name}/*.png                  — figures (300 dpi)
+```
+
+### 2.11 `scripts/run_sweep.py` — Parameter Sweep Driver
+
+```
+Usage (YAML mode):
+    uv run python scripts/run_sweep.py --config configs/default.yaml --survey-key stage4_low_z --param area_deg2 --values 1000,5000,10000,14000
+
+Usage (legacy mode):
+    uv run python scripts/run_sweep.py --base stage5_wide --param n_gal_total --values 1e6,5e6,1e7,5e7,1e8
 
 Outputs:
-    outputs/sweep_{param}_{base}.pdf
-    outputs/sweep_{param}_{base}.json
-"""
+    outputs/{run_name}/sweep_{param}_{base}.png
+    outputs/{run_name}/sweep_{param}_{base}.json
+```
+
+### 2.12 `scripts/generate_science_figures.py` — Science Figure Generator
+
+```
+Usage:
+    uv run python scripts/generate_science_figures.py --config configs/default.yaml
+    uv run python scripts/generate_science_figures.py --config configs/default.yaml --skip-sweeps
+
+Produces all science figures (ΔΣ with errors, two-regime summary, improvement
+factor, parameter sweeps) in outputs/{run_name}/.
 ```
 
 ---
@@ -619,30 +692,43 @@ Outputs:
 ## 3. Data Flow
 
 ```
-SurveyConfig + LensingConfig + ForecastConfig + SHMRParams
+YAML config (or CLI args)
+        │
+        ▼
+    config_io.load_run_config()  ──► RunConfig
+        │
+        ├── SHMRParams (with mass-dependent scatter option)
+        ├── SurveyConfig(s) (1–4 surveys)
+        ├── ForecastConfig (systematic floor, nuisance toggle)
+        ├── LensingConfig, NuisanceConfig
         │
         ▼
     fisher.compute_fisher_matrix()
         │
         ├──► For each (z_bin, M*_bin):
         │       │
-        │       ├── halo_model.delta_sigma_bin()  ──► ΔΣ(R) model vector
+        │       ├── halo_model.delta_sigma_bin()  ──► ΔΣ(R) = 1-halo NFW + 2-halo
         │       ├── halo_model.effective_bias()    ──► b_eff scalar
         │       ├── halo_model.galaxy_number_density() ──► n_gal scalar
         │       │
         │       ├── covariance.lensing_covariance()  ──► σ²(ΔΣ) per R-bin
+        │       │     + systematic floor: σ² += (f_sys × ΔΣ_fid)²
         │       ├── covariance.clustering_covariance() ──► σ²(b_eff), σ²(n_gal)
         │       │
         │       ├── fisher.compute_derivatives()   ──► Jacobian ∂obs/∂θ
+        │       │     (SHMR params via finite diff + nuisance analytically)
         │       │
         │       └──► F += J^T C^{-1} J
+        │
+        ├──► Add nuisance priors: F[i,i] += 1/σ² for (shear_m, photo_dz)
         │
         ▼
     Fisher matrix F_{ij}
         │
-        ├──► fisher.marginalized_errors()  ──► σ(θ_i)
-        ├──► fisher.fisher_ellipse()       ──► 2D contours
-        └──► fisher.add_external_prior()   ──► F with priors
+        ├──► fisher.extract_shmr_constraints()  ──► σ(θ_i) SHMR-only
+        ├──► fisher.marginalized_errors()       ──► σ(θ_i) all params
+        ├──► fisher.fisher_ellipse()            ──► 2D contours
+        └──► fisher.add_external_prior()        ──► F with external priors
 ```
 
 ---

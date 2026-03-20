@@ -31,7 +31,7 @@ This is a **Fisher forecast tool for the stellar-halo mass relation (SHMR)**, pr
 
 ### Numerical Code
 - Use `np.logspace` for halo mass grids (they span 5+ orders of magnitude).
-- Use `scipy.integrate.quad` or `np.trapz` on log-spaced grids for HMF integrals. Prefer `np.trapz` on dense grids for speed; use `quad` only when accuracy matters more than speed.
+- Use `scipy.integrate.quad` or `np.trapezoid` on log-spaced grids for HMF integrals. Prefer `np.trapezoid` on dense grids for speed; use `quad` only when accuracy matters more than speed.
 - Finite differences: central differences with configurable step size. Always check convergence.
 - When inverting the Fisher matrix, check the condition number first. Log a warning if > 1e10.
 
@@ -57,6 +57,7 @@ This is a **Fisher forecast tool for the stellar-halo mass relation (SHMR)**, pr
 | `scipy` | Root-finding (brentq), special functions (erf), integration (quad) | For SHMR inverse and HOD |
 | `matplotlib` | Plotting | For validation and science figures |
 | `astropy` | Units, constants (G, c) | For Σ_crit calculation. Use `astropy.constants` and `astropy.units`. |
+| `pyyaml` | YAML config parsing | For loading run configurations from YAML files |
 
 **Do NOT use** `halotools` or `halomod` — they require simulation data downloads and are overkill for this analytic forecast.
 
@@ -66,27 +67,43 @@ This is a **Fisher forecast tool for the stellar-halo mass relation (SHMR)**, pr
 shmr_fisher/
 ├── CLAUDE.md              # This file
 ├── SPEC.md                # Detailed specification
-├── shmr_fisher/         # Main package
+├── DESIGN.md              # Pipeline design document (how the forecast works)
+├── configs/               # YAML run configurations
+│   ├── default.yaml       # 4-survey comparison (Stage-III through Stage-V)
+│   ├── stage4_vs_stage5.yaml  # 2-survey head-to-head
+│   └── dwarf_regime.yaml  # Single low-z survey for dwarf science
+├── shmr_fisher/           # Main package
 │   ├── __init__.py
-│   ├── config.py          # All dataclasses: SHMRParams, SurveyConfig, LensingConfig, ForecastConfig
+│   ├── config.py          # Dataclasses: SHMRParams, SurveyConfig, LensingConfig, ForecastConfig, NuisanceConfig
+│   ├── config_io.py       # YAML config loader: RunConfig, load_run_config()
 │   ├── shmr_model.py      # SHMR parameterization (Moster+2013 with z-evolution)
-│   ├── halo_model.py      # ΔΣ prediction, b_eff, n_gal via halo model integrals
+│   ├── halo_model.py      # ΔΣ (1-halo NFW + 2-halo), b_eff, n_gal via HMF integrals
 │   ├── covariance.py      # Lensing + clustering covariance matrices
 │   ├── fisher.py          # Fisher matrix computation, marginalization, priors
-│   ├── survey_configs.py  # Predefined Stage-III/IV/V survey configurations
+│   ├── systematics.py     # Systematic error helpers (floor, nuisance derivatives)
+│   ├── survey_configs.py  # Predefined Stage-III/IV/V survey configurations (legacy)
 │   ├── validate.py        # Validation/sanity checks after each phase
-│   └── plot_results.py    # All plotting functions
+│   └── plot_results.py    # All plotting functions (dynamic survey colors)
 ├── scripts/
-│   ├── run_forecast.py    # Main driver: run all surveys, save results
-│   └── run_sweep.py       # Parameter sweep driver
-├── outputs/               # Generated figures and result files (gitignored)
+│   ├── run_forecast.py    # Main driver: --config YAML or legacy CLI
+│   ├── run_sweep.py       # Parameter sweep driver: --config or --base
+│   └── generate_science_figures.py  # Full figure generation from YAML config
+├── outputs/               # Generated outputs, organized by run name
+│   ├── {run_name}/        # Per-run directory (e.g., outputs/default/)
+│   │   ├── config.yaml    # Copy of input config for reproducibility
+│   │   ├── forecast_results.json
+│   │   ├── forecast_results.npz
+│   │   ├── CAPTION.md     # Figure captions for this run
+│   │   └── *.png          # Figures (300 dpi PNG)
+│   └── phase1/...phase4/  # Legacy phase-based outputs (from development)
+├── docs/                  # Development journals
 └── README.md              # User-facing documentation
 ```
 
 ## Domain Context for Claude Code
 
 ### What is the SHMR?
-The stellar-halo mass relation maps dark matter halo mass (Mh) to the stellar mass (M*) of the galaxy it hosts. It peaks at M*/Mh ~ 3–5% around Mh ~ 10^12 Msun and falls off as a double power-law at lower and higher masses. The scatter (σ_logMs ~ 0.15 dex) is log-normal at fixed Mh.
+The stellar-halo mass relation maps dark matter halo mass (Mh) to the stellar mass (M*) of the galaxy it hosts. It peaks at M*/Mh ~ 3–5% around Mh ~ 10^12 Msun and falls off as a double power-law at lower and higher masses. The scatter is log-normal at fixed Mh: either constant (σ_logMs ~ 0.15 dex) or mass-dependent following Cao & Tinker (2020), increasing from ~0.18 dex at cluster masses to ~0.38 dex at dwarf masses.
 
 ### What are the observables?
 - **Galaxy-galaxy lensing ΔΣ(R):** The excess surface mass density around galaxies, measured from weak gravitational lensing. Directly probes the mean halo mass of a galaxy sample.
@@ -124,8 +141,15 @@ If `np.linalg.cond(fisher) > 1e10`:
 - Save Fisher matrices and errors as JSON (for portability) and as numpy `.npz` files (for reloading).
 - **Default figure format: PNG** at 300 dpi, with descriptive filenames like `shmr_validation.png`, `fisher_comparison_stage4_vs_stage5.png`.
 - All figures should have axis labels with units, legends, and a title or annotation indicating the survey configuration.
+- **Per-run output directories:** When using YAML configs, all outputs go to `outputs/{run_name}/` where `run_name` is the config filename stem (e.g., `default.yaml` → `outputs/default/`). The YAML config is copied into the output directory for reproducibility.
+
+### YAML-driven workflow (preferred)
+- Survey configurations are defined in YAML files under `configs/`.
+- Each config can define 1–4 surveys. The run name is derived from the filename.
+- Use `--config configs/default.yaml` with `run_forecast.py`, `run_sweep.py`, or `generate_science_figures.py`.
+- Legacy CLI flags (`--surveys`, `--systematics`) still work for backward compatibility.
 
 ### Figure captioning (MANDATORY)
-- Every time a figure is saved to `outputs/`, a detailed caption **must** be appended to `outputs/CAPTION.md`.
+- Every time a figure is saved to `outputs/`, a detailed caption **must** be appended to the run's `CAPTION.md` (either `outputs/{run_name}/CAPTION.md` or the legacy `outputs/CAPTION.md`).
 - Each caption entry must include: the filename, creation timestamp, a full description of what is plotted (axes, units, data shown, colors/line styles), the physical interpretation of key features, and the figure's purpose in the pipeline.
 - This ensures figures remain interpretable months later without re-running the code.

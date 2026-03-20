@@ -8,6 +8,7 @@ halo model built on the Moster+2013 SHMR parameterization.
 Modules
 -------
 config : Configuration dataclasses (SHMRParams, SurveyConfig, etc.)
+config_io : YAML-based run configuration loader
 shmr_model : Parameterized SHMR with redshift evolution
 halo_model : Observable predictions (DeltaSigma, b_eff, n_gal)
 covariance : Analytic noise models for lensing and clustering

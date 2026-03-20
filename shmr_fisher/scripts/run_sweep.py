@@ -5,15 +5,16 @@ Varies a single survey parameter while holding all others fixed,
 computing Fisher constraints at each point. Produces a scaling plot
 and saves results as JSON.
 
-Usage:
+Usage (YAML mode):
+    uv run python scripts/run_sweep.py --config configs/default.yaml --survey-key stage4_low_z --param area_deg2 --values 1000,5000,10000,14000
+
+Usage (legacy mode):
     uv run python scripts/run_sweep.py --base stage5_wide --param n_gal_total --values 1e6,5e6,1e7,5e7,1e8
-    uv run python scripts/run_sweep.py --base stage5_wide --param log_Mstar_min --values 9.5,9.0,8.5,8.0
     uv run python scripts/run_sweep.py --base stage4_low_z --param area_deg2 --values 1000,5000,10000,14000
-    uv run python scripts/run_sweep.py --base stage4_low_z --param dlog_Mstar --values 1.0,0.5,0.25
 
 Outputs:
-    outputs/sweep_{param}_{base}.png
-    outputs/sweep_{param}_{base}.json
+    outputs/{run_name}/sweep_{param}_{base}.png
+    outputs/{run_name}/sweep_{param}_{base}.json
 """
 
 import argparse
@@ -32,6 +33,7 @@ from shmr_fisher.config import (
     LensingConfig,
     NuisanceConfig,
     SHMRParams,
+    SurveyConfig,
 )
 from shmr_fisher.fisher import (
     compute_fisher_matrix,
@@ -49,6 +51,7 @@ def parameter_sweep(
     lensing_config: LensingConfig | None = None,
     nuisance_config: NuisanceConfig | None = None,
     shmr_params: SHMRParams | None = None,
+    base_survey: SurveyConfig | None = None,
 ) -> dict:
     """
     Sweep a single survey parameter and compute Fisher constraints at each value.
@@ -56,13 +59,16 @@ def parameter_sweep(
     Parameters
     ----------
     base_survey_name : str
-        Key in survey_configs.surveys for the baseline survey.
+        Key name for the baseline survey (used in labels/filenames).
     sweep_param : str
         SurveyConfig field to vary (e.g., 'n_gal_total', 'area_deg2').
     sweep_values : list of float
         Values to evaluate.
     forecast_config, lensing_config, nuisance_config, shmr_params :
         Optional overrides. Defaults used if None.
+    base_survey : SurveyConfig or None
+        Explicit baseline survey config. If None, looks up from
+        survey_configs.surveys using base_survey_name.
 
     Returns
     -------
@@ -76,7 +82,11 @@ def parameter_sweep(
     if lensing_config is None:
         lensing_config = LensingConfig()
 
-    base = all_surveys[base_survey_name]
+    # Resolve base survey
+    if base_survey is not None:
+        base = base_survey
+    else:
+        base = all_surveys[base_survey_name]
 
     shmr_names = None
     all_errors = []
@@ -136,7 +146,7 @@ def parameter_sweep(
     }
 
 
-def plot_sweep(results: dict, output_dir: str = "outputs/phase4") -> Path:
+def plot_sweep(results: dict, output_dir: str = "outputs") -> Path:
     """
     Generate and save a scaling plot from sweep results.
 
@@ -215,7 +225,7 @@ def plot_sweep(results: dict, output_dir: str = "outputs/phase4") -> Path:
         json.dump(json_data, f, indent=2)
     print(f"Saved: {json_path}")
 
-    # Append caption
+    # Append caption to the run's output dir
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M PDT")
     caption = f"""
 ---
@@ -227,7 +237,7 @@ Constraint scaling plot showing how marginalized fractional errors on SHMR param
 
 **Purpose:** Validates AT-7 (monotonic improvement with increasing constraining power) and identifies which parameters benefit most from changes to {sweep_param}.
 """
-    caption_path = Path("outputs") / "CAPTION.md"
+    caption_path = outdir / "CAPTION.md"
     with open(caption_path, "a") as f:
         f.write(caption)
 
@@ -236,7 +246,15 @@ Constraint scaling plot showing how marginalized fractional errors on SHMR param
 
 def main():
     parser = argparse.ArgumentParser(description="SHMR Fisher Parameter Sweep")
-    parser.add_argument("--base", required=True, help="Base survey name")
+    parser.add_argument(
+        "--config", type=str, default=None,
+        help="Path to YAML config file",
+    )
+    parser.add_argument(
+        "--survey-key", type=str, default=None,
+        help="Survey key from YAML config to use as sweep base",
+    )
+    parser.add_argument("--base", default=None, help="Base survey name (legacy mode)")
     parser.add_argument("--param", required=True, help="Parameter to sweep")
     parser.add_argument(
         "--values", required=True,
@@ -244,27 +262,66 @@ def main():
     )
     parser.add_argument("--floor", type=float, default=0.0)
     parser.add_argument("--nuisance", action="store_true")
-    parser.add_argument("--output-dir", default="outputs/phase4")
+    parser.add_argument("--output-dir", default=None)
     args = parser.parse_args()
 
     values = [float(v) for v in args.values.split(",")]
 
-    fc = ForecastConfig(
-        n_R_bins=8,
-        n_Mh_bins=150,
-        systematic_floor_fraction=args.floor,
-        include_nuisance_params=args.nuisance,
-    )
-    nc = NuisanceConfig() if args.nuisance else None
+    # YAML config mode
+    if args.config is not None:
+        from shmr_fisher.config_io import load_run_config
+        run_config = load_run_config(args.config)
 
-    print(f"Sweep: {args.param} = {values}")
-    print(f"Base survey: {args.base}")
+        survey_key = args.survey_key
+        if survey_key is None:
+            # Default to first survey in config
+            survey_key = next(iter(run_config.surveys))
+            print(f"No --survey-key given, using first survey: {survey_key}")
 
-    results = parameter_sweep(
-        args.base, args.param, values,
-        forecast_config=fc, nuisance_config=nc,
-    )
-    plot_sweep(results, output_dir=args.output_dir)
+        if survey_key not in run_config.surveys:
+            raise ValueError(
+                f"Survey key '{survey_key}' not found in config. "
+                f"Available: {list(run_config.surveys.keys())}"
+            )
+
+        output_dir = args.output_dir or str(run_config.output_dir)
+
+        print(f"Sweep: {args.param} = {values}")
+        print(f"Base survey: {survey_key} (from {args.config})")
+
+        results = parameter_sweep(
+            survey_key, args.param, values,
+            forecast_config=run_config.forecast_config,
+            lensing_config=run_config.lensing_config,
+            nuisance_config=run_config.nuisance_config,
+            shmr_params=run_config.shmr_params,
+            base_survey=run_config.surveys[survey_key],
+        )
+        plot_sweep(results, output_dir=output_dir)
+
+    # Legacy mode
+    else:
+        if args.base is None:
+            parser.error("--base is required in legacy mode (when --config is not given)")
+
+        fc = ForecastConfig(
+            n_R_bins=8,
+            n_Mh_bins=150,
+            systematic_floor_fraction=args.floor,
+            include_nuisance_params=args.nuisance,
+        )
+        nc = NuisanceConfig() if args.nuisance else None
+
+        output_dir = args.output_dir or "outputs"
+
+        print(f"Sweep: {args.param} = {values}")
+        print(f"Base survey: {args.base}")
+
+        results = parameter_sweep(
+            args.base, args.param, values,
+            forecast_config=fc, nuisance_config=nc,
+        )
+        plot_sweep(results, output_dir=output_dir)
 
 
 if __name__ == "__main__":

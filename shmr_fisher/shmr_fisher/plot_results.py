@@ -27,6 +27,33 @@ from .config import LensingConfig, SHMRParams, SurveyConfig, ForecastConfig
 from .shmr_model import mean_log_Mstar
 
 
+# Default color palette for dynamic survey assignment
+_DEFAULT_PALETTE = [
+    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
+    "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+]
+
+
+def _assign_survey_colors(survey_keys: list[str]) -> dict[str, str]:
+    """
+    Assign colors to surveys dynamically based on order.
+
+    Parameters
+    ----------
+    survey_keys : list of str
+        Survey keys in display order.
+
+    Returns
+    -------
+    colors : dict of str to str
+        Mapping of survey key to hex color.
+    """
+    return {
+        k: _DEFAULT_PALETTE[i % len(_DEFAULT_PALETTE)]
+        for i, k in enumerate(survey_keys)
+    }
+
+
 # Map parameter names to LaTeX labels
 PARAM_LATEX = {
     "log_M1_0": r"$\log M_1$",
@@ -153,12 +180,10 @@ def plot_delta_sigma_with_errors(
     # Model prediction
     ax.plot(R_Mpc, ds_pc2, "k-", lw=2.5, label="Model", zorder=10)
 
-    # Error bars per survey
-    survey_colors = {
-        "stage3_shallow_wide": ("#1f77b4", "Stage-III"),
-        "stage4_low_z": ("#ff7f0e", "Stage-IV"),
-        "stage5_wide": ("#2ca02c", "Stage-V"),
-    }
+    # Error bars per survey — dynamic color assignment
+    survey_keys = list(forecast_results.keys())
+    survey_color_map = _assign_survey_colors(survey_keys)
+    n_surveys = len(survey_keys)
 
     R_edges = np.logspace(np.log10(0.1), np.log10(30.0), 11)
     R_centers = np.sqrt(R_edges[:-1] * R_edges[1:])
@@ -166,11 +191,16 @@ def plot_delta_sigma_with_errors(
     ds_at_centers_pc2 = ds_at_centers / 1e12
 
     lc = LensingConfig()
-    offsets = {"stage3_shallow_wide": -0.03, "stage4_low_z": 0.0, "stage5_wide": 0.03}
+    # Compute offsets dynamically so surveys don't overlap
+    if n_surveys > 1:
+        offset_values = np.linspace(-0.03, 0.03, n_surveys)
+    else:
+        offset_values = [0.0]
+    offsets = dict(zip(survey_keys, offset_values))
 
-    for sname, (color, label) in survey_colors.items():
-        if sname not in forecast_results:
-            continue
+    for sname in survey_keys:
+        color = survey_color_map[sname]
+        label = forecast_results[sname]["survey_name"]
         meta = forecast_results[sname].get("metadata", {})
         # Find N_lens for a bin near our target
         N_lens_total = 0
@@ -247,23 +277,19 @@ def plot_two_regime_summary(
         z0_params = ["log_M1_0", "N_0", "beta_0", "gamma_0", "sigma_logMs"]
     evo_params = ["nu_M1", "nu_N", "nu_beta", "nu_gamma"]
 
-    survey_colors = {
-        "stage3_shallow_wide": "#1f77b4",
-        "stage4_low_z": "#ff7f0e",
-        "stage4_high_z": "#9467bd",
-        "stage5_wide": "#2ca02c",
-        "stage5_deep": "#d62728",
-    }
+    survey_keys = list(forecast_results.keys())
+    survey_color_map = _assign_survey_colors(survey_keys)
+    n_surveys = len(survey_keys)
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
     # --- Left: z=0 shape parameters ---
     ax = axes[0]
     x = np.arange(len(z0_params))
-    width = 0.15
+    width = min(0.8 / max(n_surveys, 1), 0.18)
     i = 0
     for sname, r in forecast_results.items():
-        color = survey_colors.get(sname, "gray")
+        color = survey_color_map.get(sname, "gray")
         errs = []
         for p in z0_params:
             e = r.get("shmr_errors", r.get("errors", {})).get(p, 0)
@@ -291,7 +317,7 @@ def plot_two_regime_summary(
         has_evo = any(p in r.get("errors", {}) for p in evo_params)
         if not has_evo:
             continue
-        color = survey_colors.get(sname, "gray")
+        color = survey_color_map.get(sname, "gray")
         errs = []
         for p in evo_params:
             e = r.get("shmr_errors", r.get("errors", {})).get(p, 0)

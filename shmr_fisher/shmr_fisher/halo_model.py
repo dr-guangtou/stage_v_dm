@@ -14,7 +14,7 @@ It provides:
 3. Clustering: effective_bias, galaxy_number_density per stellar mass bin.
 
 All halo model integrals use the colossus HMF (Tinker+2008) and integrate
-over a log-spaced halo mass grid via np.trapz. Halo masses are in
+over a log-spaced halo mass grid via np.trapezoid. Halo masses are in
 Msun (NOT Msun/h) throughout.
 
 References
@@ -380,7 +380,7 @@ def delta_sigma_matter(R_Mpc: np.ndarray, z: float) -> np.ndarray:
     cumul_integrand = sigma_fine * R_fine  # Σ(R') · R'
     cumul_integral = np.zeros_like(R_fine)
     for i in range(1, len(R_fine)):
-        cumul_integral[i] = np.trapz(
+        cumul_integral[i] = np.trapezoid(
             cumul_integrand[:i + 1], R_fine[:i + 1],
         )
     sigma_bar_fine = 2.0 * cumul_integral / R_fine**2
@@ -441,7 +441,7 @@ def delta_sigma_bin(
     The satellite term uses the same NFW profile centered on the host halo
     (1-halo approximation; ignores off-centering and subhalo profiles).
 
-    Integration is done via np.trapz over a log-spaced halo mass grid.
+    Integration is done via np.trapezoid over a log-spaced halo mass grid.
 
     Parameters
     ----------
@@ -490,7 +490,7 @@ def delta_sigma_bin(
     n_total = ncen + nsat
 
     # Galaxy number density: n_gal = integral dMh (dn/dMh) * (N_cen + N_sat)
-    n_gal = np.trapz(dndMh * n_total * Mh_grid * np.log(10.0),
+    n_gal = np.trapezoid(dndMh * n_total * Mh_grid * np.log(10.0),
                          log_Mh_grid)
 
     if n_gal <= 0:
@@ -513,7 +513,7 @@ def delta_sigma_bin(
     # Weighted average: integral dMh (dn/dMh) * N_total * DS_NFW / n_gal
     # Use log-space integration: integral = integral d(log Mh) * Mh * ln(10) * ...
     integrand = (dndMh * n_total * Mh_grid * np.log(10.0))[:, np.newaxis] * ds_grid
-    ds_1h = np.trapz(integrand, log_Mh_grid, axis=0) / n_gal
+    ds_1h = np.trapezoid(integrand, log_Mh_grid, axis=0) / n_gal
 
     if not include_2halo:
         return ds_1h
@@ -530,7 +530,7 @@ def delta_sigma_bin(
         Mh_grid_h, model='tinker10', z=z, mdef='200m',
     )
     weight = dndMh * n_total * Mh_grid * np.log(10.0)
-    b_eff_val = np.trapz(weight * bh, log_Mh_grid) / n_gal
+    b_eff_val = np.trapezoid(weight * bh, log_Mh_grid) / n_gal
 
     ds_2h = b_eff_val * ds_mm
 
@@ -599,7 +599,7 @@ def effective_bias(
     # Integration weight: dMh = Mh * ln(10) * d(log Mh)
     weight = dndMh * n_total * Mh_grid * np.log(10.0)
 
-    n_gal = np.trapz(weight, log_Mh_grid)
+    n_gal = np.trapezoid(weight, log_Mh_grid)
     if n_gal <= 0:
         warnings.warn(
             f"Zero galaxy density in bias calc for [{log_Mstar_lo}, {log_Mstar_hi}] "
@@ -608,7 +608,7 @@ def effective_bias(
         )
         return 0.0
 
-    b_weighted = np.trapz(weight * bh, log_Mh_grid)
+    b_weighted = np.trapezoid(weight * bh, log_Mh_grid)
     return b_weighted / n_gal
 
 
@@ -660,4 +660,4 @@ def galaxy_number_density(
     n_total = ncen + nsat
 
     weight = dndMh * n_total * Mh_grid * np.log(10.0)
-    return np.trapz(weight, log_Mh_grid)
+    return np.trapezoid(weight, log_Mh_grid)
