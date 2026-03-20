@@ -72,8 +72,19 @@ class SHMRParams:
     nu_beta: float = -0.826
     nu_gamma: float = 0.329
 
-    # Scatter (constant with z)
+    # Scatter
+    # When use_mass_dependent_scatter is False, a constant scatter is used:
     sigma_logMs: float = 0.15
+
+    # Mass-dependent scatter following Cao & Tinker (2020, MNRAS, 498, 5080).
+    # sigma(log M* | Mh) = sigma_high + sigma_rise * [1 - tanh((log_Mh - log_Mh_break) / delta)]
+    # At high Mh (>> break): sigma -> sigma_high
+    # At low  Mh (<< break): sigma -> sigma_high + 2 * sigma_rise
+    use_mass_dependent_scatter: bool = False
+    scatter_sigma_high: float = 0.18    # Asymptotic scatter at high Mh [dex]
+    scatter_sigma_rise: float = 0.10    # Half-amplitude of the rise toward low Mh [dex]
+    scatter_log_Mh_break: float = 12.0  # Transition halo mass [log10(Msun)]
+    scatter_delta: float = 0.4          # Transition width [dex]
 
     def to_dict(self) -> dict[str, float]:
         """Return all parameters as a {name: value} dictionary.

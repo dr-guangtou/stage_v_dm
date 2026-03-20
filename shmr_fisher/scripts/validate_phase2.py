@@ -2,9 +2,9 @@
 Phase 2 QA: generate validation plots for halo model predictions.
 
 Produces:
-    outputs/hod_occupation.png    — N_cen and N_sat vs Mh for 4 M* bins
-    outputs/delta_sigma_model.png — DeltaSigma(R) for 4 M* bins at z=0.3
-    outputs/phase2_summary.png    — 4-panel diagnostic: HOD, DS, b_eff, n_gal vs z
+    outputs/phase2/hod_occupation.png    — N_cen and N_sat vs Mh for 4 M* bins
+    outputs/phase2/delta_sigma_model.png — DeltaSigma(R) for 4 M* bins at z=0.3
+    outputs/phase2/phase2_summary.png    — 4-panel diagnostic: HOD, DS, b_eff, n_gal vs z
 """
 
 import sys
@@ -21,8 +21,8 @@ from shmr_fisher.halo_model import (
 )
 
 params = SHMRParams()
-outdir = Path('outputs')
-outdir.mkdir(exist_ok=True)
+outdir = Path('outputs') / 'phase2'
+outdir.mkdir(parents=True, exist_ok=True)
 
 bins = [(9.5, 10.0), (10.0, 10.5), (10.5, 11.0), (11.0, 11.5)]
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']

@@ -158,6 +158,53 @@ def mean_log_Mh(log_Mstar: float, params: SHMRParams, z: float) -> float:
     return brentq(_residual, log_Mh_lo, log_Mh_hi, xtol=1e-6)
 
 
+def scatter_at_Mh(
+    log_Mh: np.ndarray | float,
+    params: SHMRParams,
+) -> np.ndarray | float:
+    """
+    SHMR scatter sigma(log M* | Mh) as a function of halo mass.
+
+    If params.use_mass_dependent_scatter is False, returns the constant
+    params.sigma_logMs for all halo masses.
+
+    If True, uses the Cao & Tinker (2020) parameterization:
+        sigma(Mh) = sigma_high + sigma_rise * [1 - tanh((log_Mh - log_Mh_break) / delta)]
+
+    This gives:
+    - At high Mh (log_Mh >> break): sigma -> sigma_high (~0.18 dex)
+    - At low  Mh (log_Mh << break): sigma -> sigma_high + 2*sigma_rise (~0.38 dex)
+
+    Parameters
+    ----------
+    log_Mh : array-like or float
+        log10(Mh/Msun).
+    params : SHMRParams
+        SHMR parameters (includes scatter configuration).
+
+    Returns
+    -------
+    sigma : same shape as log_Mh
+        Scatter in log M* at fixed Mh [dex].
+
+    References
+    ----------
+    Cao & Tinker (2020), MNRAS, 498, 5080 — mass-dependent SHMR scatter.
+    """
+    if not params.use_mass_dependent_scatter:
+        log_Mh = np.asarray(log_Mh, dtype=float)
+        result = np.full_like(log_Mh, params.sigma_logMs)
+        return float(result) if result.ndim == 0 else result
+
+    log_Mh = np.asarray(log_Mh, dtype=float)
+
+    # Cao & Tinker (2020) tanh transition model
+    x = (log_Mh - params.scatter_log_Mh_break) / params.scatter_delta
+    sigma = params.scatter_sigma_high + params.scatter_sigma_rise * (1.0 - np.tanh(x))
+
+    return float(sigma) if sigma.ndim == 0 else sigma
+
+
 def phi_Mstar_given_Mh(
     log_Mstar: np.ndarray | float,
     log_Mh: float,
@@ -171,7 +218,7 @@ def phi_Mstar_given_Mh(
                          exp[-(log M* - <log M*>)^2 / (2 sigma^2)]
 
     where <log M*> = mean_log_Mstar(log_Mh, params, z) and
-    sigma = params.sigma_logMs.
+    sigma = scatter_at_Mh(log_Mh, params).
 
     Parameters
     ----------
@@ -191,15 +238,16 @@ def phi_Mstar_given_Mh(
 
     Notes
     -----
-    The scatter sigma_logMs is assumed constant with redshift
-    (Behroozi+2019 find only weak evolution).
+    The scatter can be constant (params.sigma_logMs) or mass-dependent
+    following Cao & Tinker (2020). See scatter_at_Mh() for details.
+    Redshift evolution of scatter is assumed weak (Behroozi+2019).
     """
     log_Mstar = np.asarray(log_Mstar, dtype=float)
     mu = mean_log_Mstar(log_Mh, params, z)
-    sigma = params.sigma_logMs
+    sigma = scatter_at_Mh(log_Mh, params)
 
-    if sigma <= 0:
-        raise ValueError(f"Scatter must be positive, got sigma_logMs={sigma}")
+    if np.any(np.asarray(sigma) <= 0):
+        raise ValueError(f"Scatter must be positive, got sigma={sigma}")
 
     # Log-normal PDF in log-space (i.e., Gaussian in log M*)
     pdf = (

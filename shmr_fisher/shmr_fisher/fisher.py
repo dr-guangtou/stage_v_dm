@@ -72,14 +72,20 @@ def get_varied_params(
     -------
     varied : list of (param_name, fiducial_value) tuples
     """
-    # Always vary the z=0 shape and scatter
+    # Always vary the z=0 shape parameters
     varied = [
         ('log_M1_0', params.log_M1_0),
         ('N_0', params.N_0),
         ('beta_0', params.beta_0),
         ('gamma_0', params.gamma_0),
-        ('sigma_logMs', params.sigma_logMs),
     ]
+
+    # Scatter parameters: mass-dependent (Cao & Tinker 2020) or constant
+    if params.use_mass_dependent_scatter:
+        varied.append(('scatter_sigma_high', params.scatter_sigma_high))
+        varied.append(('scatter_sigma_rise', params.scatter_sigma_rise))
+    else:
+        varied.append(('sigma_logMs', params.sigma_logMs))
 
     # Vary evolution params only if survey spans enough redshift range
     if (forecast_config.vary_z_evolution

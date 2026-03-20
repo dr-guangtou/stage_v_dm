@@ -136,7 +136,7 @@ def parameter_sweep(
     }
 
 
-def plot_sweep(results: dict, output_dir: str = "outputs") -> Path:
+def plot_sweep(results: dict, output_dir: str = "outputs/phase4") -> Path:
     """
     Generate and save a scaling plot from sweep results.
 
@@ -227,7 +227,8 @@ Constraint scaling plot showing how marginalized fractional errors on SHMR param
 
 **Purpose:** Validates AT-7 (monotonic improvement with increasing constraining power) and identifies which parameters benefit most from changes to {sweep_param}.
 """
-    with open(outdir / "CAPTION.md", "a") as f:
+    caption_path = Path("outputs") / "CAPTION.md"
+    with open(caption_path, "a") as f:
         f.write(caption)
 
     return save_path
@@ -243,7 +244,7 @@ def main():
     )
     parser.add_argument("--floor", type=float, default=0.0)
     parser.add_argument("--nuisance", action="store_true")
-    parser.add_argument("--output-dir", default="outputs")
+    parser.add_argument("--output-dir", default="outputs/phase4")
     args = parser.parse_args()
 
     values = [float(v) for v in args.values.split(",")]

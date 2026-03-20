@@ -2,10 +2,10 @@
 Phase 3 QA: validate covariance and Fisher matrix, generate diagnostic plots.
 
 Produces:
-    outputs/covariance_diagnostic.png — Sigma_crit, source density, DS errors vs z
-    outputs/fisher_errors_comparison.png — marginalized errors: Stage-III vs IV vs V
-    outputs/fisher_ellipses.png — 2D Fisher ellipses for key parameter pairs
-    outputs/fisher_ngal_scaling.png — error scaling with N_gal (lensing-only check)
+    outputs/phase3/covariance_diagnostic.png — Sigma_crit, source density, DS errors vs z
+    outputs/phase3/fisher_errors_comparison.png — marginalized errors: Stage-III vs IV vs V
+    outputs/phase3/fisher_ellipses.png — 2D Fisher ellipses for key parameter pairs
+    outputs/phase3/fisher_ngal_scaling.png — error scaling with N_gal (lensing-only check)
 
 Also prints AT-3 through AT-6 results.
 """
@@ -30,8 +30,8 @@ from shmr_fisher.fisher import (
 params = SHMRParams()
 lc = LensingConfig()
 fc = ForecastConfig(n_R_bins=8, n_Mh_bins=150, dz=0.2)
-outdir = Path('outputs')
-outdir.mkdir(exist_ok=True)
+outdir = Path('outputs') / 'phase3'
+outdir.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------------------------------------------------
 # Plot 1: Covariance diagnostics

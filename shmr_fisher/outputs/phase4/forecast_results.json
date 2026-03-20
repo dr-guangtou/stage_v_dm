@@ -1,0 +1,290 @@
+{
+  "fiducial_params": {
+    "log_M1_0": 11.59,
+    "N_0": 0.0351,
+    "beta_0": 1.376,
+    "gamma_0": 0.608,
+    "nu_M1": 1.195,
+    "nu_N": -0.0247,
+    "nu_beta": -0.826,
+    "nu_gamma": 0.329,
+    "sigma_logMs": 0.15,
+    "use_mass_dependent_scatter": true,
+    "scatter_sigma_high": 0.18,
+    "scatter_sigma_rise": 0.1,
+    "scatter_log_Mh_break": 12.0,
+    "scatter_delta": 0.4
+  },
+  "forecast_settings": {
+    "systematic_floor_fraction": 0.05,
+    "include_nuisance_params": true,
+    "n_R_bins": 10,
+    "dz": 0.2,
+    "frac_step": 0.01
+  },
+  "surveys": {
+    "stage3_shallow_wide": {
+      "survey_name": "Stage-III Shallow Wide",
+      "param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "shear_m",
+        "photo_dz_source"
+      ],
+      "shmr_param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise"
+      ],
+      "errors": {
+        "log_M1_0": 0.002652885843180218,
+        "N_0": 0.00024724361468844036,
+        "beta_0": 0.004126326756866095,
+        "gamma_0": 0.002825922951078438,
+        "scatter_sigma_high": 0.0015012945053419658,
+        "scatter_sigma_rise": 0.004289879321238713,
+        "shear_m": 0.008128608645065635,
+        "photo_dz_source": 0.029387518196419733
+      },
+      "shmr_errors": {
+        "log_M1_0": 0.002652885843180218,
+        "N_0": 0.00024724361468844036,
+        "beta_0": 0.004126326756866095,
+        "gamma_0": 0.002825922951078438,
+        "scatter_sigma_high": 0.0015012945053419658,
+        "scatter_sigma_rise": 0.004289879321238713
+      },
+      "condition_number": 1518789.5657918397,
+      "positive_definite": true,
+      "n_z_bins": 1,
+      "n_Mstar_bins_total": 5
+    },
+    "stage4_low_z": {
+      "survey_name": "Stage-IV Low-z",
+      "param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "shear_m",
+        "photo_dz_source"
+      ],
+      "shmr_param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise"
+      ],
+      "errors": {
+        "log_M1_0": 0.0012049437000283692,
+        "N_0": 0.000107606586797689,
+        "beta_0": 0.0014231387571126408,
+        "gamma_0": 0.001337538611741651,
+        "scatter_sigma_high": 0.0007670060256449894,
+        "scatter_sigma_rise": 0.0018935590479000617,
+        "shear_m": 0.008199977059235943,
+        "photo_dz_source": 0.028817667955786896
+      },
+      "shmr_errors": {
+        "log_M1_0": 0.0012049437000283692,
+        "N_0": 0.000107606586797689,
+        "beta_0": 0.0014231387571126408,
+        "gamma_0": 0.001337538611741651,
+        "scatter_sigma_high": 0.0007670060256449894,
+        "scatter_sigma_rise": 0.0018935590479000617
+      },
+      "condition_number": 6352557.101313702,
+      "positive_definite": true,
+      "n_z_bins": 1,
+      "n_Mstar_bins_total": 6
+    },
+    "stage4_high_z": {
+      "survey_name": "Stage-IV High-z",
+      "param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "nu_M1",
+        "nu_N",
+        "nu_beta",
+        "nu_gamma",
+        "shear_m",
+        "photo_dz_source"
+      ],
+      "shmr_param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "nu_M1",
+        "nu_N",
+        "nu_beta",
+        "nu_gamma"
+      ],
+      "errors": {
+        "log_M1_0": 0.035910890636917374,
+        "N_0": 0.00034647918544801275,
+        "beta_0": 0.5622755865715019,
+        "gamma_0": 0.012372832889064012,
+        "scatter_sigma_high": 0.0031809643273897777,
+        "scatter_sigma_rise": 0.008658320393823356,
+        "nu_M1": 0.03694615670068431,
+        "nu_N": 0.0011962484460430187,
+        "nu_beta": 0.7840169297445622,
+        "nu_gamma": 0.022424362995458448,
+        "shear_m": 0.014754377350171047,
+        "photo_dz_source": 0.01863638291992885
+      },
+      "shmr_errors": {
+        "log_M1_0": 0.035910890636917374,
+        "N_0": 0.00034647918544801275,
+        "beta_0": 0.5622755865715019,
+        "gamma_0": 0.012372832889064012,
+        "scatter_sigma_high": 0.0031809643273897777,
+        "scatter_sigma_rise": 0.008658320393823356,
+        "nu_M1": 0.03694615670068431,
+        "nu_N": 0.0011962484460430187,
+        "nu_beta": 0.7840169297445622,
+        "nu_gamma": 0.022424362995458448
+      },
+      "condition_number": 207990738918.1208,
+      "positive_definite": true,
+      "n_z_bins": 3,
+      "n_Mstar_bins_total": 6
+    },
+    "stage5_wide": {
+      "survey_name": "Stage-V Wide",
+      "param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "nu_M1",
+        "nu_N",
+        "nu_beta",
+        "nu_gamma",
+        "shear_m",
+        "photo_dz_source"
+      ],
+      "shmr_param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "nu_M1",
+        "nu_N",
+        "nu_beta",
+        "nu_gamma"
+      ],
+      "errors": {
+        "log_M1_0": 0.00045825367210805697,
+        "N_0": 3.157424851391515e-05,
+        "beta_0": 0.0004883932552925234,
+        "gamma_0": 0.0005425117284894942,
+        "scatter_sigma_high": 0.00018370311739315757,
+        "scatter_sigma_rise": 0.00046808932064416355,
+        "nu_M1": 0.0014541865121166489,
+        "nu_N": 5.091489632935396e-05,
+        "nu_beta": 0.0014519374668044644,
+        "nu_gamma": 0.001668971096976668,
+        "shear_m": 0.0073307850970359975,
+        "photo_dz_source": 0.012402567540145853
+      },
+      "shmr_errors": {
+        "log_M1_0": 0.00045825367210805697,
+        "N_0": 3.157424851391515e-05,
+        "beta_0": 0.0004883932552925234,
+        "gamma_0": 0.0005425117284894942,
+        "scatter_sigma_high": 0.00018370311739315757,
+        "scatter_sigma_rise": 0.00046808932064416355,
+        "nu_M1": 0.0014541865121166489,
+        "nu_N": 5.091489632935396e-05,
+        "nu_beta": 0.0014519374668044644,
+        "nu_gamma": 0.001668971096976668
+      },
+      "condition_number": 35285607.74468365,
+      "positive_definite": true,
+      "n_z_bins": 4,
+      "n_Mstar_bins_total": 22
+    },
+    "stage5_deep": {
+      "survey_name": "Stage-V Deep",
+      "param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "nu_M1",
+        "nu_N",
+        "nu_beta",
+        "nu_gamma",
+        "shear_m",
+        "photo_dz_source"
+      ],
+      "shmr_param_names": [
+        "log_M1_0",
+        "N_0",
+        "beta_0",
+        "gamma_0",
+        "scatter_sigma_high",
+        "scatter_sigma_rise",
+        "nu_M1",
+        "nu_N",
+        "nu_beta",
+        "nu_gamma"
+      ],
+      "errors": {
+        "log_M1_0": 0.0005766476246191621,
+        "N_0": 2.7258661747566567e-05,
+        "beta_0": 0.0005744686267480866,
+        "gamma_0": 0.0006430226524906462,
+        "scatter_sigma_high": 0.00020158256672680097,
+        "scatter_sigma_rise": 0.0004344124389117919,
+        "nu_M1": 0.0015511547251007558,
+        "nu_N": 3.864531675677259e-05,
+        "nu_beta": 0.0014315964133781172,
+        "nu_gamma": 0.0016854534035372053,
+        "shear_m": 0.007590866069285775,
+        "photo_dz_source": 0.01030899617002508
+      },
+      "shmr_errors": {
+        "log_M1_0": 0.0005766476246191621,
+        "N_0": 2.7258661747566567e-05,
+        "beta_0": 0.0005744686267480866,
+        "gamma_0": 0.0006430226524906462,
+        "scatter_sigma_high": 0.00020158256672680097,
+        "scatter_sigma_rise": 0.0004344124389117919,
+        "nu_M1": 0.0015511547251007558,
+        "nu_N": 3.864531675677259e-05,
+        "nu_beta": 0.0014315964133781172,
+        "nu_gamma": 0.0016854534035372053
+      },
+      "condition_number": 36514988.70969143,
+      "positive_definite": true,
+      "n_z_bins": 7,
+      "n_Mstar_bins_total": 42
+    }
+  }
+}

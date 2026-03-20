@@ -1,7 +1,7 @@
-# Generated outputs (figures, data files)
-outputs/*.png
-outputs/*.json
-outputs/*.npz
+# Generated data files (not tracked)
+outputs/**/*.npz
+
+# Track figures (PNG) and result JSONs — these are the main deliverables
 
 # Python
 __pycache__/

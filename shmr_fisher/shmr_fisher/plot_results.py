@@ -34,6 +34,8 @@ PARAM_LATEX = {
     "beta_0": r"$\beta_0$",
     "gamma_0": r"$\gamma_0$",
     "sigma_logMs": r"$\sigma_{\log M_*}$",
+    "scatter_sigma_high": r"$\sigma_\mathrm{high}$",
+    "scatter_sigma_rise": r"$\sigma_\mathrm{rise}$",
     "nu_M1": r"$\nu_{M_1}$",
     "nu_N": r"$\nu_N$",
     "nu_beta": r"$\nu_\beta$",
@@ -233,7 +235,16 @@ def plot_two_regime_summary(
     if shmr_params is None:
         shmr_params = SHMRParams()
 
-    z0_params = ["log_M1_0", "N_0", "beta_0", "gamma_0", "sigma_logMs"]
+    # Detect scatter mode from the first survey result
+    first_result = next(iter(forecast_results.values()))
+    first_errors = first_result.get("shmr_errors", first_result.get("errors", {}))
+    if "scatter_sigma_high" in first_errors:
+        z0_params = [
+            "log_M1_0", "N_0", "beta_0", "gamma_0",
+            "scatter_sigma_high", "scatter_sigma_rise",
+        ]
+    else:
+        z0_params = ["log_M1_0", "N_0", "beta_0", "gamma_0", "sigma_logMs"]
     evo_params = ["nu_M1", "nu_N", "nu_beta", "nu_gamma"]
 
     survey_colors = {

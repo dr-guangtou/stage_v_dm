@@ -2,7 +2,7 @@
 Systematic error validation: compare stat-only vs systematic error forecasts.
 
 Produces:
-    outputs/systematics_comparison.png — bar chart: stat-only vs floor vs nuisance vs both
+    outputs/phase3/systematics_comparison.png — bar chart: stat-only vs floor vs nuisance vs both
 """
 
 import sys
@@ -22,8 +22,8 @@ from shmr_fisher.fisher import (
 
 params = SHMRParams()
 lc = LensingConfig()
-outdir = Path('outputs')
-outdir.mkdir(exist_ok=True)
+outdir = Path('outputs') / 'phase3'
+outdir.mkdir(parents=True, exist_ok=True)
 
 surveys = {
     'Stage-III': SurveyConfig(
@@ -186,6 +186,7 @@ Two-panel comparison of Fisher forecast constraints with and without systematic 
 **Purpose:** Validates that the systematic error implementation (1) inflates absolute errors as expected, (2) preserves the relative survey ordering, and (3) shows physically sensible parameter-dependent impact.
 """
 
-with open(outdir / 'CAPTION.md', 'a') as f:
+caption_path = Path('outputs') / 'CAPTION.md'
+with open(caption_path, 'a') as f:
     f.write(caption)
-print(f"Caption appended to {outdir / 'CAPTION.md'}")
+print(f"Caption appended to {caption_path}")
