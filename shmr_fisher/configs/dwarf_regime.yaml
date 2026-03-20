@@ -1,8 +1,15 @@
 # dwarf_regime.yaml — Focused dwarf galaxy science case
 #
-# Single low-z survey optimized for constraining the SHMR at the
-# dwarf end (M* < 10^9.5). No redshift evolution parameters varied
-# since we probe only z < 0.4.
+# Constrains the low-mass SHMR (beta_0, N_0, scatter) by fixing the
+# high-mass parameters (gamma_0, log_M1_0) that are irrelevant in the
+# dwarf regime (Mh << M1 ~ 10^11.6).
+#
+# At Mh << M1, the double power-law reduces to an effective power-law:
+#     M*/Mh ≈ 2N × (Mh/M1)^beta
+# so beta_0 and N_0 are the only shape parameters that matter.
+#
+# No z-evolution parameters are varied since z < 0.4.
+# The user can customize the survey definition for their science case.
 
 shmr_params:
   use_mass_dependent_scatter: true
@@ -13,19 +20,20 @@ forecast:
   systematic_floor_fraction: 0.05
   include_nuisance_params: true
   vary_z_evolution: false
+  fixed_params:
+    - gamma_0
+    - log_M1_0
 
 nuisance:
   sigma_m: 0.02
   sigma_dz_source: 0.03
 
 surveys:
-  stage5_wide:
-    name: "Stage-V Wide (dwarf focus)"
+  stage5_dwarf:
+    name: "Stage-V Dwarf Focus"
     area_deg2: 10000
     z_min: 0.05
     z_max: 0.4
     n_gal_total: 50000000
-    log_Mstar_min: 8.0
-    log_Mstar_min_z_dep:
-      base: 8.0
-      slope: 1.0
+    log_Mstar_min: 7.5
+    dlog_Mstar: 0.5
