@@ -329,6 +329,16 @@ class ForecastConfig:
         Overrides the default parameter selection in get_varied_params().
         Empty list (default) means no additional parameters are fixed beyond
         the standard logic (e.g., nu_* when vary_z_evolution is False).
+    sigma_log_Mstar_obs : float
+        Statistical uncertainty in observed log M* [dex]. When > 0, this
+        observational scatter is added in quadrature to the intrinsic SHMR
+        scatter, broadening the HOD occupation functions. This mimics the
+        effect of photometric stellar mass errors on bin assignments.
+        Default 0.0 (no observational scatter).
+    include_smf : bool
+        If True, include the stellar mass function (SMF) as a data vector
+        in the Fisher matrix, using Poisson + cosmic variance covariance
+        instead of Poisson-only for the n_gal contribution. Default True.
     """
 
     R_min_Mpc: float = 0.1
@@ -343,3 +353,5 @@ class ForecastConfig:
     systematic_floor_fraction: float = 0.0
     include_nuisance_params: bool = False
     fixed_params: list[str] = field(default_factory=list)
+    sigma_log_Mstar_obs: float = 0.0
+    include_smf: bool = True

@@ -33,8 +33,8 @@ import warnings
 
 import numpy as np
 
-# NumPy 2.0 renamed np.trapz -> _trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", np.trapz)
+# NumPy 2.0 renamed np.trapz -> np.trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", getattr(np, "trapz", None))
 from functools import lru_cache
 
 import scipy.integrate
@@ -61,6 +61,7 @@ def n_cen(
     log_Mstar_hi: float,
     params: SHMRParams,
     z: float,
+    sigma_obs: float = 0.0,
 ) -> np.ndarray:
     """
     Mean number of central galaxies per halo in a stellar mass bin.
@@ -71,7 +72,11 @@ def n_cen(
 
     N_cen(Mh) = 0.5 * [erf(x_hi) - erf(x_lo)]
 
-    where x = (log M* - <log M*(Mh,z)>) / (sqrt(2) * sigma_logMs).
+    where x = (log M* - <log M*(Mh,z)>) / (sqrt(2) * sigma_eff).
+
+    When sigma_obs > 0, the effective scatter is broadened:
+        sigma_eff = sqrt(sigma_intrinsic^2 + sigma_obs^2)
+    to account for observational uncertainty in stellar mass measurements.
 
     Parameters
     ----------
@@ -85,6 +90,9 @@ def n_cen(
         SHMR parameters.
     z : float
         Redshift.
+    sigma_obs : float
+        Observational scatter in log M* [dex]. Added in quadrature to
+        the intrinsic SHMR scatter. Default 0.0.
 
     Returns
     -------
@@ -94,6 +102,9 @@ def n_cen(
     mu = mean_log_Mstar(log_Mh_grid, params, z)
     # Mass-dependent scatter: sigma is an array matching log_Mh_grid
     sigma = scatter_at_Mh(log_Mh_grid, params)
+    # Add observational scatter in quadrature [dex]
+    if sigma_obs > 0:
+        sigma = np.sqrt(sigma**2 + sigma_obs**2)
     sqrt2_sigma = np.sqrt(2.0) * sigma
 
     x_lo = (log_Mstar_lo - mu) / sqrt2_sigma
@@ -108,6 +119,7 @@ def n_sat(
     log_Mstar_hi: float,
     params: SHMRParams,
     z: float,
+    sigma_obs: float = 0.0,
 ) -> np.ndarray:
     """
     Mean number of satellite galaxies per halo in a stellar mass bin.
@@ -124,6 +136,9 @@ def n_sat(
           N_cen_thresh = 0.5 (empirical ratio from Leauthaud+2011)
         - alpha_sat = 1.0
 
+    When sigma_obs > 0, the effective scatter is broadened:
+        sigma_eff = sqrt(sigma_intrinsic^2 + sigma_obs^2)
+
     Parameters
     ----------
     log_Mh_grid : array, shape (N_Mh,)
@@ -136,6 +151,9 @@ def n_sat(
         SHMR parameters.
     z : float
         Redshift.
+    sigma_obs : float
+        Observational scatter in log M* [dex]. Added in quadrature to
+        the intrinsic SHMR scatter. Default 0.0.
 
     Returns
     -------
@@ -156,6 +174,9 @@ def n_sat(
     mu = mean_log_Mstar(log_Mh_grid, params, z)
     # Mass-dependent scatter: sigma is an array matching log_Mh_grid
     sigma = scatter_at_Mh(log_Mh_grid, params)
+    # Add observational scatter in quadrature [dex]
+    if sigma_obs > 0:
+        sigma = np.sqrt(sigma**2 + sigma_obs**2)
     sqrt2_sigma = np.sqrt(2.0) * sigma
     # N_cen_thresh = 0.5 * [1 + erf((mu - log_Mstar_lo) / (sqrt2*sigma))]
     n_cen_thresh = 0.5 * (1.0 + erf((mu - log_Mstar_lo) / sqrt2_sigma))
@@ -185,7 +206,10 @@ def n_sat(
     # Satellites in a BIN (not threshold): scale by the fraction of the
     # threshold that falls in this bin. Approximate: use the central
     # occupation ratio N_cen(bin) / N_cen(threshold).
-    ncen_bin = n_cen(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
+    ncen_bin = n_cen(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
     # Avoid division by zero
     safe_thresh = np.maximum(n_cen_thresh, 1e-30)
     bin_fraction = ncen_bin / safe_thresh
@@ -427,6 +451,7 @@ def delta_sigma_bin(
     z: float,
     log_Mh_grid: np.ndarray | None = None,
     include_2halo: bool = True,
+    sigma_obs: float = 0.0,
 ) -> np.ndarray:
     """
     Halo-model prediction for DeltaSigma(R) averaged over a stellar mass bin.
@@ -462,6 +487,9 @@ def delta_sigma_bin(
         Halo mass grid [log10(Msun)]. Default: np.linspace(10, 15.5, 200).
     include_2halo : bool
         Whether to include the 2-halo term. Default True.
+    sigma_obs : float
+        Observational scatter in log M* [dex]. Passed through to the
+        HOD functions (n_cen, n_sat). Default 0.0.
 
     Returns
     -------
@@ -487,9 +515,15 @@ def delta_sigma_bin(
     # dn/dMh = dn/dlnM / Mh, and convert (Mpc/h)^{-3} -> Mpc^{-3}: * h^3
     dndMh = dndlnM * h**3 / Mh_grid  # [Msun^{-1} Mpc^{-3}]
 
-    # HOD: centrals + satellites
-    ncen = n_cen(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
-    nsat = n_sat(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
+    # HOD: centrals + satellites (with optional observational scatter)
+    ncen = n_cen(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
+    nsat = n_sat(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
     n_total = ncen + nsat
 
     # Galaxy number density: n_gal = integral dMh (dn/dMh) * (N_cen + N_sat)
@@ -550,6 +584,7 @@ def effective_bias(
     params: SHMRParams,
     z: float,
     log_Mh_grid: np.ndarray | None = None,
+    sigma_obs: float = 0.0,
 ) -> float:
     """
     HOD-weighted effective halo bias for a stellar mass bin.
@@ -570,6 +605,9 @@ def effective_bias(
         Redshift.
     log_Mh_grid : array or None
         Halo mass grid [log10(Msun)]. Default: np.linspace(10, 15.5, 200).
+    sigma_obs : float
+        Observational scatter in log M* [dex]. Passed through to the
+        HOD functions (n_cen, n_sat). Default 0.0.
 
     Returns
     -------
@@ -590,9 +628,15 @@ def effective_bias(
     )
     dndMh = dndlnM * h**3 / Mh_grid  # [Msun^{-1} Mpc^{-3}]
 
-    # HOD
-    ncen = n_cen(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
-    nsat = n_sat(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
+    # HOD (with optional observational scatter)
+    ncen = n_cen(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
+    nsat = n_sat(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
     n_total = ncen + nsat
 
     # Halo bias: colossus expects M in Msun/h
@@ -621,6 +665,7 @@ def galaxy_number_density(
     params: SHMRParams,
     z: float,
     log_Mh_grid: np.ndarray | None = None,
+    sigma_obs: float = 0.0,
 ) -> float:
     """
     Predicted comoving galaxy number density in a stellar mass bin.
@@ -639,6 +684,9 @@ def galaxy_number_density(
         Redshift.
     log_Mh_grid : array or None
         Halo mass grid [log10(Msun)]. Default: np.linspace(10, 15.5, 200).
+    sigma_obs : float
+        Observational scatter in log M* [dex]. Passed through to the
+        HOD functions (n_cen, n_sat). Default 0.0.
 
     Returns
     -------
@@ -658,8 +706,14 @@ def galaxy_number_density(
     )
     dndMh = dndlnM * h**3 / Mh_grid
 
-    ncen = n_cen(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
-    nsat = n_sat(log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z)
+    ncen = n_cen(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
+    nsat = n_sat(
+        log_Mh_grid, log_Mstar_lo, log_Mstar_hi, params, z,
+        sigma_obs=sigma_obs,
+    )
     n_total = ncen + nsat
 
     weight = dndMh * n_total * Mh_grid * np.log(10.0)

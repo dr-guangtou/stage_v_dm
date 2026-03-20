@@ -31,6 +31,7 @@ from .covariance import (
     clustering_covariance,
     d_ln_inv_sigma_crit_d_dz,
     lensing_covariance,
+    smf_covariance,
     survey_volume,
 )
 from .halo_model import (
@@ -298,6 +299,9 @@ def compute_fisher_matrix(
         'systematic_floor_fraction': forecast_config.systematic_floor_fraction,
     }
 
+    # Observational scatter in log M* [dex]
+    sigma_obs = forecast_config.sigma_log_Mstar_obs
+
     # Pre-compute total predicted galaxy counts per (z, M*) bin
     # to distribute N_gal_total proportionally
     bin_info = []
@@ -316,6 +320,7 @@ def compute_fisher_matrix(
             n_gal_vol = galaxy_number_density(
                 ms_lo, ms_hi, shmr_params, z_mid,
                 log_Mh_grid=log_Mh_grid,
+                sigma_obs=sigma_obs,
             )
             n_predicted = n_gal_vol * vol
             bin_info.append((z_mid, z_lo, z_hi, ms_lo, ms_hi,
@@ -346,10 +351,11 @@ def compute_fisher_matrix(
         metadata['N_lens_per_bin'][(z_mid, ms_lo)] = N_lens
 
         # --- Lensing observable: DeltaSigma(R) ---
-        def ds_func(p, z=z_mid, lo=ms_lo, hi=ms_hi):
+        def ds_func(p, z=z_mid, lo=ms_lo, hi=ms_hi, s_obs=sigma_obs):
             return delta_sigma_bin(
                 R_bin_centers, lo, hi, p, z,
                 log_Mh_grid=log_Mh_grid,
+                sigma_obs=s_obs,
             )
 
         ds_fiducial = ds_func(shmr_params)
@@ -400,14 +406,16 @@ def compute_fisher_matrix(
 
         # --- Clustering observables: b_eff and n_gal ---
         # Not affected by lensing nuisance parameters
-        def beff_func(p, z=z_mid, lo=ms_lo, hi=ms_hi):
+        def beff_func(p, z=z_mid, lo=ms_lo, hi=ms_hi, s_obs=sigma_obs):
             return np.array([effective_bias(
                 lo, hi, p, z, log_Mh_grid=log_Mh_grid,
+                sigma_obs=s_obs,
             )])
 
-        def ngal_func(p, z=z_mid, lo=ms_lo, hi=ms_hi):
+        def ngal_func(p, z=z_mid, lo=ms_lo, hi=ms_hi, s_obs=sigma_obs):
             return np.array([galaxy_number_density(
                 lo, hi, p, z, log_Mh_grid=log_Mh_grid,
+                sigma_obs=s_obs,
             )])
 
         b_fid = beff_func(shmr_params)[0]
@@ -415,6 +423,11 @@ def compute_fisher_matrix(
 
         # Clustering covariance uses MODEL n_gal (not N_lens/V)
         var_b, var_n = clustering_covariance(n_fid, b_fid, vol, z_mid)
+
+        # When include_smf is True, replace Poisson-only var_n with
+        # SMF covariance (Poisson + cosmic variance)
+        if forecast_config.include_smf:
+            var_n = smf_covariance(n_fid, b_fid, vol, z_mid)
 
         # SHMR derivatives of clustering observables
         J_b_shmr = compute_derivatives(
