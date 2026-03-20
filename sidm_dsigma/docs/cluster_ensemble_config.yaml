@@ -61,7 +61,7 @@ tier2:
   regime: "cluster"
 
 tier3:
-  enabled: true
+  enabled: false
   correction_model: "rt_gamma_shift"
   sigma_pivot: 1.0
   apply_to_regimes: ["cluster"]

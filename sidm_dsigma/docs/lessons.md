@@ -8,3 +8,6 @@
 - When adding Tier-2 outskirts stitching, blend in log-density with configurable match radius and width; linear blending is more prone to visible projection artifacts.
 - Auto-updating caption/inventory files should still be followed by explicit, figure-specific descriptive text to keep outputs interpretable without reading code.
 - SIDM benchmark grids should be regime-specific; cluster-focused lensing runs should stay in the sub-unity regime while dwarf-focused sensitivity tests can target high effective cross sections, and this split must be reflected consistently in config, code defaults, and docs.
+- Keep README/SPEC/PLAN synchronized with implemented Tier state (Tier-1/2/3) after merges; stale phase descriptions cause avoidable cleanup churn.
+- Maintain a canonical figure set for handoff-facing folders (`outputs/figures`) and archive/debug figures elsewhere to prevent interpretation drift.
+- Keep empirical Tier-3 outskirts corrections opt-in at runtime; default production forecasts should remain on Tier-1/Tier-2 unless explicitly enabled for sensitivity studies.

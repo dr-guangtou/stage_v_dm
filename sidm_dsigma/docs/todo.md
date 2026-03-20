@@ -127,3 +127,32 @@
 - [x] Updated code defaults in `config.py` to keep benchmark runs consistent with regime intent.
 - [x] Updated `README.md` and `SPEC.md` benchmark-grid documentation to match runtime configuration.
 - [x] Re-ran cluster and dwarf ensemble forecast scripts and verified output artifacts/captions/inventory updates.
+
+## phase 1 organization cleanup (docs + figures)
+- [x] Create dedicated worktree for cleanup and run updates there.
+- [x] Align `README.md` with implemented Tier-1/2/3 code paths and current scripts.
+- [x] Align `SPEC.md` with YAML config contract, Tier-2/Tier-3 modules, and output conventions.
+- [x] Align `PLAN.md` to reflect completed implementation and current maintenance phase.
+- [x] Prune `outputs/figures` to keep only latest Tier-3 overlay summaries with in-panel mass/concentration distributions.
+- [x] Rewrite `outputs/figures/CAPTION.md` to match retained figures only.
+
+## phase 1 cleanup review
+- Documentation now matches the current Tier-3-capable ensemble pipeline and split redshift overlay workflow.
+- Figure directory is intentionally reduced to the four canonical Tier-3 overlay summary products.
+- Caption file now contains only retained artifacts with explicit interpretation text and timestamps.
+
+## phase 1 follow-up: disable empirical tier3 by default
+- [x] Set forecast runner policy so Tier-3 empirical correction is opt-in (`--enable-tier3-empirical`).
+- [x] Update standard cluster/dwarf ensemble YAML defaults to `tier3.enabled: false`.
+- [x] Run fresh cluster+dwarf ensemble forecasts without Tier-3 empirical correction in `outputs/no_tier3_default/`.
+- [x] Verify summary tables include only Tier-1/Tier-2 entries and no Tier-3 columns in stacked profile CSVs.
+
+## phase 1 final docs cleanup: notebook alignment
+- [x] Reworked `notebooks/01_dwarf_cluster_forecast.ipynb` into a Tier-2 tutorial centered on halo-ensemble runs.
+- [x] Updated notebook flow to demonstrate DK14-like outer profile configuration (`tier2.outer_profile_model: dk14_like`) with Tier-3 disabled.
+- [x] Added end-to-end tutorial steps for:
+  - generating per-run YAML configs,
+  - running `scripts/run_ensemble_forecast.py` for cluster and dwarf ensembles,
+  - loading `*_ensemble_delta_chi2_summary.csv`,
+  - rendering `*_ensemble_summary.png` and Tier-1 vs Tier-2 comparison figures.
+- [x] Performed smoke validation of the notebook workflow via small-halo test runs in `outputs/notebook_tier2_demo/`.

@@ -1,4 +1,7 @@
-"""Run configurable Tier-1 halo-ensemble stacked DeltaSigma forecasts."""
+"""Run configurable halo-ensemble stacked DeltaSigma forecasts.
+
+Tier-3 empirical outskirts corrections are opt-in and disabled by default.
+"""
 
 from __future__ import annotations
 
@@ -303,6 +306,7 @@ def run_ensemble_forecast(
     seed: int | None,
     ensemble_mode: str,
     config_path: Path | None = None,
+    enable_tier3_empirical: bool = False,
 ) -> None:
     """Execute configurable ensemble stacking forecast and save outputs."""
     benchmark = DEFAULT_ENSEMBLE_BENCHMARK
@@ -325,9 +329,15 @@ def run_ensemble_forecast(
     tier2_enabled = bool(tier2_configuration.get("enabled", False))
     tier3_configuration = dict(runtime_configuration["tier3_configuration"])
     target_regime = "cluster" if active_mode == "HMF" else "dwarf"
-    tier3_enabled = bool(tier3_configuration.get("enabled", False)) and tier2_enabled and (
+    tier3_requested = bool(tier3_configuration.get("enabled", False))
+    tier3_enabled = bool(enable_tier3_empirical) and tier3_requested and tier2_enabled and (
         target_regime in set(tier3_configuration.get("apply_to_regimes", ("cluster",)))
     )
+    if tier3_requested and not enable_tier3_empirical:
+        print(
+            f"[info] Tier-3 empirical correction requested by config for '{mode_tag}' "
+            "but disabled by default. Pass --enable-tier3-empirical to activate."
+        )
 
     halos = generate_ensemble(mode=active_mode, config_dict=sampling_configuration)
     halo_summary = summarize_ensemble(halos)
@@ -347,7 +357,9 @@ def run_ensemble_forecast(
     r_common_min_kpc = float(r_common_lensing_kpc[0])
     r_common_max_kpc = float(r_common_lensing_kpc[-1])
 
-    weights = np.asarray([halo["weight"] for halo in halos])
+    weights = np.asarray([halo["weight"] for halo in halos], dtype=float)
+    m200_msun_samples = np.asarray([halo["m200_msun"] for halo in halos], dtype=float)
+    c200_samples = np.asarray([halo["c200"] for halo in halos], dtype=float)
     cdm_projected_profiles: list[dict[str, np.ndarray]] = []
     sidm_projected_profiles: dict[float, list[dict[str, np.ndarray]]] = {
         sigma: [] for sigma in sigma_grid
@@ -373,9 +385,13 @@ def run_ensemble_forecast(
     elif sidm_backend == "parametric":
         sidm_parameterization = str(sidm_configuration.get("parameterization", "effective")).lower()
         sidm_mass_definition = str(sidm_configuration.get("mass_definition", "200c")).lower()
+        sidm_sigma_grid_definition = str(
+            sidm_configuration.get("sigma_grid_definition", "effective")
+        ).lower()
         if sidm_parameterization == "velocity_dependent":
             sidm_kwargs = {
                 "cross_section_parameterization": "velocity_dependent",
+                "sigma_grid_definition": sidm_sigma_grid_definition,
                 "w_km_s": float(sidm_configuration.get("w_km_s", 0.0)),
                 "time_model": str(sidm_configuration.get("time_model", "since_formation")),
                 "mass_definition": sidm_mass_definition,
@@ -390,9 +406,13 @@ def run_ensemble_forecast(
         cdm_profile_source = str(sidm_configuration.get("cdm_profile_source", "nfw")).lower()
         cdm_sigma_over_m = float(sidm_configuration.get("cdm_sigma_over_m", 0.0))
         cdm_w_km_s = float(sidm_configuration.get("cdm_w_km_s", 0.0))
+        cdm_sigma_definition = str(
+            sidm_configuration.get("cdm_sigma_definition", sidm_sigma_grid_definition)
+        ).lower()
         cdm_time_model = str(sidm_configuration.get("cdm_time_model", sidm_kwargs.get("time_model", "lookback_to_z")))
         cdm_sidm_kwargs = {
             "cross_section_parameterization": "velocity_dependent",
+            "sigma_grid_definition": cdm_sigma_definition,
             "w_km_s": cdm_w_km_s,
             "time_model": cdm_time_model,
             "mass_definition": sidm_mass_definition,
@@ -885,16 +905,34 @@ def run_ensemble_forecast(
         sidm_delta_sigma_profiles=stacked_sidm_by_sigma,
         output_path=output_paths["figures"] / f"{mode_tag}_ensemble_stacked_delta_sigma.png",
     )
+
+    summary_rho_cdm = stacked_cdm_rho
+    summary_rho_sidm_by_sigma = stacked_sidm_rho_by_sigma
+    summary_delta_sigma_cdm = stacked_cdm["delta_sigma_msun_kpc2"]
+    summary_delta_sigma_sidm_by_sigma = stacked_sidm_by_sigma
+    summary_delta_chi2_by_sigma = delta_chi2_by_sigma_tier1
+    if tier2_enabled and stacked_cdm_tier2 is not None:
+        summary_rho_cdm = stacked_cdm_rho_tier2
+        summary_rho_sidm_by_sigma = stacked_sidm_rho_by_sigma_tier2
+        summary_delta_sigma_cdm = stacked_cdm_tier2["delta_sigma_msun_kpc2"]
+        summary_delta_sigma_sidm_by_sigma = stacked_sidm_by_sigma_tier2
+        summary_delta_chi2_by_sigma = delta_chi2_by_sigma_tier2
+
+    summary_figure_path = output_paths["figures"] / f"{mode_tag}_ensemble_summary.png"
     plot_tier1_summary(
         r_3d_kpc=r_common_3d_kpc,
-        rho_cdm_msun_kpc3=stacked_cdm_rho,
-        rho_sidm_profiles=stacked_sidm_rho_by_sigma,
+        rho_cdm_msun_kpc3=summary_rho_cdm,
+        rho_sidm_profiles=summary_rho_sidm_by_sigma,
         r_projected_kpc=r_common_lensing_kpc,
-        delta_sigma_cdm_msun_kpc2=stacked_cdm["delta_sigma_msun_kpc2"],
-        delta_sigma_sidm_profiles=stacked_sidm_by_sigma,
+        delta_sigma_cdm_msun_kpc2=summary_delta_sigma_cdm,
+        delta_sigma_sidm_profiles=summary_delta_sigma_sidm_by_sigma,
         sigma_over_m_grid_cm2_g=sigma_grid,
-        delta_chi2_by_sigma=delta_chi2_by_sigma_tier1,
-        output_path=output_paths["figures"] / f"{mode_tag}_ensemble_tier1_summary.png",
+        delta_chi2_by_sigma=summary_delta_chi2_by_sigma,
+        output_path=summary_figure_path,
+        h=DEFAULT_COSMOLOGY.h,
+        m200_msun_samples=m200_msun_samples,
+        c200_samples=c200_samples,
+        weights=weights,
         annotation_text=_ensemble_parameter_annotation(
             ensemble_mode=active_mode,
             sampling_configuration=sampling_configuration,
@@ -903,7 +941,7 @@ def run_ensemble_forecast(
 
     figure_paths = [
         output_paths["figures"] / f"{mode_tag}_ensemble_stacked_delta_sigma.png",
-        output_paths["figures"] / f"{mode_tag}_ensemble_tier1_summary.png",
+        summary_figure_path,
     ]
     if tier2_enabled and stacked_cdm_tier2 is not None:
         plot_tier1_tier2_stacked_comparison(
@@ -955,6 +993,10 @@ def run_ensemble_forecast(
             sigma_over_m_grid_cm2_g=sigma_grid,
             delta_chi2_by_sigma=delta_chi2_by_sigma_tier3,
             output_path=output_paths["figures"] / f"{mode_tag}_ensemble_tier3_summary.png",
+            h=DEFAULT_COSMOLOGY.h,
+            m200_msun_samples=m200_msun_samples,
+            c200_samples=c200_samples,
+            weights=weights,
             annotation_text=_ensemble_parameter_annotation(
                 ensemble_mode=active_mode,
                 sampling_configuration=sampling_configuration,
@@ -1090,9 +1132,9 @@ def run_ensemble_forecast(
                 "filename": figure_path.name,
                 "created_at": timestamp.isoformat(),
                 "caption": (
-                    "Tier forecast figure. Axes are in physical kpc and Msun-based density units; "
-                    "Tier-1 curves use inner-only profiles, Tier-2 curves include DK14-like outskirts "
-                    "attachment, and Tier-3 curves include empirical SIDM outer corrections."
+                    "Forecast summary figure with physical-radius axes (kpc); stacked density is plotted in "
+                    "h^2 Msun/pc^3 and stacked DeltaSigma is plotted in h Msun/pc^2. Inset histograms show "
+                    "the ensemble halo-mass and concentration distributions, with mean and 16-84% ranges."
                 ),
             }
         )
@@ -1168,6 +1210,11 @@ def parse_arguments() -> argparse.Namespace:
         default=None,
         help="Optional YAML config path. If set, mode and sampler settings come from YAML.",
     )
+    parser.add_argument(
+        "--enable-tier3-empirical",
+        action="store_true",
+        help="Enable Tier-3 empirical outskirts correction (disabled by default).",
+    )
     return parser.parse_args()
 
 
@@ -1181,6 +1228,7 @@ def main() -> None:
         seed=arguments.seed,
         ensemble_mode=arguments.ensemble_mode,
         config_path=arguments.config_path,
+        enable_tier3_empirical=arguments.enable_tier3_empirical,
     )
 
 

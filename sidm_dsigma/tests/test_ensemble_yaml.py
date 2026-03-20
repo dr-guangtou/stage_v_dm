@@ -20,7 +20,7 @@ def test_cluster_yaml_parses_and_generates_expected_median_mass() -> None:
     assert parsed.mode == "HMF"
     assert parsed.tier2_config["enabled"] is True
     assert parsed.tier2_config["outer_profile_model"] == "dk14_like"
-    assert parsed.tier3_config["enabled"] is True
+    assert parsed.tier3_config["enabled"] is False
     assert parsed.tier3_config["correction_model"] in {
         "rt_shift",
         "gamma_shift",
@@ -41,7 +41,7 @@ def test_dwarf_yaml_parses_and_generates_expected_median_mass() -> None:
     assert parsed.mode == "SHMR"
     assert parsed.tier2_config["enabled"] is True
     assert parsed.tier2_config["r_match_mode"] in {"fraction_r200c", "fraction_r200m", "fixed_kpc"}
-    assert parsed.tier3_config["enabled"] is True
+    assert parsed.tier3_config["enabled"] is False
     assert "dwarf" in set(parsed.tier3_config["apply_to_regimes"])
 
     halos = generate_ensemble(parsed.mode, parsed.ensemble_config)

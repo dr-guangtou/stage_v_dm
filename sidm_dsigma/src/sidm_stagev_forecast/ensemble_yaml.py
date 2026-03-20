@@ -155,6 +155,17 @@ def load_ensemble_yaml_config(path: Path) -> EnsembleYamlConfig:
 
     sidm_block = dict(raw["sidm"])
     sidm_parameterization = str(sidm_block.get("parameterization", "effective")).lower()
+    sigma_grid_definition = str(
+        sidm_block.get(
+            "sigma_grid_definition",
+            "sigma0" if sidm_parameterization == "velocity_dependent" else "effective",
+        )
+    ).lower()
+    if sigma_grid_definition not in {"effective", "sigma0"}:
+        raise ValueError(
+            "sidm.sigma_grid_definition must be 'effective' or 'sigma0', "
+            f"received {sigma_grid_definition!r}."
+        )
     if sidm_parameterization == "effective":
         sidm_sigma_grid = tuple(float(value) for value in sidm_block["sigma_over_m_grid"])
     elif sidm_parameterization == "velocity_dependent":
@@ -166,13 +177,21 @@ def load_ensemble_yaml_config(path: Path) -> EnsembleYamlConfig:
         )
 
     cdm_block = dict(sidm_block.get("cdm_reference", {}))
+    cdm_sigma_definition = str(cdm_block.get("sigma_definition", sigma_grid_definition)).lower()
+    if cdm_sigma_definition not in {"effective", "sigma0"}:
+        raise ValueError(
+            "sidm.cdm_reference.sigma_definition must be 'effective' or 'sigma0', "
+            f"received {cdm_sigma_definition!r}."
+        )
     sidm_config = {
         "parameterization": sidm_parameterization,
+        "sigma_grid_definition": sigma_grid_definition,
         "w_km_s": float(sidm_block.get("w_km_s", 0.0)),
         "time_model": str(sidm_block.get("time_model", "lookback_to_z")),
         "mass_definition": str(sidm_block.get("mass_definition", "200c")).lower(),
         "cdm_profile_source": str(cdm_block.get("profile_source", "nfw")).lower(),
         "cdm_sigma_over_m": float(cdm_block.get("sigma0_over_m", 0.0)),
+        "cdm_sigma_definition": cdm_sigma_definition,
         "cdm_w_km_s": float(cdm_block.get("w_km_s", 0.0)),
         "cdm_time_model": str(cdm_block.get("time_model", sidm_block.get("time_model", "lookback_to_z"))),
     }

@@ -55,6 +55,10 @@ Owns toy error models, `Delta chi^2`, summary tables, figure generation, and fin
 - Worktree-first development rule (core memory):
   - For this project, always implement new development work in a dedicated git worktree.
   - Do not use a branch-only workflow in the same checkout.
+- Figure-format rule for `outputs/figures/` (core memory):
+  - `DeltaSigma` must be labeled and plotted in `$h$ Msun / pc$^2$`.
+  - 3D density must be labeled and plotted in `$h^2$ Msun / pc$^3$`.
+  - Ensemble summary figures must include halo-mass and concentration histograms with highlighted weighted mean and 16-84% ranges.
 
 ## Minimum acceptance bar
 

@@ -41,6 +41,7 @@ projection:
 
 sidm:
   parameterization: "velocity_dependent"
+  sigma_grid_definition: "effective"
   sigma0_over_m_grid: [0.05, 0.1, 0.2, 0.3]
   w_km_s: 40.0
   time_model: "since_formation"

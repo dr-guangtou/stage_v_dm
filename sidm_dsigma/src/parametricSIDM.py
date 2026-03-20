@@ -7,7 +7,8 @@ It loads `parametricC4.py` from a local parametricSIDM checkout and maps
 `(M200c, c200, z, sigma_over_m)` to the C4 profile prescription.
 
 Optional velocity-dependent mode is supported through kwargs:
-`cross_section_parameterization="velocity_dependent"` and `w_km_s`.
+`cross_section_parameterization="velocity_dependent"`, `w_km_s`, and
+`sigma_grid_definition` (`"sigma0"` or `"effective"`).
 """
 
 from __future__ import annotations
@@ -74,6 +75,7 @@ def density_profile_from_m200_c200(
     elapsed_time_gyr: float | None = None,
     *,
     cross_section_parameterization: str = "effective",
+    sigma_grid_definition: str = "sigma0",
     w_km_s: float | None = None,
     formation_redshift: float | None = None,
     time_model: str = "lookback_to_z",
@@ -93,14 +95,23 @@ def density_profile_from_m200_c200(
     parameterization = str(cross_section_parameterization).lower()
     effective_sigma_over_m = float(sigma_over_m)
     if parameterization == "velocity_dependent":
-        w_value_km_s = 0.0 if w_km_s is None else float(w_km_s)
-        vmax_nfw_km_s = nfw_vmax_km_s(rho_s_msun_kpc3, rs_kpc)
-        veff_km_s = 0.64 * vmax_nfw_km_s
-        effective_sigma_over_m = sigma_eff_maxwellian(
-            veff_km_s=veff_km_s,
-            sigma0_over_m_cm2_g=float(sigma_over_m),
-            w_km_s=w_value_km_s,
-        )
+        sigma_definition = str(sigma_grid_definition).lower()
+        if sigma_definition == "effective":
+            effective_sigma_over_m = float(sigma_over_m)
+        elif sigma_definition == "sigma0":
+            w_value_km_s = 0.0 if w_km_s is None else float(w_km_s)
+            vmax_nfw_km_s = nfw_vmax_km_s(rho_s_msun_kpc3, rs_kpc)
+            veff_km_s = 0.64 * vmax_nfw_km_s
+            effective_sigma_over_m = sigma_eff_maxwellian(
+                veff_km_s=veff_km_s,
+                sigma0_over_m_cm2_g=float(sigma_over_m),
+                w_km_s=w_value_km_s,
+            )
+        else:
+            raise ValueError(
+                "sigma_grid_definition must be 'effective' or 'sigma0' when "
+                f"cross_section_parameterization='velocity_dependent', received {sigma_grid_definition!r}."
+            )
     elif parameterization != "effective":
         raise ValueError(
             "cross_section_parameterization must be either 'effective' or "

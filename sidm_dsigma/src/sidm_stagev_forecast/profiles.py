@@ -192,7 +192,7 @@ def build_hybrid_sidm_profile(
     stitch_params: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build Tier-2 hybrid profile components and stitched outputs."""
-    from sidm_stagev_forecast.outer_profiles import build_dk14_outer_profile
+    from sidm_stagev_forecast.outer_profiles import build_outer_profile
     from sidm_stagev_forecast.stitch import resolve_match_radius_kpc, stitch_inner_outer_profile
 
     cdm_profile_source = str((model_options or {}).get("cdm_profile_source", "nfw")).lower()
@@ -225,17 +225,20 @@ def build_hybrid_sidm_profile(
         model_options=model_options,
     )
 
-    outer_bundle = build_dk14_outer_profile(
+    stitching_options = {} if stitch_params is None else dict(stitch_params)
+    outer_profile_model = str(stitching_options.get("outer_profile_model", "dk14_like")).lower()
+
+    outer_bundle = build_outer_profile(
         r_kpc=r_kpc,
         mass_msun=m200_msun,
         z=z,
         concentration=c200,
         mass_def="200c",
         cosmology=cosmo,
-        dk14_params=dk14_params,
+        outer_profile_model=outer_profile_model,
+        outer_params=dk14_params,
     )
 
-    stitching_options = {} if stitch_params is None else dict(stitch_params)
     r_match_kpc = resolve_match_radius_kpc(
         mass_msun=m200_msun,
         z=z,
@@ -266,6 +269,7 @@ def build_hybrid_sidm_profile(
         "r_kpc": np.asarray(r_kpc),
         "cdm_inner": cdm_inner,
         "sidm_inner": sidm_inner,
+        "outer_reference": outer_bundle,
         "dk14_outer_reference": outer_bundle,
         "rho_cdm_hybrid_msun_kpc3": rho_cdm_hybrid,
         "rho_sidm_hybrid_msun_kpc3": rho_sidm_hybrid,
@@ -274,6 +278,7 @@ def build_hybrid_sidm_profile(
             "sigma_over_m_cm2_g": float(sigma_over_m),
             "r_match_kpc": float(r_match_kpc),
             "stitch_method": str(stitching_options.get("stitch_method", "logistic_logrho_blend")),
+            "outer_profile_model": outer_profile_model,
             "mass_definition": "200c",
         },
     }
@@ -297,7 +302,7 @@ def build_tier3_sidm_profile(
         apply_sidm_outer_correction,
         modify_dk14_parameters_for_sidm,
     )
-    from sidm_stagev_forecast.outer_profiles import build_dk14_outer_profile
+    from sidm_stagev_forecast.outer_profiles import build_outer_profile
     from sidm_stagev_forecast.stitch import resolve_match_radius_kpc, stitch_inner_outer_profile
 
     tier2_bundle = build_hybrid_sidm_profile(
@@ -323,6 +328,8 @@ def build_tier3_sidm_profile(
 
     from sidm_stagev_forecast.outer_profiles import default_dk14_like_parameters
 
+    stitch_options = {} if stitch_params is None else dict(stitch_params)
+    outer_profile_model = str(stitch_options.get("outer_profile_model", "dk14_like")).lower()
     regime = "cluster"
     if dk14_params is not None and "regime" in dk14_params:
         regime = str(dk14_params["regime"])
@@ -334,7 +341,6 @@ def build_tier3_sidm_profile(
             base_dk14[key] = float(value)
     correction_parameters = resolve_tier3_parameters(config)
     correction_model = str(correction_parameters["correction_model"])
-    stitch_options = {} if stitch_params is None else dict(stitch_params)
 
     halo_context = {
         "m200_msun": float(m200_msun),
@@ -361,23 +367,25 @@ def build_tier3_sidm_profile(
         cosmology=cosmo,
     )
 
-    outer_sidm = build_dk14_outer_profile(
+    outer_sidm = build_outer_profile(
         r_kpc=r_kpc,
         mass_msun=m200_msun,
         z=z,
         concentration=c200,
         mass_def="200c",
         cosmology=cosmo,
-        dk14_params=dk14_sidm,
+        outer_profile_model=outer_profile_model,
+        outer_params=dk14_sidm,
     )
-    outer_cdm = build_dk14_outer_profile(
+    outer_cdm = build_outer_profile(
         r_kpc=r_kpc,
         mass_msun=m200_msun,
         z=z,
         concentration=c200,
         mass_def="200c",
         cosmology=cosmo,
-        dk14_params=dk14_cdm,
+        outer_profile_model=outer_profile_model,
+        outer_params=dk14_cdm,
     )
 
     r_match_kpc = resolve_match_radius_kpc(
@@ -433,6 +441,7 @@ def build_tier3_sidm_profile(
         "metadata": {
             **tier2_bundle["metadata"],
             "profile": "sidm_tier3_empirical",
+            "outer_profile_model": outer_profile_model,
             "tier3_correction_model": correction_model,
             "tier3_parameters": correction_parameters,
         },

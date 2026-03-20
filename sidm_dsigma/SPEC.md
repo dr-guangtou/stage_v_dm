@@ -1,720 +1,153 @@
 # SPEC.md
 
-## Project title
+## Project Scope
 
-Minimal Stage-V SIDM Lensing Forecast
+`sidm_dsigma` provides a modular, first-order SIDM lensing forecast pipeline centered on stacked halo ensembles.
 
-## Objective
+Implemented modeling tiers:
 
-Implement a lightweight forecast pipeline that uses a parametric SIDM halo model to compare CDM and SIDM predictions for:
+- Tier-1: SIDM inner-halo modifications only.
+- Tier-2: SIDM inner halo stitched to DK14-like outskirts.
+- Tier-3: Tier-2 profile plus empirical SIDM-dependent outer correction.
 
-- the 3D density profile `rho(r)`, and
-- the galaxy-galaxy / cluster-galaxy lensing observable `DeltaSigma(R)`
+The pipeline is designed for interpretability and fast iteration, not full survey realism.
 
-for two benchmark halo masses:
+## Scientific Framing
 
-- `M200 = 1e10 Msun`
-- `M200 = 1e14 Msun`
+### Tier Interpretation
 
-The pipeline is intended for a 1st-order science-case forecast that can be completed quickly and handed off to a coding agent.
+- Tier-1: inner halo response to SIDM.
+- Tier-2: inner SIDM + realistic outer steepening baseline.
+- Tier-3: empirical, simulation-informed nuisance extension for SIDM outskirts sensitivity studies.
 
----
+Tier-3 is explicitly an approximate correction framework, not a first-principles cosmological SIDM splashback solver.
 
-## 1. Scientific assumptions
+### Regimes and Selection Modes
 
-### 1.1 Forecast philosophy
+- Cluster-like runs: `mode=HMF` (halo-mass-selected).
+- Dwarf-like runs: `mode=SHMR` (stellar-mass-selected, central-only assumption in Tier-1 design).
 
-This is not a full survey forecast. It is a controlled, interpretable comparison of halo-profile predictions.
+## Architecture
 
-We want to answer:
+Core package: `src/sidm_stagev_forecast/`
 
-> For a specified SIDM parameterization, how different are the predicted `rho(r)` and `DeltaSigma(R)` from CDM, and what approximate measurement precision would be needed to tell them apart?
+- `config.py`: benchmark/config dataclasses and defaults.
+- `cosmology.py`: cosmology helpers and `M200c`/`Rdelta` support.
+- `ensemble.py`: HMF and SHMR samplers, redshift/selection/scatter logic.
+- `ensemble_yaml.py`: YAML normalization into runtime config containers.
+- `profiles.py`: NFW baseline, parametric SIDM wrapper integration, Tier-2/Tier-3 builders.
+- `outer_profiles.py`: DK14-like outer profile components.
+- `stitch.py`: smooth log-density stitching utilities.
+- `outer_corrections.py`: empirical Tier-3 outer corrections.
+- `calibration.py`: correction preset/calibration helpers.
+- `projection.py`: local numerical projection (`Sigma`, `DeltaSigma`).
+- `stacking.py`: interpolation and weighted stacking.
+- `forecast.py`: toy distinguishability metrics.
+- `plotting.py`: figure generation, including Tier-3 redshift-overlay summary with inset distributions.
+- `io.py`: output writing and caption/inventory appenders.
+- `velocity_dependence.py`: SIDM velocity-dependent helper functions.
 
-### 1.2 SIDM parameterization
+Primary scripts:
 
-Use a halo-scale effective cross section:
+- `scripts/run_ensemble_forecast.py`
+- `scripts/build_tier3_redshift_overlay_summaries.py`
+- `scripts/run_cdm_engine_convergence_check.py`
+- `scripts/run_reference_crosscheck.py`
+- `scripts/run_precision_sweep.py`
 
-```text
-sigma_over_m_eff   [cm^2 / g]
-```
+## Configuration Contract
 
-This is the only required SIDM parameter in version 1.
+YAML is the operational interface for ensemble runs.
 
-### 1.3 Benchmark grids
+Required high-level blocks:
 
-#### Dwarf case
-```text
-M200 = 1e10 Msun
-c200 = 15.0   (default; allow override)
-z = 0.3       (default; allow override)
-sigma/m = [0.0, 10.0, 20.0, 50.0, 100.0]
-```
+- `mode`: `HMF` or `SHMR`
+- `ensemble`, `redshift`, `projection`, `stacking`, `concentration`
+- `sidm`
+- optional `tier2`
+- optional `tier3`
 
-#### Cluster case
-```text
-M200 = 1e14 Msun
-c200 = 4.0    (default; allow override)
-z = 0.3       (default; allow override)
-sigma/m = [0.0, 0.05, 0.1, 0.2, 0.3]
-```
+### SIDM Block
 
-### 1.4 Version-1 exclusions
+Supported parameterizations:
 
-The following are explicitly out of scope unless already easy to add:
+- `effective`: uses `sigma_over_m_grid`
+- `velocity_dependent`: uses `sigma0_over_m_grid` with `w_km_s`
 
-- halo occupation distribution,
-- halo mass scatter,
-- satellite fraction modeling,
-- miscentering,
-- 2-halo term,
-- intrinsic alignment,
-- source redshift uncertainty propagation,
-- realistic survey covariance,
-- baryonic components beyond an optional placeholder.
+Supported fields include:
 
----
+- `parameterization`
+- `w_km_s`
+- `time_model`
+- `mass_definition`
+- optional `cdm_reference`:
+  - `profile_source`
+  - `sigma0_over_m`
+  - `w_km_s`
+  - `time_model`
 
-## 2. External software guidance
+### Tier-2 Block
 
-### 2.1 Core dependency
+Controls DK14-like outskirts + stitch model:
 
-Use:
+- `enabled`
+- `outer_profile_model`
+- `stitch_method`
+- `r_match_mode`
+- `r_match_value`
+- `smooth_width_dex`
+- `continuity`
+- optional regime overrides
 
-- `parametricSIDM` as the SIDM profile engine.
+### Tier-3 Block
 
-### 2.2 Projection guidance
+Controls empirical outer correction layer:
 
-Do not use `cluster_toolkit` directly.
+- `enabled`
+- `correction_model`
+- `sigma_pivot`
+- `apply_to_regimes`
+- `calibration_mode`
+- `preset`
+- model-specific parameter sub-blocks (`rt_shift`, `gamma_shift`, `beta_shift`, `outer_window`)
 
-Implement the projection integrals in-house with `numpy` and `scipy`.
+Runtime policy:
 
-Allowed supporting packages:
+- Tier-3 empirical correction is opt-in at execution time.
+- Default forecast runs do not apply Tier-3 empirical correction unless explicitly enabled via CLI.
 
-- `numpy`
-- `scipy`
-- `matplotlib`
-- `astropy`
-- `pyccl` (optional reference / validation)
-- `colossus` (optional reference / validation)
-- `halomod` (optional future extension; not needed for v1)
+## Numerical and Physical Conventions
 
-### 2.3 Preferred use of other libraries
+- Core mass convention: `M200c`.
+- `R200m` is used only when requested by Tier-2 matching mode.
+- Projection is local numerical integration with `numpy/scipy`.
+- External packages (`colossus`, `pyccl`) are optional references/validation, not mandatory runtime requirements.
 
-- Use CCL as a reference for conventions and, if useful, cross-checks of projected quantities for standard profiles.
-- Use Colossus as a reference for halo-profile conventions and optional consistency tests against standard NFW `Sigma` and `DeltaSigma`.
-- Do not make any of these packages mandatory for the main projection path.
-
----
-
-## 3. Required modules
-
-### 3.1 `config.py`
-
-Purpose:
-- centralize constants and benchmark settings.
+## Output Contract
 
-Required contents:
-- cosmological parameters (simple flat LCDM defaults),
-- benchmark masses,
-- benchmark concentrations,
-- default redshift,
-- radial grids,
-- SIDM cross-section grids,
-- toy error models.
-
-### 3.2 `cosmology.py`
-
-Purpose:
-- provide basic cosmology helpers.
-
-Required functions:
-
-```python
-def rho_crit_z(z: float, cosmo: dict) -> float:
-    ...
-
-def rdelta(M: float, z: float, cosmo: dict, definition: str = "200c") -> float:
-    ...
-```
-
-Notes:
-- choose one mass definition and use it consistently everywhere;
-- default to `M200c` unless there is a compelling reason not to.
-
-### 3.3 `profiles.py`
-
-Purpose:
-- generate CDM and SIDM 3D profiles.
-
-Required functions:
-
-```python
-def nfw_profile_from_m_c(
-    r: np.ndarray,
-    M200: float,
-    c200: float,
-    z: float,
-    cosmo: dict,
-) -> np.ndarray:
-    ...
-
-
-def sidm_profile_from_parametric_model(
-    r: np.ndarray,
-    M200: float,
-    c200: float,
-    z: float,
-    sigma_over_m: float,
-    model_options: dict | None = None,
-) -> dict:
-    ...
-```
-
-Expected return dictionary keys for SIDM function:
-
-```python
-{
-    "r": r,
-    "rho": rho,
-    "m_enclosed": m_enclosed,
-    "vcirc": vcirc,
-    "metadata": {...}
-}
-```
-
-Requirements:
-- wrap `parametricSIDM` in a stable local interface;
-- keep the wrapper thin and transparent;
-- gracefully fail with an informative message if the upstream code changes.
-
-### 3.4 `projection.py`
-
-Purpose:
-- compute lensing profiles from 3D density profiles.
-
-Required functions:
-
-```python
-def sigma_of_R(
-    R: np.ndarray,
-    r: np.ndarray,
-    rho: np.ndarray,
-    r_max: float | None = None,
-) -> np.ndarray:
-    ...
-
-
-def sigma_bar_of_R(
-    R: np.ndarray,
-    sigma_R: np.ndarray,
-) -> np.ndarray:
-    ...
+Standard outputs are stored in:
 
+- `outputs/intermediate/`
+- `outputs/tables/`
+- `outputs/figures/`
 
-def delta_sigma_of_R(
-    R: np.ndarray,
-    r: np.ndarray,
-    rho: np.ndarray,
-) -> dict:
-    ...
-```
+Operational documentation requirements:
 
-Definitions:
+- Every generated figure must have an entry in `outputs/figures/CAPTION.md`.
+- Generated intermediate/table artifacts are tracked in `outputs/INVENTORY.md`.
 
-```text
-Sigma(R)      = 2 * integral_R^infinity dr [ rho(r) * r / sqrt(r^2 - R^2) ]
-Sigma_bar(R)  = (2 / R^2) * integral_0^R dR' [ R' * Sigma(R') ]
-DeltaSigma(R) = Sigma_bar(R) - Sigma(R)
-```
+## Current Figure Retention Policy (Phase-1 Organization)
 
-Implementation requirements:
-- use robust interpolation of `rho(r)` on a logarithmic radial grid;
-- avoid numerical instability near `r = R`;
-- expose integration controls;
-- document whether outputs are in physical `Msun / kpc^2` or another unit;
-- include at least one unit test against an analytic NFW or a trusted numerical reference.
+To reduce clutter and preserve canonical outputs, only default ensemble summary figures are retained:
 
-### 3.5 `forecast.py`
+- `cluster_ensemble_summary.png`
+- `dwarf_ensemble_summary.png`
 
-Purpose:
-- compute distinguishability metrics.
+## Explicit Non-Goals
 
-Required functions:
+Still out of scope:
 
-```python
-def fractional_error_model(
-    R: np.ndarray,
-    regime: str,
-    scenario: str = "baseline",
-) -> np.ndarray:
-    ...
-
-
-def delta_chi2(
-    model: np.ndarray,
-    reference: np.ndarray,
-    sigma: np.ndarray,
-) -> float:
-    ...
-
-
-def required_fractional_precision(
-    model: np.ndarray,
-    reference: np.ndarray,
-    target_snr: float,
-) -> float:
-    ...
-```
-
-Interpretation:
-- `delta_chi2` can assume diagonal covariance in v1;
-- `required_fractional_precision` should return a simple scalar summary for slide-ready communication.
-
-### 3.6 `plotting.py`
-
-Purpose:
-- generate publication-quality plots.
-
-Required plots:
-
-1. `rho(r)` for CDM and SIDM benchmarks, dwarf and cluster
-2. `DeltaSigma(R)` for CDM and SIDM benchmarks, dwarf and cluster
-3. ratio plots:
-   - `rho_SIDM / rho_CDM`
-   - `DeltaSigma_SIDM / DeltaSigma_CDM`
-4. optional residual plots in units of assumed observational error
-
-Style requirements:
-- readable on workshop slides,
-- log-log axes where appropriate,
-- clear legends with halo mass and `sigma/m`,
-- no hidden smoothing.
-
-### 3.7 `io.py`
-
-Purpose:
-- save outputs.
-
-Required outputs:
-- CSV or ECSV tables for profiles,
-- PNG and PDF figures,
-- a compact JSON summary of benchmark distinguishability metrics.
-
----
-
-## 4. Radial grids and units
-
-### 4.1 Dwarf grids
-
-3D grid:
-
-```text
-r = logspace(-1, 2.5) kpc   # 0.1 to ~316 kpc
-```
-
-Projected grid:
-
-```text
-R = logspace(0.5, 2.5) kpc  # ~3 to ~316 kpc
-```
-
-### 4.2 Cluster grids
-
-3D grid:
-
-```text
-r = logspace(0.7, 3.7) kpc  # ~5 to ~5000 kpc
-```
-
-Projected grid:
-
-```text
-R = logspace(1.5, 3.5) kpc  # ~30 to ~3160 kpc
-```
-
-### 4.3 Units
-
-Use:
-
-- `r`, `R` in physical kpc
-- `rho` in `Msun / kpc^3`
-- `Sigma`, `DeltaSigma` in `Msun / kpc^2`
-- `M200` in `Msun`
-
-All unit conversions must be explicit.
-
----
-
-## 5. Toy observational model
-
-### 5.1 Dwarf case
-
-Implement at least two scenarios:
-
-#### baseline
-```text
-fractional error per bin = 0.15
-```
-
-#### conservative
-```text
-fractional error per bin = 0.30
-```
-
-Allow a third optional optimistic scenario:
-
-```text
-fractional error per bin = 0.10
-```
-
-### 5.2 Cluster case
-
-Implement at least two scenarios:
-
-#### baseline
-```text
-fractional error per bin = 0.05
-```
-
-#### conservative
-```text
-fractional error per bin = 0.10
-```
-
-Optional optimistic scenario:
-
-```text
-fractional error per bin = 0.03
-```
-
-These are placeholders for a science-case forecast, not final survey requirements.
-
----
-
-## 6. Required outputs
-
-### 6.1 Figures
-
-Produce at least the following:
-
-#### Figure 1: 4-panel core comparison
-Panels:
-1. dwarf `rho(r)`
-2. dwarf `DeltaSigma(R)`
-3. cluster `rho(r)`
-4. cluster `DeltaSigma(R)`
-
-#### Figure 2: ratio figure
-Panels:
-1. dwarf `rho_SIDM / rho_CDM`
-2. dwarf `DeltaSigma_SIDM / DeltaSigma_CDM`
-3. cluster `rho_SIDM / rho_CDM`
-4. cluster `DeltaSigma_SIDM / DeltaSigma_CDM`
-
-#### Figure 3: detectability summary
-For each regime, show either:
-- `sqrt(Delta chi^2)` vs `sigma/m`, or
-- required fractional precision vs `sigma/m`.
-
-### 6.2 Tables
-
-#### Table A: benchmark setup
-Columns:
-- regime
-- `M200`
-- `c200`
-- `z`
-- `sigma_over_m`
-- radial range used
-
-#### Table B: detectability summary
-Columns:
-- regime
-- `sigma_over_m`
-- max fractional change in `DeltaSigma`
-- radial range of strongest leverage
-- `Delta chi^2` for each error scenario
-- required fractional precision for `2 sigma` and `3 sigma`
-
----
-
-## 7. Numerical validation requirements
-
-At minimum, perform the following checks:
-
-1. CDM sanity check
-   - verify that the NFW profile integrates to the intended halo mass definition within tolerance.
-
-2. Projection sanity check
-   - compare the numerical `Sigma(R)` / `DeltaSigma(R)` for an NFW halo against an analytic or trusted reference calculation.
-
-3. Monotonicity / positivity checks
-   - no negative `rho`, `Sigma`, or `DeltaSigma` in the benchmark outputs.
-
-4. Resolution test
-   - verify that doubling radial resolution changes `DeltaSigma` negligibly over the quoted radial range.
-
----
-
-## 8. Coding style and reproducibility
-
-Requirements:
-
-- Python 3.11+
-- type hints where practical
-- concise docstrings
-- deterministic benchmark outputs
-- all benchmark choices configurable from a single file
-- avoid notebook-only logic; core computation must live in importable modules
-
-Recommended:
-
-- `ruff` or `black` formatting
-- small unit tests for projection routines
-
----
-
-## 9. Nice-to-have extensions (not required for v1)
-
-Only attempt after the core benchmark works:
-
-1. optional Hernquist stellar component
-2. optional 2-halo term using CCL / halomod-inspired machinery
-3. redshift dependence (`z = 0.1, 0.3, 0.6`)
-4. concentration variation sensitivity
-5. mapping between `(sigma/m)_eff` and a velocity-dependent particle model
-6. optional use of the dedicated `SIDM_Lensing_Model` repository as a cross-check
-
----
-
-## 10. Acceptance criteria
-
-The project is successful when:
-
-1. the code runs end-to-end for the dwarf and cluster benchmarks;
-2. it generates `rho(r)` and `DeltaSigma(R)` for CDM and SIDM cases;
-3. it outputs the required figures and summary tables;
-4. it provides at least one slide-ready statement about the measurement precision needed to distinguish CDM from SIDM in each regime.
-
----
-
-## 11. References to consult during implementation
-
-- `parametricSIDM` GitHub repository for the core SIDM profile workflow.
-- `SIDM_Lensing_Model` GitHub repository for lensing-specific SIDM calculations and possible cross-checks.
-- CCL documentation for halo-profile projection conventions.
-- Colossus documentation for standard profile and `DeltaSigma` reference behavior.
-- CLMM documentation / paper for weak-lensing definitions and unit conventions.
-
----
-
-## SIDM vs CDM Stacked ΔΣ(R) Forecast
-
-### Tier-1 Halo Ensemble
-
-Assume the single-halo pipeline is complete.
-
----
-
-# 1. Objective
-
-Construct stacked ΔΣ(R) predictions from a halo ensemble.
-
-Deliverables:
-
-- Halo sampler
-- Stacking module
-- Ensemble forecast
-- Benchmark stacked cluster results
-
----
-
-# 2. Halo Ensemble Sampler
-
-Function:
-
-sample_halo_ensemble(
-    N_halos,
-    mean_mass,
-    mass_scatter_dex,
-    z,
-    concentration_model,
-    seed=None
-)
-
-Returns list of halos:
-
-{
-  M200,
-  z,
-  c200,
-  weight
-}
-
-Defaults:
-
-- mean_mass = 3e14 Msun
-- mass_scatter = 0.2 dex
-- z = 0.4
-- Equal weights
-
----
-
-# 3. Profile Generation
-
-For each halo:
-
-CDM:
-- NFW profile
-
-SIDM:
-- Use parametricSIDM wrapper
-
-Radial grid:
-- Log-spaced
-- Extend to ≥ 5 × R200
-
-Output:
-- ρ(r)
-- M(<r)
-
----
-
-# 4. Projection
-
-Compute:
-
-Σ(R)
-ΔΣ(R)
-
-Method:
-
-- Direct numerical Abel integral
-- Log-spaced grids
-- No cluster_toolkit dependency
-
----
-
-# 5. Stacking
-
-Procedure:
-
-1. Interpolate ΔΣ_i onto common R grid
-2. Compute weighted mean
-3. Return stacked ΔΣ(R)
-
----
-
-# 6. Forecast
-
-Compute:
-
-Δχ² = Σ [ (ΔΣ_SIDM − ΔΣ_CDM)^2 / σ^2 ]
-
-Toy fractional errors:
-
-Cluster regime:
-- 5% (optimistic)
-- 10% (conservative)
-
-Return:
-
-- Δχ²
-- Effective sigma separation
-
----
-
-# 7. Validation Requirements
-
-- Analytic NFW ΔΣ check
-- Single-halo limit test
-- Ensemble convergence
-- Profile sanity checks
-
----
-
-# 8. Explicit Non-Goals
-
-Do not implement:
-
-- Splashback modeling
 - 2-halo term
-- Subhalo evolution
-- Baryons
-- Full survey realism
-
----
-
-# 9. Performance Target
-
-- 100 halos per σ/m grid
-- Runtime < 2 minutes
-- Stable reproducibility with fixed seed
-
----
-
-## Tier-2 Hybrid Outskirts Extension (Optional)
-
-### Scientific Framing
-
-Tier-2 is a hybrid approximation:
-- Tier-1: SIDM-modified inner halo only.
-- Tier-2: SIDM inner halo + DK14-like outer-profile attachment.
-
-Tier-2 is not a self-consistent SIDM splashback simulation and must be documented as such in outputs.
-
-### Tier-2 Profile Structure
-
-For each halo:
-
-rho_hybrid(r) = stitch( rho_inner_sidm(r), rho_outer_dk14_like(r) )
-
-where:
-- `rho_inner_sidm` comes from `parametricSIDM` wrapper,
-- `rho_outer_dk14_like` is a DK14-inspired outer reference profile,
-- stitch is a smooth log-density blend.
-
-### Tier-2 Config Interface
-
-Add `tier2` config block:
-
-```yaml
-tier2:
-  enabled: false
-  outer_profile_model: "dk14_like"
-  stitch_method: "logistic_logrho_blend"
-  r_match_mode: "fraction_r200m"  # or fraction_r200c, fixed_kpc
-  r_match_value: 0.8
-  smooth_width_dex: 0.15
-  continuity: "density"
-```
-
-Mass-definition rule:
-- Keep the core pipeline on `M200c`.
-- Derive `R200m` only when requested by `r_match_mode`.
-
-### Tier-2 Required Validation
-
-1. Profile sanity (single halo, cluster + dwarf):
-- plot `rho_cdm_inner`, `rho_sidm_inner`, `rho_dk14_reference`, `rho_hybrid`.
-- verify no discontinuities.
-
-2. Slope diagnostic:
-- plot `d ln rho / d ln r` for baseline, DK14-like, and hybrid.
-- confirm outer steepening exists.
-
-3. Projection stability:
-- project to `Sigma(R)` and `DeltaSigma(R)`.
-- confirm no oscillatory stitching artifacts.
-
-4. Ensemble comparison:
-- stacked `DeltaSigma(R)` Tier-1 vs Tier-2 for cluster and dwarf.
-- SIDM/CDM ratios and `Delta chi^2` by `sigma/m`.
-
-### Tier-2 Acceptance
-
-Tier-2 is complete when:
-1. `tier2.enabled=false` reproduces Tier-1 behavior.
-2. `tier2.enabled=true` generates stable hybrid profiles and projections.
-3. Cluster stacked `DeltaSigma` shows sensible outskirts modification.
-4. Inner SIDM contrast remains visible at small radii.
+- baryonic/HOD/subhalo realism
+- full covariance realism
+- first-principles cosmological SIDM outskirts/splashback simulation in this repository
