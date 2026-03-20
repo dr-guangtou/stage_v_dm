@@ -1,7 +1,10 @@
 # Generated data files (not tracked)
 outputs/**/*.npz
+outputs/**/*.json
 
-# Track figures (PNG) and result JSONs — these are the main deliverables
+# Track figures (PNG) and YAML configs — these are the main deliverables
+# Track CAPTION.md for figure documentation
+# Track config.yaml copies for reproducibility
 
 # Python
 __pycache__/
