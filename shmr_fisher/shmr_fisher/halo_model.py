@@ -340,6 +340,13 @@ def _sigma_matter(R_Mpc: float, z: float, pi_max: float = 100.0) -> float:
     # ξ_mm needs comoving Mpc/h: r_com = r_phys * (1+z) * h
     scale_to_ckpc_h = (1.0 + z) * h  # physical Mpc -> comoving Mpc/h
 
+    # colossus correlationFunction has a minimum R ~ 1e-3 Mpc/h.
+    # At very small projected radii the 2-halo term is negligible
+    # (deep inside the 1-halo regime), so return 0 if below the limit.
+    r_min_cmpc_h = R_Mpc * scale_to_ckpc_h  # minimum 3D r (at pi=0)
+    if r_min_cmpc_h < 1.5e-3:
+        return 0.0
+
     def integrand(pi):
         r_3d_phys = np.sqrt(R_Mpc**2 + pi**2)  # physical Mpc
         r_3d_cmpc_h = r_3d_phys * scale_to_ckpc_h  # comoving Mpc/h
@@ -394,10 +401,13 @@ def delta_sigma_matter(R_Mpc: np.ndarray, z: float) -> np.ndarray:
     R_Mpc = np.atleast_1d(R_Mpc)
 
     # Compute Σ_mm on a fine grid from R_min/10 to R_max for accurate
-    # mean-interior integration.
-    R_min = R_Mpc.min()
+    # mean-interior integration. Clamp the lower bound so that the
+    # colossus correlation function remains valid (R > ~1e-3 Mpc/h).
+    cosmo_h = cosmology.getCurrent().H0 / 100.0
+    r_floor_phys = 2e-3 / ((1.0 + z) * cosmo_h)  # [physical Mpc]
+    R_min = max(R_Mpc.min() * 0.1, r_floor_phys)
     R_max = R_Mpc.max()
-    R_fine = np.logspace(np.log10(R_min * 0.1), np.log10(R_max * 1.01), 80)
+    R_fine = np.logspace(np.log10(R_min), np.log10(R_max * 1.01), 80)
 
     sigma_fine = np.array([_sigma_matter(r, z) for r in R_fine])
 

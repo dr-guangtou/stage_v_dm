@@ -1,0 +1,68 @@
+# dwarf_fullrange.yaml — Full stellar mass range comparison
+#
+# Same four surveys as dwarf_regime.yaml but with the stellar mass
+# upper limit removed (log_Mstar_max -> 12.0) and galaxy counts
+# scaled by 3x to reflect the larger samples spanning the full
+# M* range. All SHMR shape + scatter parameters are freed
+# (gamma_0 and log_M1_0 are no longer fixed).
+#
+# This demonstrates that scatter constraints improve by ~100x when
+# the sample spans both sides of the SHMR peak at Mh ~ 10^12.
+
+shmr_params:
+  use_mass_dependent_scatter: true
+
+forecast:
+  n_R_bins: 30
+  R_min_Mpc: 0.01
+  R_max_Mpc: 10.0
+  systematic_floor_fraction: 0.05
+  include_nuisance_params: true
+  vary_z_evolution: false
+  sigma_log_Mstar_obs: 0.1
+  include_smf: true
+
+nuisance:
+  sigma_m: 0.02
+  sigma_dz_source: 0.03
+
+surveys:
+  desi:
+    name: "DESI"
+    area_deg2: 14000
+    z_min: 0.01
+    z_max: 0.08
+    n_gal_total: 300000
+    log_Mstar_min: 8.0
+    log_Mstar_max: 12.0
+    dlog_Mstar: 0.5
+
+  desi2:
+    name: "DESI-II"
+    area_deg2: 5000
+    z_min: 0.01
+    z_max: 0.15
+    n_gal_total: 3000000
+    log_Mstar_min: 7.5
+    log_Mstar_max: 12.0
+    dlog_Mstar: 0.5
+
+  spec_s5:
+    name: "Spec-S5"
+    area_deg2: 5000
+    z_min: 0.01
+    z_max: 0.20
+    n_gal_total: 36000000
+    log_Mstar_min: 7.0
+    log_Mstar_max: 12.0
+    dlog_Mstar: 0.5
+
+  stage5_dwarf:
+    name: "Stage-V Dwarf Mania"
+    area_deg2: 8000
+    z_min: 0.01
+    z_max: 0.30
+    n_gal_total: 120000000
+    log_Mstar_min: 7.0
+    log_Mstar_max: 12.0
+    dlog_Mstar: 0.5

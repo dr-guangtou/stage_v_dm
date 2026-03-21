@@ -4,7 +4,9 @@ Generate key summary figures for the dwarf-regime forecast.
 Produces:
     1. Parameter error comparison bar chart (the key figure)
     2. DeltaSigma(R) with error bars in a representative dwarf bin
-    3. Improvement factor table (printed)
+    3. Fisher uncertainty ellipses for key parameter pairs
+    4. Relative improvement comparison (DESI as baseline)
+    5. Improvement factor table (printed)
 
 Usage:
     MPLBACKEND=Agg python scripts/generate_dwarf_figures.py
@@ -18,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
 import numpy as np
 
 from shmr_fisher.config_io import load_run_config
@@ -200,14 +203,279 @@ def plot_dwarf_delta_sigma(
     _save_or_show(fig, save_path)
 
 
-def main():
-    config_path = "configs/dwarf_regime.yaml"
+def _shmr_covariance(result: dict, param_names_filter: list[str]) -> np.ndarray:
+    """
+    Extract the SHMR parameter sub-block of the full covariance matrix.
+
+    Inverts the full Fisher matrix (including nuisance params) and returns
+    the covariance sub-block for the requested SHMR parameters.
+
+    Parameters
+    ----------
+    result : dict
+        Single survey result dict from run_forecast().
+    param_names_filter : list of str
+        SHMR parameter names to extract (must be a subset of param_names).
+
+    Returns
+    -------
+    cov_sub : array, shape (len(param_names_filter), len(param_names_filter))
+    """
+    fisher = result["fisher"]
+    all_names = result["param_names"]
+    cov = np.linalg.inv(fisher)
+    idx = [all_names.index(p) for p in param_names_filter]
+    return cov[np.ix_(idx, idx)]
+
+
+def plot_dwarf_fisher_ellipses(
+    forecast_results: dict,
+    shmr_params,
+    save_path: str | Path | None = None,
+) -> None:
+    """
+    2D Fisher forecast ellipses (1σ and 2σ) for key dwarf parameter pairs.
+
+    Shows three panels: (N_0, β_0), (σ_high, σ_rise), (N_0, σ_high).
+    Each panel overlays ellipses from all surveys.
+
+    Parameters
+    ----------
+    forecast_results : dict
+        Output of run_forecast(), keyed by survey name.
+    shmr_params : SHMRParams
+        Fiducial SHMR parameters.
+    save_path : str, Path, or None
+    """
+    # Parameter pairs to display
+    pairs = [
+        ("N_0", "beta_0"),
+        ("scatter_sigma_high", "scatter_sigma_rise"),
+        ("N_0", "scatter_sigma_high"),
+    ]
+
+    survey_keys = list(forecast_results.keys())
+    survey_color_map = _assign_survey_colors(survey_keys)
+
+    # Get the SHMR param names from the first result
+    first_result = next(iter(forecast_results.values()))
+    shmr_names = first_result["shmr_param_names"]
+
+    # Filter pairs to only those whose params exist
+    pairs = [(a, b) for a, b in pairs if a in shmr_names and b in shmr_names]
+    n_panels = len(pairs)
+    if n_panels == 0:
+        return
+
+    fig, axes = plt.subplots(1, n_panels, figsize=(6 * n_panels, 5.5))
+    if n_panels == 1:
+        axes = [axes]
+
+    for ax, (px, py) in zip(axes, pairs):
+        fid_x = getattr(shmr_params, px)
+        fid_y = getattr(shmr_params, py)
+
+        for sname in survey_keys:
+            r = forecast_results[sname]
+            color = survey_color_map[sname]
+
+            try:
+                cov_2x2 = _shmr_covariance(r, [px, py])
+            except (ValueError, np.linalg.LinAlgError):
+                continue
+
+            # Eigendecomposition for ellipse orientation and size
+            eigvals, eigvecs = np.linalg.eigh(cov_2x2)
+            # Ensure positive eigenvalues (can be tiny negative from numerics)
+            eigvals = np.maximum(eigvals, 0)
+            order = eigvals.argsort()[::-1]
+            eigvals = eigvals[order]
+            eigvecs = eigvecs[:, order]
+
+            # Ellipse angle (degrees) — angle of the major axis
+            angle = np.degrees(np.arctan2(eigvecs[1, 0], eigvecs[0, 0]))
+
+            # 1σ (Δχ²=2.30 for 2 params) and 2σ (Δχ²=6.18)
+            for n_sigma, chi2_scale, alpha in [(1, 2.30, 0.25), (2, 6.18, 0.10)]:
+                w = 2 * np.sqrt(chi2_scale * eigvals[0])
+                h = 2 * np.sqrt(chi2_scale * eigvals[1])
+                ell = Ellipse(
+                    xy=(fid_x, fid_y), width=w, height=h, angle=angle,
+                    facecolor=color, alpha=alpha,
+                    edgecolor=color, lw=1.5,
+                    label=r["survey_name"] if n_sigma == 1 else None,
+                )
+                ax.add_patch(ell)
+
+        # Fiducial point
+        ax.plot(fid_x, fid_y, "k+", ms=12, mew=2, zorder=10)
+
+        # Axis labels
+        ax.set_xlabel(PARAM_LATEX.get(px, px), fontsize=14)
+        ax.set_ylabel(PARAM_LATEX.get(py, py), fontsize=14)
+        ax.grid(True, alpha=0.3)
+
+        # Auto-scale axes: use the largest survey's 2σ extent
+        max_dx, max_dy = 0, 0
+        for sname in survey_keys:
+            r = forecast_results[sname]
+            try:
+                cov_2x2 = _shmr_covariance(r, [px, py])
+                sx = np.sqrt(cov_2x2[0, 0])
+                sy = np.sqrt(cov_2x2[1, 1])
+                max_dx = max(max_dx, sx)
+                max_dy = max(max_dy, sy)
+            except (ValueError, np.linalg.LinAlgError):
+                continue
+        # 3σ margin
+        margin = 3.5
+        ax.set_xlim(fid_x - margin * max_dx, fid_x + margin * max_dx)
+        ax.set_ylim(fid_y - margin * max_dy, fid_y + margin * max_dy)
+
+    # Single legend from the first panel
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(
+        handles, labels, loc="upper center",
+        ncol=min(len(survey_keys), 4), fontsize=10,
+        bbox_to_anchor=(0.5, 1.02),
+    )
+
+    fig.suptitle(
+        "Fisher forecast: 1σ & 2σ confidence ellipses",
+        fontsize=14, y=1.06,
+    )
+    plt.tight_layout()
+    _save_or_show(fig, save_path)
+
+
+def plot_dwarf_relative_improvement(
+    forecast_results: dict,
+    shmr_params,
+    baseline_key: str | None = None,
+    save_path: str | Path | None = None,
+) -> None:
+    """
+    Relative improvement in parameter constraints compared to a baseline survey.
+
+    Shows σ(baseline) / σ(survey) as a grouped bar chart. Values > 1 mean the
+    survey is better than the baseline.
+
+    Parameters
+    ----------
+    forecast_results : dict
+        Output of run_forecast(), keyed by survey name.
+    shmr_params : SHMRParams
+        Fiducial SHMR parameters.
+    baseline_key : str or None
+        Key of the baseline survey. If None, uses the first survey.
+    save_path : str, Path, or None
+    """
+    survey_keys = list(forecast_results.keys())
+    if baseline_key is None:
+        baseline_key = survey_keys[0]
+    survey_color_map = _assign_survey_colors(survey_keys)
+
+    baseline = forecast_results[baseline_key]
+    base_errs = baseline.get("shmr_errors", baseline.get("errors", {}))
+    varied_params = list(base_errs.keys())
+
+    # Exclude the baseline from the comparison bars
+    compare_keys = [k for k in survey_keys if k != baseline_key]
+    n_compare = len(compare_keys)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    x = np.arange(len(varied_params))
+    width = min(0.8 / max(n_compare, 1), 0.25)
+
+    for i, sname in enumerate(compare_keys):
+        r = forecast_results[sname]
+        color = survey_color_map[sname]
+        errs = r.get("shmr_errors", r.get("errors", {}))
+
+        ratios = []
+        for p in varied_params:
+            sigma_base = base_errs.get(p, np.inf)
+            sigma_survey = errs.get(p, np.inf)
+            if sigma_survey > 0 and sigma_base > 0:
+                ratios.append(sigma_base / sigma_survey)
+            else:
+                ratios.append(0)
+
+        bars = ax.bar(
+            x + i * width, ratios, width,
+            label=r["survey_name"], color=color,
+            edgecolor="white", lw=0.5,
+        )
+        # Value labels
+        for bar, val in zip(bars, ratios):
+            if val > 0:
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + 0.05,
+                    f"{val:.1f}×",
+                    ha="center", va="bottom", fontsize=8, fontweight="bold",
+                )
+
+    # Reference line at 1
+    ax.axhline(1.0, color="gray", ls="--", lw=1.5, alpha=0.7, zorder=0)
+
+    baseline_name = baseline["survey_name"]
+    ax.set_xlabel("SHMR Parameter", fontsize=13)
+    ax.set_ylabel(
+        rf"$\sigma(\mathrm{{{baseline_name}}}) \,/\, \sigma(\mathrm{{survey}})$",
+        fontsize=13,
+    )
+    ax.set_title(
+        f"Relative improvement over {baseline_name}",
+        fontsize=14,
+    )
+    ax.set_xticks(x + width * (n_compare - 1) / 2)
+    ax.set_xticklabels(
+        [PARAM_LATEX.get(p, p) for p in varied_params], fontsize=12,
+    )
+    ax.legend(fontsize=10, loc="upper left")
+    ax.grid(True, alpha=0.3, axis="y")
+
+    # Log scale if range spans > 10x
+    all_max = max(
+        base_errs.get(p, 0) / max(
+            forecast_results[k].get("shmr_errors", forecast_results[k].get("errors", {})).get(p, np.inf),
+            1e-30,
+        )
+        for k in compare_keys
+        for p in varied_params
+    )
+    if all_max > 10:
+        ax.set_yscale("log")
+        ax.set_ylim(bottom=0.5)
+
+    plt.tight_layout()
+    _save_or_show(fig, save_path)
+
+
+def run_and_plot(config_path: str, prefix: str = "dwarf") -> dict:
+    """
+    Run a forecast from a YAML config and generate all four figures.
+
+    Parameters
+    ----------
+    config_path : str
+        Path to the YAML config file.
+    prefix : str
+        Filename prefix for the output figures.
+
+    Returns
+    -------
+    results : dict
+        Forecast results keyed by survey name.
+    """
     run_config = load_run_config(config_path)
     outdir = run_config.output_dir
     outdir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 60)
-    print(f"Dwarf-regime forecast: {list(run_config.surveys.keys())}")
+    print(f"Forecast: {list(run_config.surveys.keys())}")
+    print(f"Config: {config_path}")
     print(f"Output: {outdir}")
     print("=" * 60)
 
@@ -219,14 +487,30 @@ def main():
     print("\n--- Generating parameter error comparison ---")
     plot_dwarf_error_comparison(
         results, run_config.shmr_params,
-        save_path=outdir / "dwarf_error_comparison.png",
+        save_path=outdir / f"{prefix}_error_comparison.png",
     )
 
     # Figure 2: DeltaSigma with error bars
     print("\n--- Generating DeltaSigma with errors ---")
     plot_dwarf_delta_sigma(
         results, run_config.shmr_params,
-        save_path=outdir / "dwarf_delta_sigma.png",
+        save_path=outdir / f"{prefix}_delta_sigma.png",
+    )
+
+    # Figure 3: Fisher uncertainty ellipses
+    print("\n--- Generating Fisher ellipses ---")
+    plot_dwarf_fisher_ellipses(
+        results, run_config.shmr_params,
+        save_path=outdir / f"{prefix}_fisher_ellipses.png",
+    )
+
+    # Figure 4: Relative improvement (DESI as baseline)
+    print("\n--- Generating relative improvement ---")
+    baseline_key = list(results.keys())[0]  # First survey is baseline
+    plot_dwarf_relative_improvement(
+        results, run_config.shmr_params,
+        baseline_key=baseline_key,
+        save_path=outdir / f"{prefix}_relative_improvement.png",
     )
 
     # Print improvement table
@@ -254,6 +538,27 @@ def main():
     print("\n" + "=" * 60)
     print(f"All figures saved to {outdir}")
     print("=" * 60)
+
+    return results
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Generate dwarf-regime forecast figures.",
+    )
+    parser.add_argument(
+        "--config", default="configs/dwarf_regime.yaml",
+        help="Path to YAML config (default: configs/dwarf_regime.yaml)",
+    )
+    parser.add_argument(
+        "--prefix", default="dwarf",
+        help="Filename prefix for output figures (default: dwarf)",
+    )
+    args = parser.parse_args()
+
+    run_and_plot(args.config, prefix=args.prefix)
 
 
 if __name__ == "__main__":

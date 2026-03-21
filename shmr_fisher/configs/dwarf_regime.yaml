@@ -21,8 +21,9 @@ shmr_params:
   use_mass_dependent_scatter: true
 
 forecast:
-  n_R_bins: 10
-  n_Mh_bins: 200
+  n_R_bins: 30
+  R_min_Mpc: 0.01
+  R_max_Mpc: 10.0
   systematic_floor_fraction: 0.05
   include_nuisance_params: true
   vary_z_evolution: false
